@@ -255,42 +255,57 @@
         /* Color Shades Grid */
         .color-shades-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            gap: 8px;
         }
 
         .color-shades-grid-small {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
+            gap: 8px;
         }
 
         .color-swatch {
-            border-radius: var(--radius-sm);
-            padding: 16px 12px;
+            border-radius: 6px;
+            padding: 8px 6px;
             border: 1px solid var(--border-light);
             transition: all 0.2s ease;
             cursor: pointer;
+            background: var(--bg-card);
         }
 
         .color-swatch:hover {
-            transform: translateY(-2px);
+            transform: translateY(-1px);
             box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+
+        .color-swatch-preview {
+            width: 100%;
+            height: 32px;
+            border-radius: 4px;
+            margin-bottom: 6px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
         }
 
         .color-swatch-name {
-            font-size: 11px;
+            font-size: 9px;
             font-weight: 600;
             color: var(--text-primary);
-            margin-top: 8px;
+            margin-bottom: 2px;
             font-family: 'Monaco', monospace;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .color-swatch-value {
-            font-size: 10px;
+            font-size: 8px;
             color: var(--text-secondary);
-            margin-top: 2px;
             font-family: 'Monaco', monospace;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         /* Card Styles */
@@ -298,8 +313,8 @@
             background: var(--bg-card);
             border: 1px solid var(--border-light);
             border-radius: var(--radius);
-            padding: 20px;
-            margin-bottom: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
             box-shadow: var(--shadow);
         }
 
@@ -307,18 +322,61 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 16px;
-            padding-bottom: 12px;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
             border-bottom: 1px solid var(--border-light);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .card-header:hover {
+            opacity: 0.8;
+        }
+
+        .card.collapsed .card-header {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
         }
 
         .card-title {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--text-primary);
             display: flex;
             align-items: center;
+            gap: 6px;
+        }
+
+        .card-title svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .card-header-right {
+            display: flex;
+            align-items: center;
             gap: 8px;
+        }
+
+        .collapse-arrow {
+            width: 16px;
+            height: 16px;
+            color: var(--text-secondary);
+            transition: transform 0.2s ease;
+        }
+
+        .card.collapsed .collapse-arrow {
+            transform: rotate(-90deg);
+        }
+
+        .card-body {
+            transition: all 0.2s ease;
+            overflow: hidden;
+        }
+
+        .card.collapsed .card-body {
+            display: none !important;
         }
 
         /* Toggle Switch */
@@ -451,7 +509,7 @@
                         <div style="max-width: 1200px; width: 100%;">
                             <!-- Primary Color -->
                             <div class="card">
-                                <div class="card-header">
+                                <div class="card-header" onclick="toggleCard(this)">
                                     <div class="card-title">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -465,16 +523,24 @@
                                         </svg>
                                         Primary Color
                                     </div>
-                                    <input type="color" id="primaryColor" value="#6366f1"
-                                        onchange="generatePrimaryShades(this.value)"
-                                        style="width: 40px; height: 40px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer;">
+                                    <div class="card-header-right">
+                                        <input type="color" id="primaryColor" value="#6366f1"
+                                            onchange="generatePrimaryShades(this.value)" onclick="event.stopPropagation()"
+                                            style="width: 32px; height: 32px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer;">
+                                        <svg class="collapse-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="6 9 12 15 18 9"></polyline>
+                                        </svg>
+                                    </div>
                                 </div>
-                                <div id="primaryShades" class="color-shades-grid"></div>
+                                <div class="card-body">
+                                    <div id="primaryShades" class="color-shades-grid"></div>
+                                </div>
                             </div>
 
                             <!-- Secondary Color (Optional) -->
                             <div class="card">
-                                <div class="card-header">
+                                <div class="card-header" onclick="toggleCard(this)">
                                     <div class="card-title">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
@@ -488,77 +554,95 @@
                                         </svg>
                                         Secondary Color (Optional)
                                     </div>
-                                    <div style="display: flex; align-items: center; gap: 12px;">
-                                        <label class="toggle-switch">
+                                    <div class="card-header-right">
+                                        <label class="toggle-switch" onclick="event.stopPropagation()">
                                             <input type="checkbox" id="secondaryToggle"
                                                 onchange="toggleSecondary(this.checked)">
                                             <span class="toggle-slider"></span>
                                         </label>
                                         <input type="color" id="secondaryColor" value="#8b5cf6"
-                                            onchange="generateSecondaryShades(this.value)"
-                                            style="width: 40px; height: 40px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; opacity: 0.3;"
+                                            onchange="generateSecondaryShades(this.value)" onclick="event.stopPropagation()"
+                                            style="width: 32px; height: 32px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; opacity: 0.3;"
                                             disabled>
+                                        <svg class="collapse-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="6 9 12 15 18 9"></polyline>
+                                        </svg>
                                     </div>
                                 </div>
-                                <div id="secondaryShades" class="color-shades-grid" style="display: none;"></div>
+                                <div class="card-body" style="display: none;">
+                                    <div id="secondaryShades" class="color-shades-grid"></div>
+                                </div>
                             </div>
 
                             <!-- Status Colors -->
                             <div class="card">
-                                <div class="card-header">
+                                <div class="card-header" onclick="toggleCard(this)">
                                     <div class="card-title">Status Colors</div>
+                                    <svg class="collapse-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
                                 </div>
-                                <div style="display: grid; gap: 16px;">
-                                    <!-- Success -->
-                                    <div>
-                                        <div
-                                            style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                                            <span
-                                                style="font-size: 13px; font-weight: 500; color: var(--text-primary);">Success
-                                                (Green)</span>
-                                            <input type="color" id="successColor" value="#10b981"
-                                                onchange="generateSuccessShades(this.value)"
-                                                style="width: 40px; height: 40px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer;">
+                                <div class="card-body">
+                                    <div style="display: grid; gap: 16px;">
+                                        <!-- Success -->
+                                        <div>
+                                            <div
+                                                style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                                                <span
+                                                    style="font-size: 12px; font-weight: 500; color: var(--text-primary);">Success
+                                                    (Green)</span>
+                                                <input type="color" id="successColor" value="#10b981"
+                                                    onchange="generateSuccessShades(this.value)"
+                                                    style="width: 32px; height: 32px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer;">
+                                            </div>
+                                            <div id="successShades" class="color-shades-grid-small"></div>
                                         </div>
-                                        <div id="successShades" class="color-shades-grid-small"></div>
-                                    </div>
 
-                                    <!-- Error -->
-                                    <div>
-                                        <div
-                                            style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                                            <span
-                                                style="font-size: 13px; font-weight: 500; color: var(--text-primary);">Error
-                                                (Red)</span>
-                                            <input type="color" id="errorColor" value="#ef4444"
-                                                onchange="generateErrorShades(this.value)"
-                                                style="width: 40px; height: 40px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer;">
+                                        <!-- Error -->
+                                        <div>
+                                            <div
+                                                style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                                                <span
+                                                    style="font-size: 12px; font-weight: 500; color: var(--text-primary);">Error
+                                                    (Red)</span>
+                                                <input type="color" id="errorColor" value="#ef4444"
+                                                    onchange="generateErrorShades(this.value)"
+                                                    style="width: 32px; height: 32px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer;">
+                                            </div>
+                                            <div id="errorShades" class="color-shades-grid-small"></div>
                                         </div>
-                                        <div id="errorShades" class="color-shades-grid-small"></div>
-                                    </div>
 
-                                    <!-- Warning/Process -->
-                                    <div>
-                                        <div
-                                            style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                                            <span
-                                                style="font-size: 13px; font-weight: 500; color: var(--text-primary);">Warning/Process
-                                                (Orange)</span>
-                                            <input type="color" id="warningColor" value="#f59e0b"
-                                                onchange="generateWarningShades(this.value)"
-                                                style="width: 40px; height: 40px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer;">
+                                        <!-- Warning/Process -->
+                                        <div>
+                                            <div
+                                                style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                                                <span
+                                                    style="font-size: 12px; font-weight: 500; color: var(--text-primary);">Warning/Process
+                                                    (Orange)</span>
+                                                <input type="color" id="warningColor" value="#f59e0b"
+                                                    onchange="generateWarningShades(this.value)"
+                                                    style="width: 32px; height: 32px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer;">
+                                            </div>
+                                            <div id="warningShades" class="color-shades-grid-small"></div>
                                         </div>
-                                        <div id="warningShades" class="color-shades-grid-small"></div>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Neutral Colors -->
                             <div class="card">
-                                <div class="card-header">
+                                <div class="card-header" onclick="toggleCard(this)">
                                     <div class="card-title">Neutral Colors</div>
+                                    <svg class="collapse-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
                                 </div>
-                                <div id="neutralShades" class="color-shades-grid"></div>
+                                <div class="card-body">
+                                    <div id="neutralShades" class="color-shades-grid"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -653,12 +737,11 @@
             const shadeNumbers = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
             shades.forEach((color, index) => {
                 const shadeName = `${prefix}-${shadeNumbers[index]}`;
-                const textColor = getContrastColor(color);
                 html += `
-          <div class="color-swatch" style="background: ${color};" onclick="copyToClipboard('${color}')">
-            <div style="height: 40px;"></div>
-            <div class="color-swatch-name" style="color: ${textColor};">${shadeName}</div>
-            <div class="color-swatch-value" style="color: ${textColor}; opacity: 0.8;">${color.toUpperCase()}</div>
+          <div class="color-swatch" onclick="copyToClipboard('${color}')" title="Click to copy ${color}">
+            <div class="color-swatch-preview" style="background: ${color};"></div>
+            <div class="color-swatch-name">${shadeName}</div>
+            <div class="color-swatch-value">${color.toUpperCase()}</div>
           </div>
         `;
             });
@@ -670,12 +753,11 @@
             const labels = ['light', 'default', 'dark'];
             shades.forEach((color, index) => {
                 const shadeName = `${prefix}-${labels[index]}`;
-                const textColor = getContrastColor(color);
                 html += `
-          <div class="color-swatch" style="background: ${color};" onclick="copyToClipboard('${color}')">
-            <div style="height: 40px;"></div>
-            <div class="color-swatch-name" style="color: ${textColor};">${shadeName}</div>
-            <div class="color-swatch-value" style="color: ${textColor}; opacity: 0.8;">${color.toUpperCase()}</div>
+          <div class="color-swatch" onclick="copyToClipboard('${color}')" title="Click to copy ${color}">
+            <div class="color-swatch-preview" style="background: ${color};"></div>
+            <div class="color-swatch-name">${shadeName}</div>
+            <div class="color-swatch-value">${color.toUpperCase()}</div>
           </div>
         `;
             });
@@ -698,16 +780,20 @@
         function toggleSecondary(enabled) {
             const colorInput = document.getElementById('secondaryColor');
             const shadesContainer = document.getElementById('secondaryShades');
+            const cardBody = shadesContainer.closest('.card-body');
 
             if (enabled) {
                 colorInput.disabled = false;
                 colorInput.style.opacity = '1';
                 shadesContainer.style.display = 'grid';
+                if (cardBody) cardBody.style.display = 'block';
                 generateSecondaryShades(colorInput.value);
             } else {
                 colorInput.disabled = true;
                 colorInput.style.opacity = '0.3';
                 shadesContainer.style.display = 'none';
+                // Hide the card body if secondary is disabled
+                if (cardBody) cardBody.style.display = 'none';
             }
         }
 
@@ -796,6 +882,12 @@
             if (confirm('Reset all settings to defaults?')) {
                 location.reload();
             }
+        }
+
+        // Toggle card collapse/expand
+        function toggleCard(header) {
+            const card = header.closest('.card');
+            card.classList.toggle('collapsed');
         }
 
         // Event Listeners
