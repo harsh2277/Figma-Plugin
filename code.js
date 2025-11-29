@@ -1,6 +1,178 @@
 // Figma plugin backend code
 figma.showUI(__html__, { width: 1200, height: 800, themeColors: true });
 
+// Function to create button component set
+async function createButtonComponentSet(buttonText, bgColor, textColor, radius) {
+    // Load fonts
+    await figma.loadFontAsync({ family: "Inter", style: "Medium" });
+    
+    // Helper to convert hex to RGB
+    function hexToRgb(hex) {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16) / 255,
+            g: parseInt(result[2], 16) / 255,
+            b: parseInt(result[3], 16) / 255
+        } : { r: 0, g: 0, b: 0 };
+    }
+
+    // Helper to darken color
+    function darkenColor(rgb, amount) {
+        return {
+            r: Math.max(0, rgb.r - amount),
+            g: Math.max(0, rgb.g - amount),
+            b: Math.max(0, rgb.b - amount)
+        };
+    }
+
+    // Helper to lighten color
+    function lightenColor(rgb, amount) {
+        return {
+            r: Math.min(1, rgb.r + amount),
+            g: Math.min(1, rgb.g + amount),
+            b: Math.min(1, rgb.b + amount)
+        };
+    }
+
+    // Helper to create icon placeholder
+    function createIconPlaceholder(color, size = 16) {
+        const icon = figma.createFrame();
+        icon.resize(size, size);
+        icon.fills = [];
+        icon.name = "Icon";
+        
+        // Create a simple icon shape (circle)
+        const circle = figma.createEllipse();
+        circle.resize(size, size);
+        circle.fills = [{ type: 'SOLID', color: color }];
+        icon.appendChild(circle);
+        
+        return icon;
+    }
+
+    const baseRgb = hexToRgb(bgColor);
+    const textRgb = hexToRgb(textColor);
+    
+    const spacing = 20;
+    
+    // Button size configurations
+    const sizes = [
+        { name: 'Small', height: 32, paddingX: 12, paddingY: 6, fontSize: 12, iconSize: 14 },
+        { name: 'Medium', height: 40, paddingX: 16, paddingY: 10, fontSize: 14, iconSize: 16 },
+        { name: 'Large', height: 48, paddingX: 20, paddingY: 12, fontSize: 16, iconSize: 18 }
+    ];
+    
+    // Button variants with their configurations
+    const variants = [
+        {
+            name: 'Primary',
+            states: [
+                { name: 'Default', bgColor: baseRgb, textColor: textRgb, borderColor: null, borderWidth: 0 },
+                { name: 'Hover', bgColor: darkenColor(baseRgb, 0.08), textColor: textRgb, borderColor: null, borderWidth: 0 },
+                { name: 'Click', bgColor: darkenColor(baseRgb, 0.15), textColor: textRgb, borderColor: null, borderWidth: 0 },
+                { name: 'Disabled', bgColor: { r: 0.88, g: 0.88, b: 0.88 }, textColor: { r: 0.6, g: 0.6, b: 0.6 }, borderColor: null, borderWidth: 0 }
+            ]
+        },
+        {
+            name: 'Secondary',
+            states: [
+                { name: 'Default', bgColor: { r: 1, g: 1, b: 1 }, textColor: baseRgb, borderColor: baseRgb, borderWidth: 1 },
+                { name: 'Hover', bgColor: lightenColor(baseRgb, 0.85), textColor: baseRgb, borderColor: baseRgb, borderWidth: 1 },
+                { name: 'Click', bgColor: lightenColor(baseRgb, 0.75), textColor: baseRgb, borderColor: baseRgb, borderWidth: 1 },
+                { name: 'Disabled', bgColor: { r: 0.98, g: 0.98, b: 0.98 }, textColor: { r: 0.7, g: 0.7, b: 0.7 }, borderColor: { r: 0.85, g: 0.85, b: 0.85 }, borderWidth: 1 }
+            ]
+        },
+        {
+            name: 'Link',
+            states: [
+                { name: 'Default', bgColor: { r: 0, g: 0, b: 0, a: 0 }, textColor: baseRgb, borderColor: null, borderWidth: 0 },
+                { name: 'Hover', bgColor: lightenColor(baseRgb, 0.85), textColor: darkenColor(baseRgb, 0.1), borderColor: null, borderWidth: 0 },
+                { name: 'Click', bgColor: lightenColor(baseRgb, 0.75), textColor: darkenColor(baseRgb, 0.15), borderColor: null, borderWidth: 0 },
+                { name: 'Disabled', bgColor: { r: 0, g: 0, b: 0, a: 0 }, textColor: { r: 0.7, g: 0.7, b: 0.7 }, borderColor: null, borderWidth: 0 }
+            ]
+        }
+    ];
+    
+    let xOffset = 0;
+    let yOffset = 0;
+    
+    // Array to store all components
+    const components = [];
+    
+    // Create variants for each size, variant type, and state
+    for (const size of sizes) {
+        for (const variant of variants) {
+            for (const state of variant.states) {
+                // Create button component
+                const button = figma.createComponent();
+                button.name = `Size=${size.name}, Variant=${variant.name}, State=${state.name}`;
+                button.resize(120, size.height);
+                button.x = xOffset;
+                button.y = yOffset;
+                
+                // Background
+                if (state.bgColor.a !== undefined && state.bgColor.a === 0) {
+                    button.fills = [];
+                } else {
+                    button.fills = [{ type: 'SOLID', color: state.bgColor }];
+                }
+                
+                button.cornerRadius = radius;
+                
+                // Border for secondary buttons
+                if (state.borderColor && state.borderWidth > 0) {
+                    button.strokes = [{ type: 'SOLID', color: state.borderColor }];
+                    button.strokeWeight = state.borderWidth;
+                }
+                
+                // Create auto-layout for content
+                button.layoutMode = 'HORIZONTAL';
+                button.primaryAxisAlignItems = 'CENTER';
+                button.counterAxisAlignItems = 'CENTER';
+                button.primaryAxisSizingMode = 'AUTO';
+                button.paddingLeft = size.paddingX;
+                button.paddingRight = size.paddingX;
+                button.paddingTop = size.paddingY;
+                button.paddingBottom = size.paddingY;
+                button.itemSpacing = 8;
+                
+                // Add text
+                const text = figma.createText();
+                text.fontName = { family: "Inter", style: "Medium" };
+                text.fontSize = size.fontSize;
+                text.characters = buttonText;
+                text.fills = [{ type: 'SOLID', color: state.textColor }];
+                button.appendChild(text);
+                
+                // Add to current page and components array
+                figma.currentPage.appendChild(button);
+                components.push(button);
+                
+                // Update position for next variant
+                xOffset += 140;
+                
+                // Move to next row after 4 states
+                if (variant.states.indexOf(state) === variant.states.length - 1) {
+                    xOffset = 0;
+                    yOffset += size.height + spacing;
+                }
+            }
+        }
+        // Add extra spacing between sizes
+        yOffset += spacing;
+    }
+    
+    // Combine all components into a component set
+    const componentSet = figma.combineAsVariants(components, figma.currentPage);
+    componentSet.name = "Button";
+    
+    // Center in viewport
+    figma.viewport.scrollAndZoomIntoView([componentSet]);
+    
+    const totalVariants = sizes.length * variants.length * variants[0].states.length;
+    figma.notify(`✅ Button component set created with 3 sizes (Small, Medium, Large), 3 variants (Primary, Secondary, Link), and 4 states! Total: ${totalVariants} components`);
+}
+
 // Handle messages from the UI
 figma.ui.onmessage = async (msg) => {
     if (msg.type === 'copy-to-clipboard') {
@@ -19,6 +191,15 @@ figma.ui.onmessage = async (msg) => {
 
     if (msg.type === 'notify') {
         figma.notify(msg.message);
+    }
+
+    if (msg.type === 'create-button-component') {
+        try {
+            await createButtonComponentSet(msg.buttonText, msg.bgColor, msg.textColor, msg.radius);
+        } catch (error) {
+            figma.notify(`❌ Error creating button component: ${error.message}`);
+            console.error('Button component error:', error);
+        }
     }
 
     if (msg.type === 'create-variables') {
