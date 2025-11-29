@@ -1499,7 +1499,8 @@
             const buttonText = document.getElementById('buttonText').value || 'Button';
             const bgColor = document.getElementById('buttonBgColor').value;
             const textColor = document.getElementById('buttonTextColor').value;
-            const radius = parseInt(document.getElementById('buttonRadius').value) || 8;
+            const radiusValue = document.getElementById('buttonRadius').value;
+            const radius = radiusValue !== '' ? parseInt(radiusValue) : 8;
 
             // Send message to Figma plugin
             parent.postMessage({

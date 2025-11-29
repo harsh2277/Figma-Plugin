@@ -77,12 +77,21 @@ async function createButtonComponentSet(buttonText, bgColor, textColor, radius) 
             ]
         },
         {
+            name: 'Secondary',
+            states: [
+                { name: 'Default', bgColor: { r: 1, g: 1, b: 1 }, textColor: baseRgb, borderColor: baseRgb, borderWidth: 1 },
+                { name: 'Hover', bgColor: lightenColor(baseRgb, 0.85), textColor: baseRgb, borderColor: baseRgb, borderWidth: 1 },
+                { name: 'Click', bgColor: lightenColor(baseRgb, 0.75), textColor: baseRgb, borderColor: baseRgb, borderWidth: 1 },
+                { name: 'Disabled', bgColor: { r: 0.98, g: 0.98, b: 0.98 }, textColor: { r: 0.7, g: 0.7, b: 0.7 }, borderColor: { r: 0.85, g: 0.85, b: 0.85 }, borderWidth: 1 }
+            ]
+        },
+        {
             name: 'Link',
             states: [
-                { name: 'Default', bgColor: { r: 0, g: 0, b: 0, a: 0 }, textColor: baseRgb, borderColor: null, borderWidth: 0 },
-                { name: 'Hover', bgColor: lightenColor(baseRgb, 0.85), textColor: darkenColor(baseRgb, 0.1), borderColor: null, borderWidth: 0 },
-                { name: 'Click', bgColor: lightenColor(baseRgb, 0.75), textColor: darkenColor(baseRgb, 0.15), borderColor: null, borderWidth: 0 },
-                { name: 'Disabled', bgColor: { r: 0, g: 0, b: 0, a: 0 }, textColor: { r: 0.7, g: 0.7, b: 0.7 }, borderColor: null, borderWidth: 0 }
+                { name: 'Default', bgColor: { r: 0, g: 0, b: 0, a: 0 }, textColor: baseRgb, borderColor: null, borderWidth: 0, textDecoration: 'UNDERLINE' },
+                { name: 'Hover', bgColor: { r: 0, g: 0, b: 0, a: 0 }, textColor: darkenColor(baseRgb, 0.1), borderColor: null, borderWidth: 0, textDecoration: 'UNDERLINE' },
+                { name: 'Click', bgColor: { r: 0, g: 0, b: 0, a: 0 }, textColor: darkenColor(baseRgb, 0.15), borderColor: null, borderWidth: 0, textDecoration: 'UNDERLINE' },
+                { name: 'Disabled', bgColor: { r: 0, g: 0, b: 0, a: 0 }, textColor: { r: 0.7, g: 0.7, b: 0.7 }, borderColor: null, borderWidth: 0, textDecoration: 'UNDERLINE' }
             ]
         }
     ];
@@ -92,15 +101,20 @@ async function createButtonComponentSet(buttonText, bgColor, textColor, radius) 
         { leftIcon: false, rightIcon: false }
     ];
     
+    // Manual positioning variables
+    const buttonWidth = 120;
+    const buttonSpacing = 20;
     let xOffset = 0;
     let yOffset = 0;
     
     // Array to store all components
     const components = [];
     
-    // Create variants for each size, variant type, state, and icon configuration
+    // Create variants organized by size, then variant type in rows
     for (const size of sizes) {
         for (const variant of variants) {
+            xOffset = 0; // Reset x for each row
+            
             for (const state of variant.states) {
                 for (const iconConfig of iconConfigs) {
                     // Create button component
@@ -148,6 +162,12 @@ async function createButtonComponentSet(buttonText, bgColor, textColor, radius) 
                     text.fontSize = size.fontSize;
                     text.characters = buttonText;
                     text.fills = [{ type: 'SOLID', color: state.textColor }];
+                    
+                    // Add underline for Link variant
+                    if (state.textDecoration === 'UNDERLINE') {
+                        text.textDecoration = 'UNDERLINE';
+                    }
+                    
                     button.appendChild(text);
                     
                     // Add right icon (always add, visibility will be controlled by boolean property)
@@ -160,24 +180,25 @@ async function createButtonComponentSet(buttonText, bgColor, textColor, radius) 
                     figma.currentPage.appendChild(button);
                     components.push(button);
                     
-                    // Update position for next variant
-                    xOffset += 140;
-                    
-                    // Move to next row after 4 icon configs
-                    if (iconConfigs.indexOf(iconConfig) === iconConfigs.length - 1) {
-                        xOffset = 0;
-                        yOffset += size.height + spacing;
-                    }
+                    // Move to next button position
+                    xOffset += buttonWidth + buttonSpacing;
                 }
             }
+            
+            // Move to next row
+            yOffset += size.height + buttonSpacing;
         }
-        // Add extra spacing between sizes
-        yOffset += spacing;
     }
     
     // Combine all components into a component set
     const componentSet = figma.combineAsVariants(components, figma.currentPage);
     componentSet.name = "Button";
+    
+    // Remove auto-layout and set manual positioning
+    componentSet.layoutMode = 'NONE';
+    
+    // Remove background color
+    componentSet.fills = [];
     
     // Add boolean properties for LeftIcon and RightIcon and get their keys
     const leftIconPropKey = componentSet.addComponentProperty("LeftIcon", "BOOLEAN", false);
