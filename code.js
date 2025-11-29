@@ -53,6 +53,9 @@ async function createButtonComponentSet(buttonText, bgColor, textColor, radius) 
     const baseRgb = hexToRgb(bgColor);
     const textRgb = hexToRgb(textColor);
     
+    // Secondary color (purple)
+    const secondaryColorRgb = hexToRgb('#8b5cf6');
+    
     const spacing = 20;
     
     // Button size configurations
@@ -74,15 +77,6 @@ async function createButtonComponentSet(buttonText, bgColor, textColor, radius) 
             ]
         },
         {
-            name: 'Secondary',
-            states: [
-                { name: 'Default', bgColor: { r: 1, g: 1, b: 1 }, textColor: baseRgb, borderColor: baseRgb, borderWidth: 1 },
-                { name: 'Hover', bgColor: lightenColor(baseRgb, 0.85), textColor: baseRgb, borderColor: baseRgb, borderWidth: 1 },
-                { name: 'Click', bgColor: lightenColor(baseRgb, 0.75), textColor: baseRgb, borderColor: baseRgb, borderWidth: 1 },
-                { name: 'Disabled', bgColor: { r: 0.98, g: 0.98, b: 0.98 }, textColor: { r: 0.7, g: 0.7, b: 0.7 }, borderColor: { r: 0.85, g: 0.85, b: 0.85 }, borderWidth: 1 }
-            ]
-        },
-        {
             name: 'Link',
             states: [
                 { name: 'Default', bgColor: { r: 0, g: 0, b: 0, a: 0 }, textColor: baseRgb, borderColor: null, borderWidth: 0 },
@@ -93,68 +87,87 @@ async function createButtonComponentSet(buttonText, bgColor, textColor, radius) 
         }
     ];
     
+    // Icon configurations
+    const iconConfigs = [
+        { leftIcon: false, rightIcon: false }
+    ];
+    
     let xOffset = 0;
     let yOffset = 0;
     
     // Array to store all components
     const components = [];
     
-    // Create variants for each size, variant type, and state
+    // Create variants for each size, variant type, state, and icon configuration
     for (const size of sizes) {
         for (const variant of variants) {
             for (const state of variant.states) {
-                // Create button component
-                const button = figma.createComponent();
-                button.name = `Size=${size.name}, Variant=${variant.name}, State=${state.name}`;
-                button.resize(120, size.height);
-                button.x = xOffset;
-                button.y = yOffset;
-                
-                // Background
-                if (state.bgColor.a !== undefined && state.bgColor.a === 0) {
-                    button.fills = [];
-                } else {
-                    button.fills = [{ type: 'SOLID', color: state.bgColor }];
-                }
-                
-                button.cornerRadius = radius;
-                
-                // Border for secondary buttons
-                if (state.borderColor && state.borderWidth > 0) {
-                    button.strokes = [{ type: 'SOLID', color: state.borderColor }];
-                    button.strokeWeight = state.borderWidth;
-                }
-                
-                // Create auto-layout for content
-                button.layoutMode = 'HORIZONTAL';
-                button.primaryAxisAlignItems = 'CENTER';
-                button.counterAxisAlignItems = 'CENTER';
-                button.primaryAxisSizingMode = 'AUTO';
-                button.paddingLeft = size.paddingX;
-                button.paddingRight = size.paddingX;
-                button.paddingTop = size.paddingY;
-                button.paddingBottom = size.paddingY;
-                button.itemSpacing = 8;
-                
-                // Add text
-                const text = figma.createText();
-                text.fontName = { family: "Inter", style: "Medium" };
-                text.fontSize = size.fontSize;
-                text.characters = buttonText;
-                text.fills = [{ type: 'SOLID', color: state.textColor }];
-                button.appendChild(text);
-                
-                // Add to current page and components array
-                figma.currentPage.appendChild(button);
-                components.push(button);
-                
-                // Update position for next variant
-                xOffset += 140;
-                
-                // Move to next row after 4 states
-                if (variant.states.indexOf(state) === variant.states.length - 1) {
-                    xOffset = 0;
-                    yOffset += size.height + spacing;
+                for (const iconConfig of iconConfigs) {
+                    // Create button component
+                    const button = figma.createComponent();
+                    button.name = `Size=${size.name}, Variant=${variant.name}, State=${state.name}`;
+                    button.resize(120, size.height);
+                    button.x = xOffset;
+                    button.y = yOffset;
+                    
+                    // Background
+                    if (state.bgColor.a !== undefined && state.bgColor.a === 0) {
+                        button.fills = [];
+                    } else {
+                        button.fills = [{ type: 'SOLID', color: state.bgColor }];
+                    }
+                    
+                    button.cornerRadius = radius;
+                    
+                    // Border for secondary buttons
+                    if (state.borderColor && state.borderWidth > 0) {
+                        button.strokes = [{ type: 'SOLID', color: state.borderColor }];
+                        button.strokeWeight = state.borderWidth;
+                    }
+                    
+                    // Create auto-layout for content
+                    button.layoutMode = 'HORIZONTAL';
+                    button.primaryAxisAlignItems = 'CENTER';
+                    button.counterAxisAlignItems = 'CENTER';
+                    button.primaryAxisSizingMode = 'AUTO';
+                    button.paddingLeft = size.paddingX;
+                    button.paddingRight = size.paddingX;
+                    button.paddingTop = size.paddingY;
+                    button.paddingBottom = size.paddingY;
+                    button.itemSpacing = 8;
+                    
+                    // Add left icon (always add, visibility will be controlled by boolean property)
+                    const leftIcon = createIconPlaceholder(state.textColor, size.iconSize);
+                    leftIcon.name = "LeftIcon";
+                    leftIcon.visible = false; // Default to hidden
+                    button.appendChild(leftIcon);
+                    
+                    // Add text
+                    const text = figma.createText();
+                    text.fontName = { family: "Inter", style: "Medium" };
+                    text.fontSize = size.fontSize;
+                    text.characters = buttonText;
+                    text.fills = [{ type: 'SOLID', color: state.textColor }];
+                    button.appendChild(text);
+                    
+                    // Add right icon (always add, visibility will be controlled by boolean property)
+                    const rightIcon = createIconPlaceholder(state.textColor, size.iconSize);
+                    rightIcon.name = "RightIcon";
+                    rightIcon.visible = false; // Default to hidden
+                    button.appendChild(rightIcon);
+                    
+                    // Add to current page and components array
+                    figma.currentPage.appendChild(button);
+                    components.push(button);
+                    
+                    // Update position for next variant
+                    xOffset += 140;
+                    
+                    // Move to next row after 4 icon configs
+                    if (iconConfigs.indexOf(iconConfig) === iconConfigs.length - 1) {
+                        xOffset = 0;
+                        yOffset += size.height + spacing;
+                    }
                 }
             }
         }
@@ -166,11 +179,29 @@ async function createButtonComponentSet(buttonText, bgColor, textColor, radius) 
     const componentSet = figma.combineAsVariants(components, figma.currentPage);
     componentSet.name = "Button";
     
+    // Add boolean properties for LeftIcon and RightIcon and get their keys
+    const leftIconPropKey = componentSet.addComponentProperty("LeftIcon", "BOOLEAN", false);
+    const rightIconPropKey = componentSet.addComponentProperty("RightIcon", "BOOLEAN", false);
+    
+    // Bind boolean properties to icon visibility for all components
+    componentSet.children.forEach(component => {
+        const leftIconLayer = component.findOne(node => node.name === "LeftIcon");
+        const rightIconLayer = component.findOne(node => node.name === "RightIcon");
+        
+        if (leftIconLayer) {
+            leftIconLayer.componentPropertyReferences = { visible: leftIconPropKey };
+        }
+        
+        if (rightIconLayer) {
+            rightIconLayer.componentPropertyReferences = { visible: rightIconPropKey };
+        }
+    });
+    
     // Center in viewport
     figma.viewport.scrollAndZoomIntoView([componentSet]);
     
-    const totalVariants = sizes.length * variants.length * variants[0].states.length;
-    figma.notify(`✅ Button component set created with 3 sizes (Small, Medium, Large), 3 variants (Primary, Secondary, Link), and 4 states! Total: ${totalVariants} components`);
+    const totalVariants = sizes.length * variants.length * variants[0].states.length * iconConfigs.length;
+    figma.notify(`✅ Button component set created with 3 sizes, 4 variants, 4 states, and icon options (Left/Right)! Total: ${totalVariants} components`);
 }
 
 // Handle messages from the UI

@@ -1031,6 +1031,14 @@
         function generatePrimaryShades(color) {
             const shades = generateShades(color, 11);
             renderColorShades(shades, 'primary', 'primaryShades');
+            
+            // Auto-sync button background color with primary color
+            const buttonBgColor = document.getElementById('buttonBgColor');
+            const buttonBgColorHex = document.getElementById('buttonBgColorHex');
+            if (buttonBgColor && buttonBgColorHex) {
+                buttonBgColor.value = color;
+                buttonBgColorHex.value = color.toUpperCase();
+            }
         }
 
         // Generate secondary shades
