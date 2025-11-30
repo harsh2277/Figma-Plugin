@@ -225,6 +225,377 @@ async function createButtonComponentSet(buttonText, bgColor, textColor, radius) 
     figma.notify(`✅ Button component set created with 3 sizes, 4 variants, 4 states, and icon options (Left/Right)! Total: ${totalVariants} components`);
 }
 
+// Function to create input component set
+async function createInputComponentSet(placeholder, borderColor, primaryColor, textColor, radius) {
+    // Load fonts
+    await figma.loadFontAsync({ family: "Inter", style: "Regular" });
+    await figma.loadFontAsync({ family: "Inter", style: "Medium" });
+    
+    // Helper to convert hex to RGB
+    function hexToRgb(hex) {
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16) / 255,
+            g: parseInt(result[2], 16) / 255,
+            b: parseInt(result[3], 16) / 255
+        } : { r: 0, g: 0, b: 0 };
+    }
+
+    // Helper to lighten color
+    function lightenColor(rgb, amount) {
+        return {
+            r: Math.min(1, rgb.r + amount),
+            g: Math.min(1, rgb.g + amount),
+            b: Math.min(1, rgb.b + amount)
+        };
+    }
+
+    // Helper to create icon placeholder
+    function createIconPlaceholder(color, size = 16) {
+        const icon = figma.createFrame();
+        icon.resize(size, size);
+        icon.fills = [];
+        icon.name = "Icon";
+        
+        // Create a simple icon shape (circle)
+        const circle = figma.createEllipse();
+        circle.resize(size, size);
+        circle.fills = [{ type: 'SOLID', color: color }];
+        icon.appendChild(circle);
+        
+        return icon;
+    }
+
+    const borderRgb = hexToRgb(borderColor);
+    const textRgb = hexToRgb(textColor);
+    const primaryRgb = hexToRgb(primaryColor); // Use primary color from UI
+    const successRgb = hexToRgb('#10b981');
+    const errorRgb = hexToRgb('#ef4444');
+    
+    const spacing = 20;
+    
+    // Input states with their configurations
+    const states = [
+        { 
+            name: 'Default', 
+            borderColor: borderRgb, 
+            borderWidth: 1,
+            bgColor: { r: 1, g: 1, b: 1 },
+            textColor: textRgb,
+            placeholderOpacity: 0.5,
+            hasErrorMsg: false
+        },
+        { 
+            name: 'Click', 
+            borderColor: primaryRgb, 
+            borderWidth: 2,
+            bgColor: { r: 1, g: 1, b: 1 },
+            textColor: textRgb,
+            placeholderOpacity: 0.5,
+            hasErrorMsg: false
+        },
+        { 
+            name: 'Error', 
+            borderColor: errorRgb, 
+            borderWidth: 1,
+            bgColor: { r: 1, g: 1, b: 1 },
+            textColor: textRgb,
+            placeholderOpacity: 0.5,
+            hasErrorMsg: true
+        },
+        { 
+            name: 'Success', 
+            borderColor: successRgb, 
+            borderWidth: 1,
+            bgColor: { r: 1, g: 1, b: 1 },
+            textColor: textRgb,
+            placeholderOpacity: 0.5,
+            hasErrorMsg: false
+        },
+        { 
+            name: 'Disabled', 
+            borderColor: { r: 0.88, g: 0.88, b: 0.88 }, 
+            borderWidth: 1,
+            bgColor: { r: 0.98, g: 0.98, b: 0.98 },
+            textColor: { r: 0.6, g: 0.6, b: 0.6 },
+            placeholderOpacity: 1,
+            hasErrorMsg: false
+        }
+    ];
+    
+    // Input types with their configurations
+    const types = [
+        { 
+            name: 'Text', 
+            placeholder: placeholder,
+            height: 40,
+            showIcons: true,
+            isOTP: false,
+            isTextarea: false
+        },
+        { 
+            name: 'Textarea', 
+            placeholder: placeholder,
+            height: 120,
+            showIcons: false,
+            isOTP: false,
+            isTextarea: true
+        },
+        { 
+            name: 'OTP', 
+            placeholder: '0',
+            height: 56,
+            showIcons: false,
+            isOTP: true,
+            isTextarea: false,
+            digitCount: 4
+        }
+    ];
+    
+    // Manual positioning variables
+    const inputSpacing = 20;
+    let xOffset = 0;
+    let yOffset = 0;
+    
+    // Array to store all components
+    const components = [];
+    
+    // Create input variants for each type and state
+    for (const type of types) {
+        for (const state of states) {
+            // Create wrapper frame for label + input
+            const wrapper = figma.createComponent();
+            wrapper.name = `Type=${type.name}, State=${state.name}`;
+            wrapper.x = xOffset;
+            wrapper.y = yOffset;
+            wrapper.fills = [];
+            
+            // Set wrapper auto-layout (vertical) with HUG
+            wrapper.layoutMode = 'VERTICAL';
+            wrapper.primaryAxisAlignItems = 'MIN';
+            wrapper.counterAxisAlignItems = 'MIN';
+            wrapper.primaryAxisSizingMode = 'AUTO'; // HUG content
+            wrapper.counterAxisSizingMode = 'AUTO'; // HUG content
+            wrapper.itemSpacing = 6;
+            
+            // Add label (will be controlled by boolean property)
+            const label = figma.createText();
+            label.fontName = { family: "Inter", style: "Medium" };
+            label.fontSize = 12;
+            label.characters = "Label";
+            label.fills = [{ type: 'SOLID', color: state.textColor }];
+            label.name = "Label";
+            label.visible = false; // Default to hidden
+            wrapper.appendChild(label);
+            
+            // Check if this is an OTP input type
+            if (type.isOTP) {
+                // Create OTP container with individual boxes
+                const otpContainer = figma.createFrame();
+                otpContainer.name = "InputField";
+                otpContainer.fills = [];
+                
+                // Set auto-layout for OTP boxes (HUG content)
+                otpContainer.layoutMode = 'HORIZONTAL';
+                otpContainer.primaryAxisAlignItems = 'CENTER';
+                otpContainer.counterAxisAlignItems = 'CENTER';
+                otpContainer.primaryAxisSizingMode = 'AUTO'; // HUG content
+                otpContainer.counterAxisSizingMode = 'AUTO'; // HUG content
+                otpContainer.itemSpacing = 10;
+                
+                // Create 6 digit boxes (digits 5 and 6 will be hidden by default)
+                const boxSize = 48;
+                for (let i = 0; i < 6; i++) {
+                    const digitBox = figma.createFrame();
+                    digitBox.name = `Digit${i + 1}`;
+                    digitBox.resize(boxSize, boxSize);
+                    
+                    // Hide digits 5 and 6 by default (for 4-digit mode)
+                    if (i >= 4) {
+                        digitBox.visible = false;
+                    }
+                    
+                    // Background
+                    digitBox.fills = [{ type: 'SOLID', color: state.bgColor }];
+                    digitBox.cornerRadius = 12;
+                    
+                    // Border
+                    digitBox.strokes = [{ type: 'SOLID', color: state.borderColor }];
+                    digitBox.strokeWeight = state.borderWidth;
+                    
+                    // Set auto-layout for centering text
+                    digitBox.layoutMode = 'HORIZONTAL';
+                    digitBox.primaryAxisAlignItems = 'CENTER';
+                    digitBox.counterAxisAlignItems = 'CENTER';
+                    digitBox.primaryAxisSizingMode = 'FIXED';
+                    
+                    // Add digit text
+                    const digitText = figma.createText();
+                    digitText.fontName = { family: "Inter", style: "Medium" };
+                    digitText.fontSize = 20;
+                    digitText.characters = type.placeholder;
+                    digitText.fills = [{ 
+                        type: 'SOLID', 
+                        color: state.textColor,
+                        opacity: state.placeholderOpacity
+                    }];
+                    digitText.textAlignHorizontal = 'CENTER';
+                    digitText.textAlignVertical = 'CENTER';
+                    
+                    digitBox.appendChild(digitText);
+                    otpContainer.appendChild(digitBox);
+                }
+                
+                wrapper.appendChild(otpContainer);
+            } else {
+                // Create regular input field frame
+                const input = figma.createFrame();
+                input.name = "InputField";
+                
+                // Background
+                input.fills = [{ type: 'SOLID', color: state.bgColor }];
+                input.cornerRadius = radius;
+                
+                // Border
+                input.strokes = [{ type: 'SOLID', color: state.borderColor }];
+                input.strokeWeight = state.borderWidth;
+                
+                // Create auto-layout for input content with FIXED width
+                input.layoutMode = 'HORIZONTAL';
+                
+                // For textarea, align to top; for text input, center
+                if (type.isTextarea) {
+                    input.primaryAxisAlignItems = 'MIN'; // Top align for textarea
+                    input.counterAxisAlignItems = 'MIN';
+                } else {
+                    input.primaryAxisAlignItems = 'CENTER';
+                    input.counterAxisAlignItems = 'CENTER';
+                }
+                
+                input.primaryAxisSizingMode = 'FIXED'; // Fixed width
+                input.counterAxisSizingMode = 'FIXED';
+                input.paddingLeft = 12;
+                input.paddingRight = 12;
+                input.paddingTop = 10;
+                input.paddingBottom = 10;
+                input.itemSpacing = 8;
+                
+                // Set fixed width and height
+                input.resize(324, type.height);
+                
+                // Add left icon only if type supports icons
+                if (type.showIcons) {
+                    const leftIcon = createIconPlaceholder(state.textColor, 16);
+                    leftIcon.name = "LeftIcon";
+                    leftIcon.visible = false; // Default to hidden
+                    input.appendChild(leftIcon);
+                }
+                
+                // Add placeholder text
+                const text = figma.createText();
+                text.fontName = { family: "Inter", style: "Regular" };
+                text.fontSize = 14;
+                text.characters = type.placeholder;
+                text.textAlignHorizontal = 'LEFT'; // Left align text
+                text.textAlignVertical = 'TOP'; // Top align text
+                
+                // Apply opacity to placeholder text using opacity property on the fill
+                text.fills = [{ 
+                    type: 'SOLID', 
+                    color: state.textColor,
+                    opacity: state.placeholderOpacity
+                }];
+                text.layoutGrow = 1; // Grow to fill available space
+                
+                input.appendChild(text);
+                
+                // Add right icon only if type supports icons
+                if (type.showIcons) {
+                    const rightIcon = createIconPlaceholder(state.textColor, 16);
+                    rightIcon.name = "RightIcon";
+                    rightIcon.visible = false; // Default to hidden
+                    input.appendChild(rightIcon);
+                }
+                
+                wrapper.appendChild(input);
+            }
+            
+            // Add error message if this is the Error state
+            if (state.hasErrorMsg) {
+                const errorMsg = figma.createText();
+                errorMsg.fontName = { family: "Inter", style: "Regular" };
+                errorMsg.fontSize = 11;
+                errorMsg.characters = "This field has an error";
+                errorMsg.fills = [{ type: 'SOLID', color: errorRgb }];
+                errorMsg.name = "ErrorMessage";
+                wrapper.appendChild(errorMsg);
+            }
+            
+            // Add to current page and components array
+            figma.currentPage.appendChild(wrapper);
+            components.push(wrapper);
+            
+            // Move to next position vertically (component height + 24px gap)
+            yOffset += wrapper.height + 24;
+        }
+        
+        // Add extra spacing between different types
+        yOffset += 24;
+    }
+    
+    // Combine all components into a component set
+    const componentSet = figma.combineAsVariants(components, figma.currentPage);
+    componentSet.name = "Input";
+    
+    // Remove auto-layout and set manual positioning
+    componentSet.layoutMode = 'NONE';
+    
+    // Remove background color
+    componentSet.fills = [];
+    
+    // Add boolean properties for Label, LeftIcon, RightIcon, and 6-Digit mode
+    const labelPropKey = componentSet.addComponentProperty("Label", "BOOLEAN", false);
+    const leftIconPropKey = componentSet.addComponentProperty("LeftIcon", "BOOLEAN", false);
+    const rightIconPropKey = componentSet.addComponentProperty("RightIcon", "BOOLEAN", false);
+    const sixDigitPropKey = componentSet.addComponentProperty("6-Digit", "BOOLEAN", false);
+    
+    // Bind boolean properties to visibility for all components
+    componentSet.children.forEach(component => {
+        const labelLayer = component.findOne(node => node.name === "Label");
+        const leftIconLayer = component.findOne(node => node.name === "LeftIcon");
+        const rightIconLayer = component.findOne(node => node.name === "RightIcon");
+        const digit5Layer = component.findOne(node => node.name === "Digit5");
+        const digit6Layer = component.findOne(node => node.name === "Digit6");
+        
+        if (labelLayer) {
+            labelLayer.componentPropertyReferences = { visible: labelPropKey };
+        }
+        
+        if (leftIconLayer) {
+            leftIconLayer.componentPropertyReferences = { visible: leftIconPropKey };
+        }
+        
+        if (rightIconLayer) {
+            rightIconLayer.componentPropertyReferences = { visible: rightIconPropKey };
+        }
+        
+        // Bind 6-digit mode to digits 5 and 6 visibility
+        if (digit5Layer) {
+            digit5Layer.componentPropertyReferences = { visible: sixDigitPropKey };
+        }
+        
+        if (digit6Layer) {
+            digit6Layer.componentPropertyReferences = { visible: sixDigitPropKey };
+        }
+    });
+    
+    // Center in viewport
+    figma.viewport.scrollAndZoomIntoView([componentSet]);
+    
+    const totalVariants = types.length * states.length;
+    figma.notify(`✅ Input component set created with ${types.length} types (Text, Textarea, OTP) × ${states.length} states = ${totalVariants} variants! OTP supports 4 or 6 digits via boolean property.`);
+}
+
 // Handle messages from the UI
 figma.ui.onmessage = async (msg) => {
     if (msg.type === 'copy-to-clipboard') {
@@ -251,6 +622,15 @@ figma.ui.onmessage = async (msg) => {
         } catch (error) {
             figma.notify(`❌ Error creating button component: ${error.message}`);
             console.error('Button component error:', error);
+        }
+    }
+
+    if (msg.type === 'create-input-component') {
+        try {
+            await createInputComponentSet(msg.placeholder, msg.borderColor, msg.primaryColor, msg.textColor, msg.radius);
+        } catch (error) {
+            figma.notify(`❌ Error creating input component: ${error.message}`);
+            console.error('Input component error:', error);
         }
     }
 
