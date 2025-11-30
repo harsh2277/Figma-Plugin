@@ -505,6 +505,67 @@
             transform: scale(1.1);
             box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
         }
+
+        /* Typography Styles */
+        .card {
+            transition: all 0.2s ease;
+            overflow: visible !important;
+        }
+        
+        .card .card-body {
+            overflow: visible !important;
+        }
+        
+        .card:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+        
+        /* Font Dropdown Styles */
+        .font-dropdown-selected:hover {
+            border-color: var(--primary) !important;
+        }
+        
+        .font-dropdown-menu {
+            animation: slideDown 0.2s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .font-option:active {
+            background: var(--primary-light) !important;
+        }
+        
+        /* Custom scrollbar for font list */
+        #primaryFontList::-webkit-scrollbar,
+        #secondaryFontList::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        #primaryFontList::-webkit-scrollbar-track,
+        #secondaryFontList::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: 4px;
+        }
+        
+        #primaryFontList::-webkit-scrollbar-thumb,
+        #secondaryFontList::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+        
+        #primaryFontList::-webkit-scrollbar-thumb:hover,
+        #secondaryFontList::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
     </style>
 </head>
 
@@ -535,11 +596,12 @@
                     <line x1="12" x2="12" y1="6.81" y2="12" />
                 </svg>
             </div>
-            <div class="sidebar-icon" data-tab="themes" onclick="switchTab(this)" title="Themes">
+            <div class="sidebar-icon" data-tab="typography" onclick="switchTab(this)" title="Typography">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
-                    <circle cx="12" cy="12" r="3" />
+                    <polyline points="4 7 4 4 20 4 20 7" />
+                    <line x1="9" x2="15" y1="20" y2="20" />
+                    <line x1="12" x2="12" y1="4" y2="20" />
                 </svg>
             </div>
             <div class="sidebar-icon" data-tab="export" onclick="switchTab(this)" title="Export">
@@ -1040,13 +1102,9 @@
                         </div>
                     </div>
 
-                    <!-- Themes Tab -->
-                    <div class="tab-content" id="themes">
-                        <div class="empty-state">
-                            <div class="empty-state-icon">🌈</div>
-                            <div class="empty-state-title">Themes</div>
-                            <div class="empty-state-description">Manage multiple design themes</div>
-                        </div>
+                    <!-- Typography Tab -->
+                    <div class="tab-content" id="typography">
+                        <div id="typography-content"></div>
                     </div>
 
                     <!-- Export Tab -->
@@ -1683,6 +1741,309 @@
                 updateRangeSlider(inputRadiusSlider);
             }
         });
+    </script>
+    <script>
+        // App.js content - State Management and Render Functions
+        
+        // State Management
+        const state = {
+          colors: {
+            primary: { value: '#6366f1', description: 'Primary brand color', enabled: true },
+            secondary: { value: '#8b5cf6', description: 'Secondary brand color', enabled: true },
+            success: { value: '#10b981', description: 'Success state color', enabled: true },
+            error: { value: '#ef4444', description: 'Error state color', enabled: true },
+            warning: { value: '#f59e0b', description: 'Warning/Process color', enabled: true },
+            'neutral-1000': { value: '#000000', description: 'Black', enabled: true },
+            'neutral-900': { value: '#111827', description: 'Darkest gray', enabled: true },
+            'neutral-800': { value: '#1f2937', description: '', enabled: true },
+            'neutral-700': { value: '#374151', description: '', enabled: true },
+            'neutral-600': { value: '#4b5563', description: '', enabled: true },
+            'neutral-500': { value: '#6b7280', description: 'Mid gray', enabled: true },
+            'neutral-400': { value: '#9ca3af', description: '', enabled: true },
+            'neutral-300': { value: '#d1d5db', description: '', enabled: true },
+            'neutral-200': { value: '#e5e7eb', description: '', enabled: true },
+            'neutral-100': { value: '#f3f4f6', description: '', enabled: true },
+            'neutral-50': { value: '#f9fafb', description: 'Lightest gray', enabled: true },
+            'neutral-0': { value: '#ffffff', description: 'White', enabled: true }
+          },
+          typography: {
+            primaryFont: 'Inter',
+            secondaryFont: '',
+            secondaryEnabled: false,
+            styles: {
+              h1: { family: 'primary', size: 48, lineHeight: 1.2, letterSpacing: -0.5 },
+              h2: { family: 'primary', size: 40, lineHeight: 1.3, letterSpacing: -0.3 },
+              h3: { family: 'primary', size: 32, lineHeight: 1.3, letterSpacing: 0 },
+              h4: { family: 'primary', size: 24, lineHeight: 1.4, letterSpacing: 0 },
+              h5: { family: 'primary', size: 20, lineHeight: 1.4, letterSpacing: 0 },
+              h6: { family: 'primary', size: 16, lineHeight: 1.5, letterSpacing: 0 },
+              body1: { family: 'primary', size: 16, lineHeight: 1.5, letterSpacing: 0 },
+              body2: { family: 'primary', size: 14, lineHeight: 1.5, letterSpacing: 0 },
+              body3: { family: 'primary', size: 12, lineHeight: 1.4, letterSpacing: 0 },
+              body4: { family: 'primary', size: 10, lineHeight: 1.4, letterSpacing: 0 }
+            },
+            weights: [400, 500, 600, 700]
+          }
+        };
+        
+        // Typography render function
+        function renderTypography() {
+          const container = document.getElementById('typography-content');
+          if (!container) {
+            console.error('Typography content container not found');
+            return;
+          }
+          
+          let html = '<div style="max-width: 1200px; width: 100%;">';
+          
+          // Font Family Selection Card
+          html += '<div class="card" style="margin-bottom: 20px; overflow: visible;">';
+          html += '<div class="card-header" onclick="toggleCard(this)">';
+          html += '<div class="card-title" style="display: flex; align-items: center; gap: 8px;">';
+          html += '<span style="font-size: 16px;">🔤</span>';
+          html += '<span style="font-size: 13px; font-weight: 600;">Font Families</span>';
+          html += '</div>';
+          html += '<svg class="collapse-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+          html += '</div>';
+          html += '<div class="card-body" style="padding: 20px; overflow: visible;">';
+          
+          // Primary Font - Custom Searchable Dropdown
+          html += '<div style="margin-bottom: 20px;">';
+          html += '<label style="font-size: 11px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px;">Primary Font</label>';
+          html += '<div class="font-dropdown" id="primaryFontDropdown" style="position: relative;">';
+          html += '<div class="font-dropdown-selected" onclick="toggleFontDropdown(\'primary\')" style="width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; font-weight: 500; background: white; cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: all 0.2s;">';
+          html += '<span id="primaryFontSelected">' + state.typography.primaryFont + '</span>';
+          html += '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+          html += '</div>';
+          html += '<div class="font-dropdown-menu" id="primaryFontMenu" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden; z-index: 10000;">';
+          html += '<div style="padding: 8px; border-bottom: 1px solid var(--border-light);">';
+          html += '<input type="text" id="primaryFontSearch" placeholder="Search fonts..." oninput="filterFonts(\'primary\', this.value)" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px;" onclick="event.stopPropagation()">';
+          html += '</div>';
+          html += '<div id="primaryFontList" style="max-height: 510px; overflow-y: auto;">';
+          
+          if (!window.availableFonts || window.availableFonts.length === 0) {
+            html += '<div style="padding: 12px; text-align: center; color: var(--text-secondary); font-size: 13px;">Loading fonts...</div>';
+          } else {
+            const uniqueFonts = [...new Set(window.availableFonts.map(f => f.family))].sort();
+            uniqueFonts.forEach(font => {
+              const isSelected = font === state.typography.primaryFont;
+              const escapedFont = font.replace(/'/g, "\\'");
+              html += '<div class="font-option" data-font="' + escapedFont + '" onclick="selectFont(\'primary\', \'' + escapedFont + '\')" style="padding: 10px 14px; cursor: pointer; font-size: 14px; line-height: 14px; transition: background 0.15s; ' + (isSelected ? 'background: var(--primary-light); color: var(--primary); font-weight: 600;' : '') + '" onmouseover="this.style.background=\'var(--bg-hover)\'" onmouseout="if(this.dataset.font !== \'' + escapedFont + '\') this.style.background=\'transparent\'">' + font + '</div>';
+            });
+          }
+          
+          html += '</div></div></div></div>';
+          
+          // Secondary Font (Optional)
+          html += '<div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">';
+          html += '<label class="toggle-switch"><input type="checkbox" id="secondaryToggle" ' + (state.typography.secondaryEnabled ? 'checked' : '') + ' onchange="toggleSecondaryFont(this.checked)"><span class="toggle-slider"></span></label>';
+          html += '<label style="font-size: 12px; font-weight: 500; color: var(--text-primary); cursor: pointer;" onclick="document.getElementById(\'secondaryToggle\').click()">Secondary Font (Optional)</label>';
+          html += '</div>';
+          
+          // Secondary Font - Custom Searchable Dropdown
+          html += '<div class="font-dropdown" id="secondaryFontDropdown" style="position: relative; opacity: ' + (state.typography.secondaryEnabled ? '1' : '0.4') + '; pointer-events: ' + (state.typography.secondaryEnabled ? 'auto' : 'none') + ';">';
+          html += '<div class="font-dropdown-selected" onclick="toggleFontDropdown(\'secondary\')" style="width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; font-weight: 500; background: white; cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: all 0.2s;">';
+          html += '<span id="secondaryFontSelected">' + (state.typography.secondaryFont || 'Select font...') + '</span>';
+          html += '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+          html += '</div>';
+          html += '<div class="font-dropdown-menu" id="secondaryFontMenu" style="display: none; position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px; background: white; border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden; z-index: 10000;">';
+          html += '<div style="padding: 8px; border-bottom: 1px solid var(--border-light);">';
+          html += '<input type="text" id="secondaryFontSearch" placeholder="Search fonts..." oninput="filterFonts(\'secondary\', this.value)" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px;" onclick="event.stopPropagation()">';
+          html += '</div>';
+          html += '<div id="secondaryFontList" style="max-height: 510px; overflow-y: auto;">';
+          
+          if (!window.availableFonts || window.availableFonts.length === 0) {
+            html += '<div style="padding: 12px; text-align: center; color: var(--text-secondary); font-size: 13px;">Loading fonts...</div>';
+          } else {
+            const uniqueFonts = [...new Set(window.availableFonts.map(f => f.family))].sort();
+            uniqueFonts.forEach(font => {
+              const isSelected = font === state.typography.secondaryFont;
+              const escapedFont = font.replace(/'/g, "\\'");
+              html += '<div class="font-option" data-font="' + escapedFont + '" onclick="selectFont(\'secondary\', \'' + escapedFont + '\')" style="padding: 10px 14px; cursor: pointer; font-size: 14px; line-height: 14px; transition: background 0.15s; ' + (isSelected ? 'background: var(--primary-light); color: var(--primary); font-weight: 600;' : '') + '" onmouseover="this.style.background=\'var(--bg-hover)\'" onmouseout="if(this.dataset.font !== \'' + escapedFont + '\') this.style.background=\'transparent\'">' + font + '</div>';
+            });
+          }
+          
+          html += '</div></div></div>';
+          
+          html += '</div></div>';
+          
+          // Typography Styles Card
+          html += '<div class="card">';
+          html += '<div class="card-header" onclick="toggleCard(this)">';
+          html += '<div class="card-title" style="display: flex; align-items: center; gap: 8px;">';
+          html += '<span style="font-size: 16px;">📝</span>';
+          html += '<span style="font-size: 13px; font-weight: 600;">Typography Styles</span>';
+          html += '</div>';
+          html += '<svg class="collapse-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+          html += '</div>';
+          html += '<div class="card-body" style="padding: 16px; display: flex; flex-direction: column; gap: 16px;">';
+          
+          Object.entries(state.typography.styles).forEach(([key, style]) => {
+            const fontFamily = state.typography.primaryFont;
+            html += '<div style="background: white; border: 1px solid var(--border-light); border-radius: 10px; padding: 20px; transition: all 0.2s;" onmouseover="this.style.borderColor=\'var(--primary)\'; this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.08)\'" onmouseout="this.style.borderColor=\'var(--border-light)\'; this.style.boxShadow=\'none\'">';
+            
+            // Preview text
+            html += '<div style="font-family: ' + fontFamily + '; font-size: ' + style.size + 'px; font-weight: 400; line-height: ' + style.lineHeight + '; letter-spacing: ' + style.letterSpacing + 'px; color: var(--text-primary); margin-bottom: 16px;">The quick brown fox jumps over the lazy dog</div>';
+            
+            // Style info and size control
+            html += '<div style="display: flex; align-items: center; justify-content: space-between;">';
+            html += '<div style="display: flex; flex-direction: column; gap: 4px;">';
+            html += '<div style="font-size: 11px; font-weight: 700; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.5px;">' + key.toUpperCase() + '</div>';
+            html += '<div style="font-size: 11px; color: var(--text-secondary); font-family: monospace;">' + fontFamily + ' • ' + style.size + 'px • undefined</div>';
+            html += '</div>';
+            
+            // Size input only
+            html += '<input type="number" value="' + style.size + '" onchange="updateTypographySize(\'' + key + '\', this.value)" style="width: 80px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-weight: 500; text-align: center; transition: all 0.2s;" placeholder="Size" onfocus="this.style.borderColor=\'var(--primary)\'; this.style.boxShadow=\'0 0 0 3px rgba(99, 102, 241, 0.1)\'" onblur="this.style.borderColor=\'var(--border)\'; this.style.boxShadow=\'none\'">';
+            html += '</div>';
+            
+            html += '</div>';
+          });
+          
+          html += '</div></div>';
+          
+          // Create Styles Button
+          html += '<button class="btn btn-primary" onclick="createTextStyles()" style="width: 100%; padding: 14px; font-size: 14px; font-weight: 600; margin-top: 20px; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 8px;">';
+          html += '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" x2="15" y1="20" y2="20"/><line x1="12" x2="12" y1="4" y2="20"/></svg>';
+          html += '<span>Create Text Styles in Figma</span>';
+          html += '</button>';
+          
+          html += '</div>';
+          container.innerHTML = html;
+        }
+        
+        function updatePrimaryFont(value) {
+          state.typography.primaryFont = value;
+          renderTypography();
+        }
+        
+        function updateSecondaryFont(value) {
+          state.typography.secondaryFont = value;
+          renderTypography();
+        }
+        
+        function toggleSecondaryFont(enabled) {
+          state.typography.secondaryEnabled = enabled;
+          renderTypography();
+        }
+        
+        function updateTypographySize(key, size) {
+          state.typography.styles[key].size = parseInt(size);
+          renderTypography();
+        }
+        
+        function createTextStyles() {
+          parent.postMessage({ 
+            pluginMessage: { 
+              type: 'create-text-styles',
+              typography: state.typography
+            } 
+          }, '*');
+        }
+        
+        // Font dropdown functions
+        function toggleFontDropdown(type) {
+          const menu = document.getElementById(type + 'FontMenu');
+          const allMenus = document.querySelectorAll('.font-dropdown-menu');
+          
+          // Close all other dropdowns
+          allMenus.forEach(m => {
+            if (m.id !== type + 'FontMenu') {
+              m.style.display = 'none';
+            }
+          });
+          
+          // Toggle current dropdown
+          if (menu.style.display === 'none') {
+            menu.style.display = 'block';
+            // Focus search input
+            const searchInput = document.getElementById(type + 'FontSearch');
+            if (searchInput) {
+              setTimeout(() => searchInput.focus(), 100);
+            }
+          } else {
+            menu.style.display = 'none';
+          }
+        }
+        
+        function selectFont(type, fontName) {
+          if (type === 'primary') {
+            updatePrimaryFont(fontName);
+            document.getElementById('primaryFontSelected').textContent = fontName;
+          } else {
+            updateSecondaryFont(fontName);
+            document.getElementById('secondaryFontSelected').textContent = fontName;
+          }
+          
+          // Close dropdown
+          document.getElementById(type + 'FontMenu').style.display = 'none';
+        }
+        
+        function filterFonts(type, searchTerm) {
+          const listId = type + 'FontList';
+          const list = document.getElementById(listId);
+          const options = list.querySelectorAll('.font-option');
+          
+          searchTerm = searchTerm.toLowerCase();
+          
+          options.forEach(option => {
+            const fontName = option.dataset.font.toLowerCase();
+            if (fontName.includes(searchTerm)) {
+              option.style.display = 'block';
+            } else {
+              option.style.display = 'none';
+            }
+          });
+        }
+        
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', function(event) {
+          const dropdowns = document.querySelectorAll('.font-dropdown');
+          let clickedInside = false;
+          
+          dropdowns.forEach(dropdown => {
+            if (dropdown.contains(event.target)) {
+              clickedInside = true;
+            }
+          });
+          
+          if (!clickedInside) {
+            document.querySelectorAll('.font-dropdown-menu').forEach(menu => {
+              menu.style.display = 'none';
+            });
+          }
+        });
+        
+        // Fetch available fonts from Figma
+        function fetchAvailableFonts() {
+          parent.postMessage({ 
+            pluginMessage: { 
+              type: 'get-available-fonts'
+            } 
+          }, '*');
+        }
+        
+        // Listen for font list from Figma
+        window.addEventListener('message', (event) => {
+          const msg = event.data.pluginMessage;
+          if (msg && msg.type === 'available-fonts') {
+            window.availableFonts = msg.fonts;
+            renderTypography();
+          }
+        });
+        
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', initializeTypography);
+        } else {
+          initializeTypography();
+        }
+        
+        function initializeTypography() {
+          console.log('Initializing typography...');
+          fetchAvailableFonts();
+          renderTypography();
+          console.log('Typography initialized');
+        }
     </script>
 </body>
 

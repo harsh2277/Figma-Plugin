@@ -43,15 +43,21 @@ const state = {
     full: { value: 9999, description: 'Fully rounded' }
   },
   typography: {
-    display: { family: 'Inter', size: 48, weight: 700, lineHeight: 1.2, letterSpacing: -0.5, transform: 'normal', description: 'Large display text' },
-    h1: { family: 'Inter', size: 36, weight: 700, lineHeight: 1.3, letterSpacing: -0.5, transform: 'normal', description: 'Heading 1' },
-    h2: { family: 'Inter', size: 30, weight: 600, lineHeight: 1.3, letterSpacing: -0.3, transform: 'normal', description: 'Heading 2' },
-    h3: { family: 'Inter', size: 24, weight: 600, lineHeight: 1.4, letterSpacing: 0, transform: 'normal', description: 'Heading 3' },
-    h4: { family: 'Inter', size: 20, weight: 600, lineHeight: 1.4, letterSpacing: 0, transform: 'normal', description: 'Heading 4' },
-    subtitle: { family: 'Inter', size: 16, weight: 500, lineHeight: 1.5, letterSpacing: 0, transform: 'normal', description: 'Subtitle text' },
-    body: { family: 'Inter', size: 14, weight: 400, lineHeight: 1.5, letterSpacing: 0, transform: 'normal', description: 'Body text' },
-    caption: { family: 'Inter', size: 12, weight: 400, lineHeight: 1.4, letterSpacing: 0, transform: 'normal', description: 'Caption text' },
-    overline: { family: 'Inter', size: 11, weight: 600, lineHeight: 1.5, letterSpacing: 1, transform: 'uppercase', description: 'Overline text' }
+    primaryFont: 'Inter',
+    secondaryFont: '',
+    secondaryEnabled: false,
+    styles: {
+      h1: { family: 'primary', size: 48, weight: 700, lineHeight: 1.2, letterSpacing: -0.5 },
+      h2: { family: 'primary', size: 40, weight: 700, lineHeight: 1.3, letterSpacing: -0.3 },
+      h3: { family: 'primary', size: 32, weight: 600, lineHeight: 1.3, letterSpacing: 0 },
+      h4: { family: 'primary', size: 24, weight: 600, lineHeight: 1.4, letterSpacing: 0 },
+      h5: { family: 'primary', size: 20, weight: 600, lineHeight: 1.4, letterSpacing: 0 },
+      h6: { family: 'primary', size: 16, weight: 600, lineHeight: 1.5, letterSpacing: 0 },
+      body1: { family: 'primary', size: 16, weight: 400, lineHeight: 1.5, letterSpacing: 0 },
+      body2: { family: 'primary', size: 14, weight: 400, lineHeight: 1.5, letterSpacing: 0 },
+      body3: { family: 'primary', size: 12, weight: 400, lineHeight: 1.4, letterSpacing: 0 },
+      body4: { family: 'primary', size: 10, weight: 400, lineHeight: 1.4, letterSpacing: 0 }
+    }
   },
   shadows: {
     'shadow-xs': { x: 0, y: 1, blur: 2, spread: 0, color: 'rgba(0,0,0,0.05)', description: 'Extra small shadow' },
@@ -192,27 +198,7 @@ function renderTypographySection() {
   html += '<div class="section-title">🔤 Typography System</div>';
   html += '<div class="section-toggle">▼</div></div>';
   html += '<div class="section-content">';
-
-  Object.entries(state.typography).forEach(([key, typo]) => {
-    html += '<div class="form-group" style="border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 16px;">';
-    html += '<div class="flex-between mb-16"><label class="form-label" style="margin: 0; font-size: 14px; font-weight: 600;">' + key + '</label>';
-    html += '<div class="flex flex-gap-8">';
-    html += '<button class="btn btn-sm btn-secondary" onclick="duplicateTypo(\'' + key + '\')">Duplicate</button>';
-    html += '<button class="btn btn-sm btn-danger" onclick="deleteTypo(\'' + key + '\')">Delete</button>';
-    html += '</div></div>';
-    html += '<div class="form-row">';
-    html += '<div><label class="form-label">Font Family</label><input class="form-input" value="' + typo.family + '" data-typo-family="' + key + '" onchange="updateTypo(this)"/></div>';
-    html += '<div><label class="form-label">Size (px)</label><input type="number" class="form-input" value="' + typo.size + '" data-typo-size="' + key + '" onchange="updateTypo(this)"/></div>';
-    html += '<div><label class="form-label">Weight</label><input type="number" class="form-input" value="' + typo.weight + '" data-typo-weight="' + key + '" onchange="updateTypo(this)"/></div>';
-    html += '<div><label class="form-label">Line Height</label><input type="number" step="0.1" class="form-input" value="' + typo.lineHeight + '" data-typo-lineheight="' + key + '" onchange="updateTypo(this)"/></div>';
-    html += '</div><div class="form-row" style="margin-top: 12px;">';
-    html += '<div><label class="form-label">Letter Spacing</label><input type="number" step="0.1" class="form-input" value="' + typo.letterSpacing + '" data-typo-letterspacing="' + key + '" onchange="updateTypo(this)"/></div>';
-    html += '<div><label class="form-label">Transform</label><select class="form-select" data-typo-transform="' + key + '" onchange="updateTypo(this)"><option value="normal" ' + (typo.transform === 'normal' ? 'selected' : '') + '>Normal</option><option value="uppercase" ' + (typo.transform === 'uppercase' ? 'selected' : '') + '>Uppercase</option></select></div>';
-    html += '<div><label class="form-label">Description</label><input class="form-input" placeholder="Description" value="' + (typo.description || '') + '" data-typo-desc="' + key + '" onchange="updateTypo(this)"/></div>';
-    html += '</div></div>';
-  });
-
-  html += '<button class="btn btn-primary mt-16" onclick="addTypo()">+ Add Typography Style</button>';
+  html += '<p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">Typography settings are managed in the Typography tab.</p>';
   html += '</div></div>';
   return html;
 }
@@ -253,20 +239,119 @@ function renderComponents() {
   document.getElementById('components-content').innerHTML = '<div class="component-builder"><div><h3 class="mb-16">Button Component</h3><div class="variant-selector">' + Object.keys(state.components.button.variants).map(v => '<button class="variant-btn ' + (v === 'primary' ? 'active' : '') + '" onclick="selectVariant(\'' + v + '\')">' + v + '</button>').join('') + '</div><div id="button-config"></div></div><div class="component-preview"><div class="preview-title">Live Preview</div><div id="button-preview"></div></div></div>';
 }
 
-function renderThemes() {
-  let html = '<div class="section"><div class="section-header"><div class="section-title">🎨 Theme Management</div></div>';
-  html += '<div class="section-content"><div class="theme-list">';
-  Object.keys(state.themes).forEach(theme => {
-    html += '<div class="theme-item ' + (theme === state.currentTheme ? 'active' : '') + '"><span>' + theme + '</span>';
-    html += '<div class="theme-actions">';
-    html += '<button class="btn btn-sm btn-secondary" onclick="duplicateTheme(\'' + theme + '\')">Duplicate</button>';
-    if (theme !== 'default') {
-      html += '<button class="btn btn-sm btn-danger" onclick="deleteTheme(\'' + theme + '\')">Delete</button>';
+function renderTypography() {
+  console.log('renderTypography called');
+  const container = document.getElementById('typography-content');
+  console.log('Container found:', container);
+  if (!container) {
+    console.error('Typography content container not found');
+    return;
+  }
+  
+  console.log('Typography state:', state.typography);
+  let html = '<div style="max-width: 1200px; width: 100%; margin: 0 auto; padding: 24px;">';
+  
+  // Font Family Selection Card
+  html += '<div class="card">';
+  html += '<div class="card-header" onclick="toggleCard(this)">';
+  html += '<div class="card-title">🔤 Font Families</div>';
+  html += '<svg class="collapse-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+  html += '</div>';
+  html += '<div class="card-body">';
+  
+  // Primary Font
+  html += '<div style="margin-bottom: 16px;">';
+  html += '<label style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; display: block;">Primary Font</label>';
+  html += '<input type="text" id="primaryFont" value="' + state.typography.primaryFont + '" placeholder="Enter font name" onchange="updatePrimaryFont(this.value)" style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px;">';
+  html += '</div>';
+  
+  // Secondary Font (Optional)
+  html += '<div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">';
+  html += '<label class="toggle-switch"><input type="checkbox" id="secondaryToggle" ' + (state.typography.secondaryEnabled ? 'checked' : '') + ' onchange="toggleSecondaryFont(this.checked)"><span class="toggle-slider"></span></label>';
+  html += '<label style="font-size: 11px; font-weight: 600; color: var(--text-primary);">Secondary Font (Optional)</label>';
+  html += '</div>';
+  html += '<input type="text" id="secondaryFont" value="' + state.typography.secondaryFont + '" placeholder="Enter secondary font name" onchange="updateSecondaryFont(this.value)" ' + (state.typography.secondaryEnabled ? '' : 'disabled') + ' style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; opacity: ' + (state.typography.secondaryEnabled ? '1' : '0.5') + ';">';
+  
+  html += '</div></div>';
+  
+  // Typography Styles Card
+  html += '<div class="card">';
+  html += '<div class="card-header" onclick="toggleCard(this)">';
+  html += '<div class="card-title">📝 Typography Styles</div>';
+  html += '<svg class="collapse-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>';
+  html += '</div>';
+  html += '<div class="card-body">';
+  
+  Object.entries(state.typography.styles).forEach(([key, style]) => {
+    const fontFamily = style.family === 'primary' ? state.typography.primaryFont : state.typography.secondaryFont;
+    html += '<div class="typography-item">';
+    html += '<div class="typography-preview" style="font-family: ' + fontFamily + '; font-size: ' + style.size + 'px; font-weight: ' + style.weight + '; line-height: ' + style.lineHeight + '; letter-spacing: ' + style.letterSpacing + 'px;">The quick brown fox jumps over the lazy dog</div>';
+    html += '<div class="typography-details">';
+    html += '<div class="typography-name">' + key.toUpperCase() + '</div>';
+    html += '<div class="typography-specs">' + fontFamily + ' • ' + style.size + 'px • ' + style.weight + '</div>';
+    html += '</div>';
+    html += '<div class="typography-controls">';
+    html += '<select onchange="updateTypographyFamily(\'' + key + '\', this.value)" style="padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 11px; margin-right: 8px;">';
+    html += '<option value="primary" ' + (style.family === 'primary' ? 'selected' : '') + '>Primary</option>';
+    if (state.typography.secondaryEnabled) {
+      html += '<option value="secondary" ' + (style.family === 'secondary' ? 'selected' : '') + '>Secondary</option>';
     }
-    html += '</div></div>';
+    html += '</select>';
+    html += '<input type="number" value="' + style.size + '" onchange="updateTypographySize(\'' + key + '\', this.value)" style="width: 60px; padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 11px; margin-right: 8px;" placeholder="Size">';
+    html += '<input type="number" value="' + style.weight + '" onchange="updateTypographyWeight(\'' + key + '\', this.value)" style="width: 60px; padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 11px;" placeholder="Weight">';
+    html += '</div>';
+    html += '</div>';
   });
-  html += '</div><button class="btn btn-primary mt-16" onclick="addTheme()">+ Add Theme</button></div></div>';
-  document.getElementById('themes-content').innerHTML = html;
+  
+  html += '</div></div>';
+  
+  // Create Styles Button
+  html += '<button class="btn btn-primary" onclick="createTextStyles()" style="width: 100%; padding: 12px; font-size: 13px; font-weight: 600; margin-top: 16px;">';
+  html += '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" x2="15" y1="20" y2="20"/><line x1="12" x2="12" y1="4" y2="20"/></svg>';
+  html += 'Create Text Styles in Figma';
+  html += '</button>';
+  
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+function updatePrimaryFont(value) {
+  state.typography.primaryFont = value;
+  renderTypography();
+}
+
+function updateSecondaryFont(value) {
+  state.typography.secondaryFont = value;
+  renderTypography();
+}
+
+function toggleSecondaryFont(enabled) {
+  state.typography.secondaryEnabled = enabled;
+  renderTypography();
+}
+
+function updateTypographyFamily(key, family) {
+  state.typography.styles[key].family = family;
+  renderTypography();
+}
+
+function updateTypographySize(key, size) {
+  state.typography.styles[key].size = parseInt(size);
+  renderTypography();
+}
+
+function updateTypographyWeight(key, weight) {
+  state.typography.styles[key].weight = parseInt(weight);
+  renderTypography();
+}
+
+function createTextStyles() {
+  parent.postMessage({ 
+    pluginMessage: { 
+      type: 'create-text-styles',
+      typography: state.typography
+    } 
+  }, '*');
 }
 
 function renderExport() {
@@ -383,39 +468,7 @@ function updateRadiusDesc(input) {
   state.radius[key].description = input.value;
 }
 
-function updateTypo(input) {
-  const key = input.dataset.typoFamily || input.dataset.typoSize || input.dataset.typoWeight || input.dataset.typoLineheight || input.dataset.typoLetterspacing || input.dataset.typoTransform || input.dataset.typoDesc;
-  if (input.dataset.typoFamily) state.typography[key].family = input.value;
-  if (input.dataset.typoSize) state.typography[key].size = parseInt(input.value);
-  if (input.dataset.typoWeight) state.typography[key].weight = parseInt(input.value);
-  if (input.dataset.typoLineheight) state.typography[key].lineHeight = parseFloat(input.value);
-  if (input.dataset.typoLetterspacing) state.typography[key].letterSpacing = parseFloat(input.value);
-  if (input.dataset.typoTransform) state.typography[key].transform = input.value;
-  if (input.dataset.typoDesc) state.typography[key].description = input.value;
-}
-
-function addTypo() {
-  const key = prompt('Enter typography style name:');
-  if (key && !state.typography[key]) {
-    state.typography[key] = { family: 'Inter', size: 14, weight: 400, lineHeight: 1.5, letterSpacing: 0, transform: 'normal', description: '' };
-    renderFoundations();
-  }
-}
-
-function duplicateTypo(key) {
-  const newKey = prompt('Enter new typography style name:', key + '-copy');
-  if (newKey && !state.typography[newKey]) {
-    state.typography[newKey] = JSON.parse(JSON.stringify(state.typography[key]));
-    renderFoundations();
-  }
-}
-
-function deleteTypo(key) {
-  if (confirm('Delete typography style "' + key + '"?')) {
-    delete state.typography[key];
-    renderFoundations();
-  }
-}
+// Typography functions moved to renderTypography()
 
 function updateShadow(input) {
   const key = input.dataset.shadowX || input.dataset.shadowY || input.dataset.shadowBlur || input.dataset.shadowSpread || input.dataset.shadowColor || input.dataset.shadowDesc;
@@ -442,28 +495,7 @@ function selectVariant(variant) {
   event.target.classList.add('active');
 }
 
-function addTheme() {
-  const name = prompt('Enter theme name:');
-  if (name && !state.themes[name]) {
-    state.themes[name] = { colors: {}, components: {} };
-    renderThemes();
-  }
-}
-
-function duplicateTheme(theme) {
-  const name = prompt('Enter new theme name:');
-  if (name && !state.themes[name]) {
-    state.themes[name] = JSON.parse(JSON.stringify(state.themes[theme]));
-    renderThemes();
-  }
-}
-
-function deleteTheme(theme) {
-  if (confirm('Delete theme "' + theme + '"?')) {
-    delete state.themes[theme];
-    renderThemes();
-  }
-}
+// Typography functions are handled in renderTypography()
 
 function generateJSON() {
   const colors = {};
@@ -483,15 +515,21 @@ function generateJSON() {
     radius[key] = data.value;
   });
 
-  const typography = {};
-  Object.entries(state.typography).forEach(([key, typo]) => {
-    typography[key] = {
-      fontFamily: typo.family,
-      fontSize: typo.size,
-      fontWeight: typo.weight,
-      lineHeight: typo.lineHeight,
-      letterSpacing: typo.letterSpacing,
-      textTransform: typo.transform
+  const typography = {
+    fonts: {
+      primary: state.typography.primaryFont,
+      secondary: state.typography.secondaryEnabled ? state.typography.secondaryFont : null
+    },
+    styles: {}
+  };
+  Object.entries(state.typography.styles).forEach(([key, style]) => {
+    const fontFamily = style.family === 'primary' ? state.typography.primaryFont : state.typography.secondaryFont;
+    typography.styles[key] = {
+      fontFamily: fontFamily,
+      fontSize: style.size,
+      fontWeight: style.weight,
+      lineHeight: style.lineHeight,
+      letterSpacing: style.letterSpacing
     };
   });
 
@@ -555,8 +593,18 @@ document.getElementById('generate-json-btn').addEventListener('click', () => {
   renderExport();
 });
 
-// Initialize
-renderFoundations();
-renderComponents();
-renderThemes();
-renderExport();
+// Initialize when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeApp);
+} else {
+  initializeApp();
+}
+
+function initializeApp() {
+  console.log('Initializing app...');
+  renderFoundations();
+  renderComponents();
+  renderTypography();
+  renderExport();
+  console.log('App initialized');
+}

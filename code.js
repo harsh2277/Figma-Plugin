@@ -1443,4 +1443,211 @@ figma.ui.onmessage = async (msg) => {
             console.error('Error stack:', error && error.stack);
         }
     }
+
+    if (msg.type === 'get-available-fonts') {
+        try {
+            const fonts = await figma.listAvailableFontsAsync();
+            // Group fonts by family
+            const fontsByFamily = {};
+            fonts.forEach(font => {
+                if (!fontsByFamily[font.fontName.family]) {
+                    fontsByFamily[font.fontName.family] = [];
+                }
+                fontsByFamily[font.fontName.family].push({
+                    family: font.fontName.family,
+                    style: font.fontName.style
+                });
+            });
+            
+            figma.ui.postMessage({
+                type: 'available-fonts',
+                fonts: fonts.map(f => ({ family: f.fontName.family, style: f.fontName.style }))
+            });
+        } catch (error) {
+            console.error('Error fetching fonts:', error);
+        }
+    }
+
+    if (msg.type === 'create-text-styles') {
+        try {
+            const typography = msg.typography;
+            
+            // Create font name variables first
+            const collections = figma.variables.getLocalVariableCollections();
+            let fontCollection = collections.find(c => c.name === 'Typography/Font Names');
+            
+            if (!fontCollection) {
+                fontCollection = figma.variables.createVariableCollection('Typography/Font Names');
+            }
+            
+            // Create primary font variable
+            const existingVars = figma.variables.getLocalVariables('STRING');
+            let primaryFontVar = existingVars.find(v => v.name === 'font/primary' && v.variableCollectionId === fontCollection.id);
+            
+            if (!primaryFontVar) {
+                primaryFontVar = figma.variables.createVariable('font/primary', fontCollection.id, 'STRING');
+            }
+            primaryFontVar.setValueForMode(fontCollection.modes[0].modeId, typography.primaryFont);
+            
+            // Create secondary font variable if enabled
+            if (typography.secondaryEnabled && typography.secondaryFont) {
+                let secondaryFontVar = existingVars.find(v => v.name === 'font/secondary' && v.variableCollectionId === fontCollection.id);
+                
+                if (!secondaryFontVar) {
+                    secondaryFontVar = figma.variables.createVariable('font/secondary', fontCollection.id, 'STRING');
+                }
+                secondaryFontVar.setValueForMode(fontCollection.modes[0].modeId, typography.secondaryFont);
+            }
+            
+            // Get all available fonts in Figma
+            const availableFonts = await figma.listAvailableFontsAsync();
+            
+            // Helper function to find the best matching font
+            function findBestFont(fontFamily, weight) {
+                // Try to find exact match first
+                let matchingFonts = availableFonts.filter(f => f.fontName.family === fontFamily);
+                
+                if (matchingFonts.length === 0) {
+                    // If no exact match, try case-insensitive
+                    matchingFonts = availableFonts.filter(f => 
+                        f.fontName.family.toLowerCase() === fontFamily.toLowerCase()
+                    );
+                }
+                
+                if (matchingFonts.length === 0) {
+                    // Fallback to Inter
+                    matchingFonts = availableFonts.filter(f => f.fontName.family === 'Inter');
+                }
+                
+                // Map weight to style name
+                const weightMap = {
+                    100: 'Thin',
+                    200: 'Extra Light',
+                    300: 'Light',
+                    400: 'Regular',
+                    500: 'Medium',
+                    600: 'Semi Bold',
+                    700: 'Bold',
+                    800: 'Extra Bold',
+                    900: 'Black'
+                };
+                
+                const styleName = weightMap[weight] || 'Regular';
+                
+                // Try to find matching weight
+                let font = matchingFonts.find(f => f.fontName.style === styleName);
+                
+                if (!font) {
+                    // Try alternative style names (multiple variations)
+                    const altNames = {
+                        'Semi Bold': ['Semibold', 'SemiBold', 'Semi-Bold', 'Demi Bold', 'DemiBold'],
+                        'Extra Light': ['ExtraLight', 'Extra-Light', 'Ultra Light', 'UltraLight'],
+                        'Extra Bold': ['ExtraBold', 'Extra-Bold', 'Ultra Bold', 'UltraBold']
+                    };
+                    
+                    if (altNames[styleName]) {
+                        for (const altName of altNames[styleName]) {
+                            font = matchingFonts.find(f => f.fontName.style === altName);
+                            if (font) break;
+                        }
+                    }
+                    
+                    // Try case-insensitive match
+                    if (!font) {
+                        font = matchingFonts.find(f => f.fontName.style.toLowerCase() === styleName.toLowerCase());
+                    }
+                }
+                
+                // Fallback to first available style
+                if (!font && matchingFonts.length > 0) {
+                    font = matchingFonts[0];
+                }
+                
+                return font ? font.fontName : { family: 'Inter', style: 'Regular' };
+            }
+            
+            let createdCount = 0;
+            
+            // Get the font variables we just created
+            const allVars = figma.variables.getLocalVariables('STRING');
+            const primaryFontVariable = allVars.find(v => v.name === 'font/primary' && v.variableCollectionId === fontCollection.id);
+            const secondaryFontVariable = allVars.find(v => v.name === 'font/secondary' && v.variableCollectionId === fontCollection.id);
+            
+            // Weight names mapping
+            const weightNames = {
+                400: 'Regular',
+                500: 'Medium',
+                600: 'Semi Bold',
+                700: 'Bold'
+            };
+            
+            // Weights to create for each style
+            const weights = typography.weights || [400, 500, 600, 700];
+            
+            // Font groups to create
+            const fontGroups = [
+                { name: 'Primary', fontFamily: typography.primaryFont, variable: primaryFontVariable }
+            ];
+            
+            // Add secondary group if enabled
+            if (typography.secondaryEnabled && typography.secondaryFont) {
+                fontGroups.push({ 
+                    name: 'Secondary', 
+                    fontFamily: typography.secondaryFont, 
+                    variable: secondaryFontVariable 
+                });
+            }
+            
+            // Create text styles for each font group
+            for (const group of fontGroups) {
+                if (!group.fontFamily) continue;
+                
+                // Create text styles for each typography style with all weights
+                for (const [key, style] of Object.entries(typography.styles)) {
+                    // Create a text style for each weight
+                    for (const weight of weights) {
+                        // Find best matching font
+                        const fontName = findBestFont(group.fontFamily, weight);
+                        
+                        // Load the font
+                        await figma.loadFontAsync(fontName);
+                        
+                        // Create style name: Primary/H1/Regular or Secondary/Body1/Bold
+                        const styleName = `${group.name}/${key.toUpperCase()}/${weightNames[weight]}`;
+                        
+                        // Check if text style already exists
+                        const existingStyles = figma.getLocalTextStyles();
+                        let textStyle = existingStyles.find(s => s.name === styleName);
+                        
+                        if (!textStyle) {
+                            textStyle = figma.createTextStyle();
+                            textStyle.name = styleName;
+                        }
+                        
+                        // Set text style properties
+                        textStyle.fontName = fontName;
+                        textStyle.fontSize = style.size;
+                        textStyle.lineHeight = { value: style.lineHeight * 100, unit: 'PERCENT' };
+                        textStyle.letterSpacing = { value: style.letterSpacing, unit: 'PIXELS' };
+                        
+                        // Bind font family to variable
+                        if (group.variable) {
+                            try {
+                                textStyle.setBoundVariable('fontFamily', group.variable);
+                            } catch (error) {
+                                console.log('Note: Font family variable binding not yet supported in this Figma version');
+                            }
+                        }
+                        
+                        createdCount++;
+                    }
+                }
+            }
+            
+            figma.notify(`✅ Created ${createdCount} text styles with font variables!`);
+        } catch (error) {
+            figma.notify(`❌ Error creating text styles: ${error.message}`);
+            console.error('Text styles error:', error);
+        }
+    }
 };
