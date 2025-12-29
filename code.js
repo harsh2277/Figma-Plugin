@@ -1,4 +1,6 @@
 // Figma plugin backend code
+// Import icon data
+// Note: In Figma plugins, we need to pass icon data through the UI
 figma.showUI(__html__, { width: 1000, height: 600, themeColors: true });
 
 // Function to create button component set
@@ -1731,6 +1733,169 @@ figma.ui.onmessage = async (msg) => {
             });
         } catch (error) {
             console.error('Error fetching fonts:', error);
+        }
+    }
+
+    if (msg.type === 'add-icons') {
+        try {
+            const iconColor = msg.iconColor;
+            const icons = msg.icons;
+            const svgData = msg.svgData; // SVG content from UI
+            
+            figma.notify(`🔄 Loading ${icons.length} icons...`);
+            
+            // Helper to convert hex to RGB
+            function hexToRgb(hex) {
+                const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                return result ? {
+                    r: parseInt(result[1], 16) / 255,
+                    g: parseInt(result[2], 16) / 255,
+                    b: parseInt(result[3], 16) / 255
+                } : { r: 0, g: 0, b: 0 };
+            }
+            
+            // Create icon color variable
+            const collections = await figma.variables.getLocalVariableCollectionsAsync();
+            let iconCollection = collections.find(c => c.name === 'Icon Colors');
+            
+            if (!iconCollection) {
+                iconCollection = figma.variables.createVariableCollection('Icon Colors');
+            }
+            
+            const existingVars = await figma.variables.getLocalVariablesAsync('COLOR');
+            let iconColorVar = existingVars.find(v => v.name === 'icon/default' && v.variableCollectionId === iconCollection.id);
+            
+            if (!iconColorVar) {
+                iconColorVar = figma.variables.createVariable('icon/default', iconCollection, 'COLOR');
+            }
+            
+            const colorRgb = hexToRgb(iconColor);
+            iconColorVar.setValueForMode(iconCollection.modes[0].modeId, colorRgb);
+            
+            // Create a frame to hold all icons
+            const iconsFrame = figma.createFrame();
+            iconsFrame.name = "Vuesax Icons";
+            iconsFrame.layoutMode = 'NONE';
+            iconsFrame.fills = [];
+            
+            let createdCount = 0;
+            let xOffset = 0;
+            let yOffset = 0;
+            const iconSize = 24;
+            const spacing = 40;
+            const iconsPerRow = 30;
+            
+            // Process each icon
+            for (let i = 0; i < icons.length; i++) {
+                const icon = icons[i];
+                const svg = svgData[icon.name];
+                
+                if (!svg) {
+                    console.warn(`No SVG data for icon: ${icon.name}`);
+                    continue;
+                }
+                
+                try {
+                    // Create icon component
+                    const iconComponent = figma.createComponent();
+                    iconComponent.name = `Icon/${icon.style}/${icon.name}`;
+                    iconComponent.resize(iconSize, iconSize);
+                    iconComponent.x = xOffset;
+                    iconComponent.y = yOffset;
+                    iconComponent.fills = [];
+                    
+                    // Create SVG node from the SVG string
+                    const svgNode = figma.createNodeFromSvg(svg);
+                    
+                    // Resize to fit icon size
+                    const scaleX = iconSize / svgNode.width;
+                    const scaleY = iconSize / svgNode.height;
+                    const scale = Math.min(scaleX, scaleY);
+                    
+                    svgNode.resize(svgNode.width * scale, svgNode.height * scale);
+                    
+                    // Center the SVG in the component
+                    svgNode.x = (iconSize - svgNode.width) / 2;
+                    svgNode.y = (iconSize - svgNode.height) / 2;
+                    
+                    // Apply color to all vector paths in the SVG
+                    function applyColorToNode(node) {
+                        if (node.type === 'VECTOR' || node.type === 'BOOLEAN_OPERATION' || node.type === 'STAR' || node.type === 'ELLIPSE' || node.type === 'POLYGON' || node.type === 'RECTANGLE') {
+                            // Apply fill color
+                            if (node.fills && node.fills !== figma.mixed && node.fills.length > 0) {
+                                try {
+                                    node.fills = [{
+                                        type: 'SOLID',
+                                        color: colorRgb,
+                                        boundVariables: {
+                                            color: {
+                                                type: 'VARIABLE_ALIAS',
+                                                id: iconColorVar.id
+                                            }
+                                        }
+                                    }];
+                                } catch (e) {
+                                    node.fills = [{ type: 'SOLID', color: colorRgb }];
+                                }
+                            }
+                            
+                            // Apply stroke color if exists
+                            if (node.strokes && node.strokes !== figma.mixed && node.strokes.length > 0) {
+                                try {
+                                    node.strokes = [{
+                                        type: 'SOLID',
+                                        color: colorRgb,
+                                        boundVariables: {
+                                            color: {
+                                                type: 'VARIABLE_ALIAS',
+                                                id: iconColorVar.id
+                                            }
+                                        }
+                                    }];
+                                } catch (e) {
+                                    node.strokes = [{ type: 'SOLID', color: colorRgb }];
+                                }
+                            }
+                        }
+                        
+                        // Recursively apply to children
+                        if ('children' in node) {
+                            node.children.forEach(child => applyColorToNode(child));
+                        }
+                    }
+                    
+                    applyColorToNode(svgNode);
+                    
+                    iconComponent.appendChild(svgNode);
+                    iconsFrame.appendChild(iconComponent);
+                    
+                    createdCount++;
+                    
+                    // Update position
+                    xOffset += spacing;
+                    if ((i + 1) % iconsPerRow === 0) {
+                        xOffset = 0;
+                        yOffset += spacing;
+                    }
+                } catch (error) {
+                    console.error(`Error creating icon ${icon.name}:`, error);
+                }
+            }
+            
+            // Resize frame to fit all icons
+            const rows = Math.ceil(icons.length / iconsPerRow);
+            iconsFrame.resize(iconsPerRow * spacing, rows * spacing);
+            
+            // Add to current page
+            figma.currentPage.appendChild(iconsFrame);
+            
+            // Center in viewport
+            figma.viewport.scrollAndZoomIntoView([iconsFrame]);
+            
+            figma.notify(`✅ Created ${createdCount} icon components with color variable!`);
+        } catch (error) {
+            figma.notify(`❌ Error adding icons: ${error.message}`);
+            console.error('Add icons error:', error);
         }
     }
 
