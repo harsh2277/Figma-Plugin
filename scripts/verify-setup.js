@@ -13,7 +13,7 @@ let allChecks = true;
 
 // Check 1: Icon.js exists
 console.log('1. Checking if Icon.js exists...');
-const iconJsPath = path.join(__dirname, 'Icon.js');
+const iconJsPath = path.join(__dirname, '..', 'Icon.js');
 if (fs.existsSync(iconJsPath)) {
     const stats = fs.statSync(iconJsPath);
     const sizeMB = (stats.size / (1024 * 1024)).toFixed(2);
@@ -64,7 +64,7 @@ try {
 
 // Check 3: ui.html has embedded Icon data
 console.log('\n3. Checking if ui.html has embedded Icon data...');
-const uiHtmlPath = path.join(__dirname, 'ui.html');
+const uiHtmlPath = path.join(__dirname, '..', 'ui.html');
 if (fs.existsSync(uiHtmlPath)) {
     const uiHtmlContent = fs.readFileSync(uiHtmlPath, 'utf-8');
     
@@ -96,7 +96,7 @@ if (fs.existsSync(uiHtmlPath)) {
 
 // Check 4: code.js has add-icons handler
 console.log('\n4. Checking if code.js has add-icons handler...');
-const codeJsPath = path.join(__dirname, 'code.js');
+const codeJsPath = path.join(__dirname, '..', 'code.js');
 if (fs.existsSync(codeJsPath)) {
     const codeJsContent = fs.readFileSync(codeJsPath, 'utf-8');
     
@@ -120,13 +120,13 @@ if (fs.existsSync(codeJsPath)) {
 
 // Check 5: Icons folder exists
 console.log('\n5. Checking if Icons folder exists...');
-const iconsFolderPath = path.join(__dirname, 'Icons', 'Vuesax Icon', 'bold');
+const iconsFolderPath = path.join(__dirname, '..', 'assets', 'icons', 'vuesax', 'bold');
 if (fs.existsSync(iconsFolderPath)) {
     const files = fs.readdirSync(iconsFolderPath);
     const svgFiles = files.filter(f => f.endsWith('.svg'));
     console.log(`   ✅ Icons folder exists with ${svgFiles.length} SVG files`);
 } else {
-    console.log('   ❌ Icons folder not found at: Icons/Vuesax Icon/bold/');
+    console.log('   ❌ Icons folder not found at: assets/icons/vuesax/bold/');
     allChecks = false;
 }
 

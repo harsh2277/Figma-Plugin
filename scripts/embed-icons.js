@@ -8,9 +8,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const ICON_JS_PATH = path.join(__dirname, 'Icon.js');
-const UI_HTML_PATH = path.join(__dirname, 'ui.html');
-const UI_HTML_BACKUP = path.join(__dirname, 'ui.html.backup');
+const ICON_JS_PATH = path.join(__dirname, '..', 'Icon.js');
+const UI_HTML_PATH = path.join(__dirname, '..', 'ui.html');
+const UI_HTML_BACKUP = path.join(__dirname, '..', 'ui.html.backup');
 
 console.log('🔄 Embedding Icon.js into ui.html...\n');
 

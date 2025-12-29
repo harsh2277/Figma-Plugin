@@ -9,9 +9,9 @@ const fs = require('fs');
 const path = require('path');
 
 // Path to the Vuesax icons folder
-const VUESAX_BOLD_PATH = path.join(__dirname, 'Icons', 'Vuesax Icon', 'bold');
-const VUESAX_OUTLINE_PATH = path.join(__dirname, 'Icons', 'Vuesax Icon', 'outline');
-const OUTPUT_FILE = path.join(__dirname, 'Icon.js');
+const VUESAX_BOLD_PATH = path.join(__dirname, '..', 'assets', 'icons', 'vuesax', 'bold');
+const VUESAX_OUTLINE_PATH = path.join(__dirname, '..', 'assets', 'icons', 'vuesax', 'outline');
+const OUTPUT_FILE = path.join(__dirname, '..', 'Icon.js');
 
 console.log('🔍 Reading Vuesax icons...');
 
