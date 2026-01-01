@@ -4,10 +4,6 @@
   "description": "A comprehensive Figma plugin for creating and managing design system tokens, components, and variables",
   "main": "code.js",
   "scripts": {
-    "generate-icons": "node scripts/generate-icon-data.js",
-    "embed-icons": "node scripts/embed-icons.js",
-    "verify": "node scripts/verify-setup.js",
-    "setup": "npm run generate-icons && npm run embed-icons",
     "dev": "echo 'Development mode - reload plugin in Figma after changes'",
     "build": "echo 'Build complete - plugin ready for use'"
   },
