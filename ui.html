@@ -13,79 +13,39 @@
         }
 
         :root {
-            /* Primary Colors - Simple & Clean */
-            --primary: #3B82F6;
-            --primary-hover: #2563EB;
-            --primary-light: rgba(59, 130, 246, 0.1);
-            --primary-dark: #1E40AF;
-            --primary-focus: rgba(59, 130, 246, 0.2);
+            /* Single Primary Color */
+            --primary: #0066FF;
+            --primary-hover: #0052CC;
 
-            /* Background Colors - Layered System */
-            --bg-app: #F9FAFB;
+            /* Neutral Backgrounds */
+            --bg-app: #FAFAFA;
             --bg-card: #FFFFFF;
-            --bg-secondary: #F3F4F6;
-            --bg-hover: #E5E7EB;
-            --bg-accent: #EFF6FF;
+            --bg-hover: #F5F5F5;
 
-            /* Border Colors - Enhanced Hierarchy */
-            --border: #E5E7EB;
-            --border-light: #F3F4F6;
-            --border-medium: #D1D5DB;
-            --border-dark: #9CA3AF;
-            --border-focus: #3B82F6;
+            /* Simple Borders */
+            --border: #E0E0E0;
 
-            /* Text Colors - Better Contrast */
-            --text-primary: #111827;
-            --text-secondary: #4B5563;
-            --text-tertiary: #6B7280;
-            --text-muted: #9CA3AF;
+            /* Text Colors */
+            --text-primary: #1A1A1A;
+            --text-secondary: #666666;
+            --text-tertiary: #999999;
             --text-inverse: #FFFFFF;
 
-            /* Shadows - Enhanced Depth */
-            --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            --shadow-focus: 0 0 0 3px var(--primary-focus);
-
-            /* Radius - Consistent Rounding */
-            --radius-xs: 4px;
-            --radius-sm: 6px;
-            --radius-md: 8px;
-            --radius-lg: 12px;
-            --radius-xl: 16px;
-            --radius-full: 9999px;
-
-            /* Status Colors - Semantic */
-            --success: #10B981;
-            --success-light: #D1FAE5;
-            --success-dark: #059669;
-            --error: #EF4444;
-            --error-light: #FEE2E2;
-            --error-dark: #DC2626;
-            --warning: #F59E0B;
-            --warning-light: #FEF3C7;
-            --warning-dark: #D97706;
-            --info: #3B82F6;
-            --info-light: #DBEAFE;
-            --info-dark: #2563EB;
-
-            /* Spacing Scale */
+            /* Spacing */
             --space-1: 4px;
             --space-2: 8px;
             --space-3: 12px;
             --space-4: 16px;
-            --space-5: 20px;
             --space-6: 24px;
             --space-8: 32px;
-            --space-10: 40px;
-            --space-12: 48px;
 
-            /* Animation Timing */
-            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+            /* Border Radius */
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+
+            /* Sidebar */
+            --sidebar-width: 72px;
         }
 
         body {
@@ -103,128 +63,119 @@
 
         .app-container {
             display: flex;
-            flex-direction: column;
             height: 100vh;
             background: var(--bg-app);
         }
 
-        /* Top Navigation */
-        .top-nav {
+        /* Left Sidebar Navigation */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-card);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-logo {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary);
+            border-radius: 12px;
+            padding: 8px;
+        }
+
+        .sidebar-logo svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        .sidebar-logo svg path {
+            fill: white;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            padding: 0 12px;
+        }
+
+        .sidebar-item {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-tertiary);
+            position: relative;
+            background: transparent;
+        }
+
+        .sidebar-item:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .sidebar-item.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .sidebar-item svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .sidebar-divider {
+            width: 32px;
+            background: var(--border);
+            margin: 16px 0;
+        }
+
+        .sidebar-actions {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            padding: 0 12px;
+        }
+
+        /* Main Content Area */
+        .main-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Top Header */
+        .top-header {
+            height: 64px;
             background: var(--bg-card);
             border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             padding: 0 var(--space-8);
-            gap: var(--space-8);
             flex-shrink: 0;
-            box-shadow: var(--shadow-xs);
         }
 
-        .nav-brand {
-            display: flex;
-            align-items: center;
-            gap: var(--space-3);
-            padding: var(--space-5) 0;
-            border-right: 1px solid var(--border);
-            padding-right: var(--space-8);
-        }
-
-        .nav-brand-title {
-            font-size: 15px;
+        .header-title {
+            font-size: 18px;
             font-weight: 600;
             color: var(--text-primary);
-            letter-spacing: -0.4px;
-        }
-
-        .nav-brand-badge {
-            padding: 3px 8px;
-            background: linear-gradient(135deg, var(--primary-light), var(--bg-accent));
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-full);
-            font-size: 10px;
-            font-weight: 600;
-            color: var(--primary);
-            letter-spacing: 0.3px;
-            text-transform: uppercase;
-        }
-
-        .nav-tabs {
-            display: flex;
-            gap: var(--space-1);
-            flex: 1;
-        }
-
-        .nav-tab {
-            padding: var(--space-5) var(--space-4);
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: var(--transition-base);
-            border-bottom: 2px solid transparent;
-            letter-spacing: -0.2px;
-            display: flex;
-            align-items: center;
-            gap: var(--space-2);
-            border-radius: var(--radius-sm) var(--radius-sm) 0 0;
-            position: relative;
-            outline: none;
-        }
-
-        .nav-tab::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 50%;
-            width: 0;
-            height: 2px;
-            background: var(--primary);
-            transition: var(--transition-base);
-            transform: translateX(-50%);
-        }
-
-        .nav-tab svg {
-            width: 18px;
-            height: 18px;
-            opacity: 0.6;
-            transition: var(--transition-base);
-            transform: translateY(0);
-        }
-
-        .nav-tab:hover {
-            color: var(--text-primary);
-            background: var(--bg-secondary);
-        }
-
-        .nav-tab:hover svg {
-            opacity: 0.8;
-            transform: translateY(-1px);
-        }
-
-        .nav-tab:focus-visible {
-            box-shadow: inset 0 0 0 2px var(--primary-focus);
-            z-index: 1;
-        }
-
-        .nav-tab.active {
-            color: var(--primary);
-            background: var(--bg-accent);
-        }
-
-        .nav-tab.active::after {
-            width: 100%;
-        }
-
-        .nav-tab.active svg {
-            opacity: 1;
-            color: var(--primary);
-            transform: translateY(0);
-        }
-
-        .nav-actions {
-            display: flex;
-            gap: var(--space-2);
-            padding: var(--space-3) 0;
         }
 
         /* Main Content */
@@ -247,9 +198,9 @@
 
         .content {
             width: 100%;
-            max-width: 1400px;
+            max-width: 1200px;
             overflow-y: auto;
-            padding: var(--space-10) var(--space-12);
+            padding: var(--space-8);
         }
 
         .tab-content {
@@ -300,7 +251,7 @@
             line-height: 1.6;
         }
 
-        /* Buttons - Enhanced with Micro-animations */
+        /* Buttons - Clean Flat Design */
         .btn {
             padding: 10px 20px;
             border: none;
@@ -308,87 +259,35 @@
             font-size: 13px;
             font-weight: 500;
             cursor: pointer;
-            transition: var(--transition-base);
+            transition: all 0.2s;
             display: inline-flex;
             align-items: center;
             gap: var(--space-2);
             justify-content: center;
-            letter-spacing: -0.2px;
-            position: relative;
-            overflow: hidden;
-            outline: none;
-            will-change: transform;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.25);
-            transform: translate(-50%, -50%);
-            transition: width 0.5s ease, height 0.5s ease;
-            pointer-events: none;
-        }
-
-        .btn:active::before {
-            width: 300px;
-            height: 300px;
         }
 
         .btn svg {
-            transition: var(--transition-base);
-        }
-
-        .btn:hover svg {
-            transform: scale(1.1);
+            width: 16px;
+            height: 16px;
         }
 
         .btn-primary {
             background: var(--primary);
             color: var(--text-inverse);
-            box-shadow: var(--shadow-sm);
         }
 
         .btn-primary:hover {
             background: var(--primary-hover);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
-            box-shadow: var(--shadow-xs);
-        }
-
-        .btn-primary:focus-visible {
-            box-shadow: var(--shadow-focus), var(--shadow-sm);
         }
 
         .btn-secondary {
             background: var(--bg-card);
             color: var(--text-primary);
-            border: 1.5px solid var(--border);
-            box-shadow: var(--shadow-xs);
+            border: 1px solid var(--border);
         }
 
         .btn-secondary:hover {
-            background: var(--bg-secondary);
-            border-color: var(--border-medium);
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .btn-secondary:active {
-            transform: translateY(0);
-        }
-
-        .btn-secondary:focus-visible {
-            border-color: var(--primary);
-            box-shadow: var(--shadow-focus);
+            background: var(--bg-hover);
         }
 
         .btn-sm {
@@ -399,7 +298,6 @@
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-            transform: none !important;
         }
 
         /* Scrollbar */
@@ -409,24 +307,24 @@
         }
 
         ::-webkit-scrollbar-track {
-            background: var(--bg-secondary);
+            background: var(--bg-hover);
             border-radius: var(--radius-sm);
         }
 
         ::-webkit-scrollbar-thumb {
-            background: var(--border-medium);
+            background: var(--border);
             border-radius: var(--radius-sm);
-            border: 2px solid var(--bg-secondary);
+            border: 2px solid var(--bg-hover);
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--border-dark);
+            background: var(--text-tertiary);
         }
 
         /* Color Shades Grid */
         .color-shades-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
             gap: 12px;
         }
 
@@ -439,96 +337,43 @@
         .color-swatch {
             border-radius: var(--radius-md);
             padding: 0;
-            border: 1.5px solid var(--border);
-            transition: var(--transition-base);
+            border: 1px solid var(--border);
+            transition: all 0.2s;
             cursor: pointer;
             background: var(--bg-card);
             overflow: hidden;
-            position: relative;
-            box-shadow: var(--shadow-xs);
-            outline: none;
-            will-change: transform;
         }
 
         .color-swatch:hover {
-            transform: translateY(-4px) scale(1.03);
-            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
             border-color: var(--primary);
-            z-index: 10;
-        }
-
-        .color-swatch:focus-visible {
-            box-shadow: var(--shadow-focus), var(--shadow-lg);
-            border-color: var(--primary);
-            z-index: 10;
-        }
-
-        .color-swatch:hover::after {
-            content: 'Click to copy';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(17, 24, 39, 0.95);
-            backdrop-filter: blur(8px);
-            color: white;
-            padding: 6px 12px;
-            border-radius: var(--radius-sm);
-            font-size: 10px;
-            font-weight: 600;
-            white-space: nowrap;
-            pointer-events: none;
-            z-index: 10;
-            box-shadow: var(--shadow-md);
-            animation: tooltipFadeIn 0.2s ease;
-        }
-
-        @keyframes tooltipFadeIn {
-            from {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(0.9);
-            }
-
-            to {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1);
-            }
         }
 
         .color-swatch-preview {
             width: 100%;
-            height: 56px;
+            height: 64px;
             border: none;
-            border-bottom: 1px solid var(--border-light);
-            position: relative;
         }
 
         .color-swatch-name {
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 600;
             color: var(--text-primary);
-            padding: 8px 10px 3px;
+            padding: 8px 10px 4px;
             font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            letter-spacing: -0.3px;
         }
 
         .color-swatch-value {
-            font-size: 9px;
+            font-size: 10px;
             color: var(--text-tertiary);
             padding: 0 10px 8px;
             font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
         }
 
         /* Spacing List */
         .spacing-list {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             gap: 12px;
         }
 
@@ -537,105 +382,63 @@
             flex-direction: column;
             align-items: center;
             background: var(--bg-card);
-            border: 1.5px solid var(--border);
+            border: 1px solid var(--border);
             border-radius: var(--radius-md);
-            padding: var(--space-4) var(--space-3);
-            transition: var(--transition-base);
+            padding: var(--space-4);
+            transition: all 0.2s;
             cursor: pointer;
             gap: var(--space-2);
-            box-shadow: var(--shadow-xs);
-            outline: none;
-            will-change: transform;
         }
 
         .spacing-token:hover {
             border-color: var(--primary);
-            background: var(--bg-accent);
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: var(--shadow-md);
-        }
-
-        .spacing-token:focus-visible {
-            border-color: var(--primary);
-            box-shadow: var(--shadow-focus), var(--shadow-md);
+            transform: translateY(-2px);
         }
 
         .spacing-token-name {
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 600;
             color: var(--text-tertiary);
             font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
             text-align: center;
-            letter-spacing: -0.3px;
         }
 
         .spacing-token-value {
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 700;
             color: var(--text-primary);
             font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
         }
 
-        /* Card Styles - Enhanced Borders & Animations */
+        /* Card Styles - Clean Flat Design */
         .card {
             background: var(--bg-card);
-            border: 1.5px solid var(--border);
+            border: 1px solid var(--border);
             border-radius: var(--radius-lg);
             padding: 0;
             margin-bottom: var(--space-4);
-            transition: var(--transition-base);
-            box-shadow: var(--shadow-xs);
-            position: relative;
-            will-change: transform, box-shadow;
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            inset: -1.5px;
-            border-radius: var(--radius-lg);
-            padding: 1.5px;
-            background: linear-gradient(135deg, transparent, var(--primary-light), transparent);
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            mask-composite: exclude;
-            opacity: 0;
-            transition: var(--transition-base);
-            pointer-events: none;
+            transition: all 0.2s;
         }
 
         .card:hover {
-            box-shadow: var(--shadow-md);
-            border-color: var(--border-medium);
-            transform: translateY(-2px);
-        }
-
-        .card:hover::before {
-            opacity: 1;
+            border-color: var(--primary);
         }
 
         .card-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: var(--space-5) var(--space-6);
+            padding: 20px 24px;
             cursor: pointer;
             user-select: none;
-            border-bottom: 1.5px solid var(--border);
-            transition: var(--transition-base);
+            border-bottom: 1px solid var(--border);
+            transition: all 0.2s;
             background: var(--bg-card);
-            outline: none;
             border-radius: var(--radius-lg) var(--radius-lg) 0 0;
         }
 
         .card-header:hover {
-            background: var(--bg-accent);
-        }
-
-        .card-header:focus-visible {
-            box-shadow: inset 0 0 0 2px var(--primary-focus);
-            z-index: 1;
+            background: var(--bg-hover);
         }
 
         .card.collapsed .card-header {
@@ -645,52 +448,40 @@
         }
 
         .card-title {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
             color: var(--text-primary);
             display: flex;
             align-items: center;
             gap: var(--space-2);
-            letter-spacing: -0.3px;
         }
 
         .card-title svg {
-            width: 18px;
-            height: 18px;
-            opacity: 0.7;
+            width: 20px;
+            height: 20px;
             color: var(--primary);
-            transition: var(--transition-base);
-        }
-
-        .card-header:hover .card-title svg {
-            opacity: 1;
-            transform: scale(1.05);
         }
 
         .card-header-right {
             display: flex;
             align-items: center;
-            gap: var(--space-3);
+            gap: 12px;
         }
 
         .collapse-arrow {
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             color: var(--text-tertiary);
-            transition: var(--transition-slow);
+            transition: transform 0.2s;
         }
 
         .card.collapsed .collapse-arrow {
             transform: rotate(-90deg);
         }
 
-        .card-header:hover .collapse-arrow {
-            color: var(--primary);
-        }
-
         .card-body {
-            padding: var(--space-6);
-            transition: var(--transition-slow);
+            padding: 24px;
+            transition: all 0.2s;
             overflow: hidden;
         }
 
@@ -698,7 +489,7 @@
             display: none !important;
         }
 
-        /* Toggle Switch - Enhanced */
+        /* Toggle Switch */
         .toggle-switch {
             position: relative;
             display: inline-block;
@@ -719,9 +510,9 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: var(--border-medium);
-            transition: var(--transition-slow);
-            border-radius: var(--radius-full);
+            background: var(--border);
+            transition: 0.3s;
+            border-radius: 24px;
         }
 
         .toggle-slider:before {
@@ -731,10 +522,9 @@
             width: 20px;
             left: 2px;
             bottom: 2px;
-            background: var(--bg-card);
-            transition: var(--transition-slow);
+            background: white;
+            transition: 0.3s;
             border-radius: 50%;
-            box-shadow: var(--shadow-sm);
         }
 
         .toggle-switch input:checked+.toggle-slider {
@@ -746,15 +536,7 @@
         }
 
         .toggle-switch:hover .toggle-slider {
-            box-shadow: 0 0 0 4px var(--primary-light);
-        }
-
-        .toggle-switch input:focus-visible+.toggle-slider {
-            box-shadow: var(--shadow-focus);
-        }
-
-        .toggle-switch input:checked:focus-visible+.toggle-slider {
-            box-shadow: 0 0 0 4px var(--primary-focus);
+            opacity: 0.8;
         }
 
         /* Range Slider Styling - Enhanced */
@@ -763,11 +545,11 @@
             appearance: none;
             width: 100%;
             height: 6px;
-            border-radius: var(--radius-full);
-            background: var(--bg-secondary);
+            border-radius: 3px;
+            background: var(--bg-hover);
             outline: none;
             cursor: pointer;
-            transition: var(--transition-base);
+            transition: all 0.2s;
         }
 
         input[type="range"]:hover {
@@ -775,14 +557,14 @@
         }
 
         input[type="range"]:focus-visible {
-            box-shadow: var(--shadow-focus);
+            outline: 2px solid var(--primary);
         }
 
         input[type="range"]::-webkit-slider-track {
             width: 100%;
             height: 6px;
-            border-radius: var(--radius-full);
-            background: var(--bg-secondary);
+            border-radius: 3px;
+            background: var(--bg-hover);
         }
 
         input[type="range"]::-webkit-slider-thumb {
@@ -793,15 +575,12 @@
             border-radius: 50%;
             background: var(--primary);
             cursor: pointer;
-            box-shadow: var(--shadow-md);
-            transition: var(--transition-base);
+            transition: all 0.2s;
             border: 3px solid var(--bg-card);
-            will-change: transform;
         }
 
         input[type="range"]::-webkit-slider-thumb:hover {
             transform: scale(1.2);
-            box-shadow: 0 0 0 6px var(--primary-light), var(--shadow-lg);
             background: var(--primary-hover);
         }
 
@@ -812,8 +591,8 @@
         input[type="range"]::-moz-range-track {
             width: 100%;
             height: 6px;
-            border-radius: var(--radius-full);
-            background: var(--bg-secondary);
+            border-radius: 3px;
+            background: var(--bg-hover);
         }
 
         input[type="range"]::-moz-range-thumb {
@@ -823,13 +602,11 @@
             background: var(--primary);
             cursor: pointer;
             border: 3px solid var(--bg-card);
-            box-shadow: var(--shadow-md);
-            transition: var(--transition-base);
+            transition: all 0.2s;
         }
 
         input[type="range"]::-moz-range-thumb:hover {
             transform: scale(1.2);
-            box-shadow: 0 0 0 6px var(--primary-light), var(--shadow-lg);
             background: var(--primary-hover);
         }
 
@@ -875,19 +652,18 @@
             font-size: 12px;
             color: var(--text-primary);
             cursor: pointer;
-            transition: var(--transition-base);
+            transition: all 0.2s;
             font-weight: 500;
             outline: none;
         }
 
         select:hover {
-            border-color: var(--border-medium);
-            background: var(--bg-secondary);
+            border-color: var(--text-tertiary);
+            background: var(--bg-hover);
         }
 
         select:focus {
             border-color: var(--primary);
-            box-shadow: var(--shadow-focus);
         }
 
         input[type="number"] {
@@ -898,17 +674,16 @@
             font-size: 12px;
             color: var(--text-primary);
             font-weight: 500;
-            transition: var(--transition-base);
+            transition: all 0.2s;
             outline: none;
         }
 
         input[type="number"]:hover {
-            border-color: var(--border-medium);
+            border-color: var(--text-tertiary);
         }
 
         input[type="number"]:focus {
             border-color: var(--primary);
-            box-shadow: var(--shadow-focus);
         }
 
         /* Font Dropdown Styles */
@@ -946,19 +721,19 @@
 
         #primaryFontList::-webkit-scrollbar-track,
         #secondaryFontList::-webkit-scrollbar-track {
-            background: var(--bg-secondary);
+            background: var(--bg-hover);
             border-radius: var(--radius-sm);
         }
 
         #primaryFontList::-webkit-scrollbar-thumb,
         #secondaryFontList::-webkit-scrollbar-thumb {
-            background: var(--border-medium);
+            background: var(--border);
             border-radius: var(--radius-sm);
         }
 
         #primaryFontList::-webkit-scrollbar-thumb:hover,
         #secondaryFontList::-webkit-scrollbar-thumb:hover {
-            background: var(--border-dark);
+            background: var(--text-tertiary);
         }
 
         /* Badge Styles */
@@ -992,16 +767,12 @@
 
 <body>
     <div class="app-container">
-        <!-- Top Navigation -->
-        <div class="top-nav">
-            <div class="nav-brand">
-                <svg width="124" height="20" viewBox="0 0 506 92" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                        d="M46 82.225C46 84.448 44.1934 86.2709 41.9816 86.0489C35.4407 85.3927 29.1381 83.1415 23.6383 79.4667C17.0192 75.0439 11.8603 68.7577 8.81387 61.403C5.76744 54.0483 4.97036 45.9554 6.52341 38.1476C8.07647 30.3399 11.9099 23.168 17.539 17.539C23.168 11.9099 30.3399 8.07646 38.1476 6.52341C45.9554 4.97036 54.0483 5.76744 61.403 8.81387C68.7578 11.8603 75.0439 17.0192 79.4667 23.6383C83.1415 29.1381 85.3927 35.4407 86.0489 41.9816C86.2709 44.1934 84.448 46 82.225 46V46C80.0021 46 78.2259 44.191 77.9488 41.9854C77.3273 37.0394 75.5631 32.2859 72.7733 28.1107C69.2352 22.8154 64.2062 18.6882 58.3224 16.2511C52.4386 13.814 45.9643 13.1763 39.7181 14.4187C33.4719 15.6612 27.7344 18.7279 23.2312 23.2312C18.7279 27.7344 15.6612 33.4719 14.4187 39.7181C13.1763 45.9643 13.814 52.4386 16.2511 58.3224C18.6882 64.2062 22.8154 69.2352 28.1107 72.7733C32.2859 75.5631 37.0394 77.3273 41.9854 77.9488C44.191 78.2259 46 80.0021 46 82.225V82.225Z"
-                        fill="#0A5DF5" />
-                    <path fill-rule="evenodd" clip-rule="evenodd"
-                        d="M70.8811 49.8738C69.7147 44.6855 62.416 44.7179 61.2942 49.9163L61.2515 50.1146L61.1682 50.4994C59.9448 56.0557 55.539 60.3194 50.0046 61.2959C44.6651 62.2381 44.6652 70.0119 50.0046 70.9541C55.5583 71.9339 59.9755 76.2241 61.1809 81.809L61.2942 82.3337C62.416 87.5321 69.7147 87.5645 70.8811 82.3762L71.019 81.7647C72.27 76.1998 76.6939 71.941 82.2386 70.9627C87.5871 70.0189 87.5871 62.2311 82.2386 61.2873C76.7234 60.3142 72.317 56.0952 71.039 50.5738C71.0033 50.4195 70.9701 50.272 70.9344 50.1114L70.8811 49.8738Z"
-                        fill="url(#paint0_linear_5_98)" />
+        <!-- Left Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-logo">
+                <svg viewBox="0 0 92 92" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M46 82.225C46 84.448 44.1934 86.2709 41.9816 86.0489C35.4407 85.3927 29.1381 83.1415 23.6383 79.4667C17.0192 75.0439 11.8603 68.7577 8.81387 61.403C5.76744 54.0483 4.97036 45.9554 6.52341 38.1476C8.07647 30.3399 11.9099 23.168 17.539 17.539C23.168 11.9099 30.3399 8.07646 38.1476 6.52341C45.9554 4.97036 54.0483 5.76744 61.403 8.81387C68.7578 11.8603 75.0439 17.0192 79.4667 23.6383C83.1415 29.1381 85.3927 35.4407 86.0489 41.9816C86.2709 44.1934 84.448 46 82.225 46V46C80.0021 46 78.2259 44.191 77.9488 41.9854C77.3273 37.0394 75.5631 32.2859 72.7733 28.1107C69.2352 22.8154 64.2062 18.6882 58.3224 16.2511C52.4386 13.814 45.9643 13.1763 39.7181 14.4187C33.4719 15.6612 27.7344 18.7279 23.2312 23.2312C18.7279 27.7344 15.6612 33.4719 14.4187 39.7181C13.1763 45.9643 13.814 52.4386 16.2511 58.3224C18.6882 64.2062 22.8154 69.2352 28.1107 72.7733C32.2859 75.5631 37.0394 77.3273 41.9854 77.9488C44.191 78.2259 46 80.0021 46 82.225V82.225Z" fill="white"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M70.8811 49.8738C69.7147 44.6855 62.416 44.7179 61.2942 49.9163L61.2515 50.1146L61.1682 50.4994C59.9448 56.0557 55.539 60.3194 50.0046 61.2959C44.6651 62.2381 44.6652 70.0119 50.0046 70.9541C55.5583 71.9339 59.9755 76.2241 61.1809 81.809L61.2942 82.3337C62.416 87.5321 69.7147 87.5645 70.8811 82.3762L71.019 81.7647C72.27 76.1998 76.6939 71.941 82.2386 70.9627C87.5871 70.0189 87.5871 62.2311 82.2386 61.2873C76.7234 60.3142 72.317 56.0952 71.039 50.5738C71.0033 50.4195 70.9701 50.272 70.9344 50.1114L70.8811 49.8738Z" fill="white"/>
                     <path
                         d="M479.893 65.4765V36.9933H488.045V42.1821H488.375C488.706 41.3725 489.11 40.6181 489.587 39.9189C490.064 39.2197 490.633 38.6125 491.294 38.0973C491.992 37.5453 492.781 37.1221 493.663 36.8277C494.581 36.4965 495.609 36.3309 496.747 36.3309C498.106 36.3309 499.354 36.5701 500.492 37.0485C501.631 37.4901 502.604 38.1709 503.411 39.0909C504.219 40.0109 504.843 41.1333 505.284 42.4581C505.761 43.7829 506 45.3101 506 47.0397V65.4765H497.849V48.1437C497.849 44.4637 496.251 42.6237 493.057 42.6237C492.433 42.6237 491.808 42.7157 491.184 42.8997C490.597 43.0469 490.064 43.3045 489.587 43.6725C489.11 44.0037 488.724 44.4269 488.43 44.9421C488.173 45.4573 488.045 46.0645 488.045 46.7637V65.4765H479.893Z"
                         fill="#08103B" />
@@ -1048,80 +819,67 @@
                 </svg>
             </div>
 
-            <div class="nav-tabs">
-                <div class="nav-tab active" data-tab="foundations" onclick="switchTab(this)">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="13.5" cy="6.5" r=".5" fill="currentColor" />
-                        <circle cx="17.5" cy="10.5" r=".5" fill="currentColor" />
-                        <circle cx="8.5" cy="7.5" r=".5" fill="currentColor" />
-                        <circle cx="6.5" cy="12.5" r=".5" fill="currentColor" />
-                        <path
-                            d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z" />
+            <div class="sidebar-nav">
+                <div class="sidebar-item active" data-tab="foundations" onclick="switchTab(this)" title="Foundations">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/>
+                        <circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/>
+                        <circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/>
+                        <circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/>
+                        <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>
                     </svg>
-                    Foundations
                 </div>
-                <div class="nav-tab" data-tab="components" onclick="switchTab(this)">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path
-                            d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                        <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-                        <line x1="12" y1="22.08" x2="12" y2="12" />
+                <div class="sidebar-item" data-tab="components" onclick="switchTab(this)" title="Components">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                        <line x1="12" y1="22.08" x2="12" y2="12"/>
                     </svg>
-                    Components
                 </div>
-                <div class="nav-tab" data-tab="typography" onclick="switchTab(this)">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="4 7 4 4 20 4 20 7" />
-                        <line x1="9" y1="20" x2="15" y2="20" />
-                        <line x1="12" y1="4" x2="12" y2="20" />
+                <div class="sidebar-item" data-tab="typography" onclick="switchTab(this)" title="Typography">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="4 7 4 4 20 4 20 7"/>
+                        <line x1="9" y1="20" x2="15" y2="20"/>
+                        <line x1="12" y1="4" x2="12" y2="20"/>
                     </svg>
-                    Typography
                 </div>
-                <div class="nav-tab" data-tab="icons" onclick="switchTab(this)">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10" />
-                        <path d="M8 14s1.5 2 4 2 4-2 4-2" />
-                        <line x1="9" y1="9" x2="9.01" y2="9" />
-                        <line x1="15" y1="9" x2="15.01" y2="9" />
+                <div class="sidebar-item" data-tab="icons" onclick="switchTab(this)" title="Icons">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+                        <line x1="9" y1="9" x2="9.01" y2="9"/>
+                        <line x1="15" y1="9" x2="15.01" y2="9"/>
                     </svg>
-                    Icons
                 </div>
-                <div class="nav-tab" data-tab="export" onclick="switchTab(this)">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                        <polyline points="7 10 12 15 17 10" />
-                        <line x1="12" y1="15" x2="12" y2="3" />
+                <div class="sidebar-item" data-tab="export" onclick="switchTab(this)" title="Export">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
                     </svg>
-                    Export
                 </div>
             </div>
 
-            <div class="nav-actions">
-                <button class="btn btn-secondary btn-sm" id="reset-btn" onclick="resetDefaults()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
-                        <path d="M21 3v5h-5" />
-                        <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
-                        <path d="M3 21v-5h5" />
+            <div class="sidebar-divider"></div>
+
+            <div class="sidebar-actions">
+                <div class="sidebar-item" onclick="resetDefaults()" title="Reset">
+
+                        <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                        <path d="M21 3v5h-5"/>
+                        <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+                        <path d="M3 21v-5h5"/>
                     </svg>
-                    Reset
-                </button>
-                <button class="btn btn-primary btn-sm" id="create-variable-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="12" y1="5" x2="12" y2="19" />
-                        <line x1="5" y1="12" x2="19" y2="12" />
-                    </svg>
-                    Create Variables
-                </button>
+                </div>
             </div>
         </div>
+
+        <!-- Main Area -->
+        <div class="main-area">
+            <!-- Top Header -->
+            <div class="top-header">
+                <div class="header-title" id="headerTitle">Foundations</div>
+            </div>
 
         <!-- Main Content -->
         <div class="main-content">
@@ -1461,6 +1219,17 @@
                                     <div id="strokePreview" class="spacing-list"></div>
                                 </div>
                             </div>
+                        </div>
+
+                        <!-- Create Variables Button -->
+                        <div style="margin-top: 32px; display: flex; justify-content: center;">
+                            <button class="btn btn-primary" id="create-variable-btn" style="padding: 12px 32px; font-size: 14px;">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="12" y1="5" x2="12" y2="19"/>
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                </svg>
+                                Create Variables
+                            </button>
                         </div>
                     </div>
                     <!-- Components Tab -->
@@ -2073,10 +1842,23 @@
 
         // Navigation
         function switchTab(tab) {
-            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.sidebar-item').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             tab.classList.add('active');
             document.getElementById(tab.dataset.tab).classList.add('active');
+
+            // Update header title
+            const titles = {
+                'foundations': 'Foundations',
+                'components': 'Components',
+                'typography': 'Typography',
+                'icons': 'Icon Library',
+                'export': 'Export'
+            };
+            const headerTitle = document.getElementById('headerTitle');
+            if (headerTitle) {
+                headerTitle.textContent = titles[tab.dataset.tab] || 'Design System Maker';
+            }
 
             // Initialize icon library when switching to icons tab
             if (tab.dataset.tab === 'icons') {
@@ -2099,8 +1881,6 @@
         }
 
         // Event Listeners
-        document.getElementById('reset-btn').addEventListener('click', resetDefaults);
-
         document.getElementById('create-variable-btn').addEventListener('click', () => {
             console.log('Create Variable button clicked');
 
