@@ -23,36 +23,57 @@ const ICON_LIBRARIES = {
   'vuesax-icons': {
     name: 'Vuesax Icons',
     categories: {
-        'twotone': {
-    name: 'Two-tone',
-    baseUrl: 'https://raw.githubusercontent.com/harsh2277/Vuesax-Icon/1fc373df0cef028768f13d29571b0f6e163d7d68/twotone'
-},
-'line': {
-    name: 'Line',
-    baseUrl: 'https://raw.githubusercontent.com/harsh2277/Vuesax-Icon/1fc373df0cef028768f13d29571b0f6e163d7d68/line'
-},
-'outline': {
-    name: 'Outline',
-    baseUrl: 'https://raw.githubusercontent.com/harsh2277/Vuesax-Icon/1fc373df0cef028768f13d29571b0f6e163d7d68/outline'
-},
-'linear': {
-    name: 'Linear',
-    baseUrl: 'https://raw.githubusercontent.com/harsh2277/Vuesax-Icon/1fc373df0cef028768f13d29571b0f6e163d7d68/linear'
-},
-'bulk': {
-    name: 'Bulk',
-    baseUrl: 'https://raw.githubusercontent.com/harsh2277/Vuesax-Icon/1fc373df0cef028768f13d29571b0f6e163d7d68/bulk'
-},
-'broken': {
-    name: 'Broken',
-    baseUrl: 'https://raw.githubusercontent.com/harsh2277/Vuesax-Icon/1fc373df0cef028768f13d29571b0f6e163d7d68/broken'
-},
-'bold': {
-    name: 'Bold',
-    baseUrl: 'https://raw.githubusercontent.com/harsh2277/Vuesax-Icon/1fc373df0cef028768f13d29571b0f6e163d7d68/bold'
-}
+      'twotone': {
+        name: 'Two-tone',
+        baseUrl: 'https://raw.githubusercontent.com/harsh2277/Vuesax-Icon/1fc373df0cef028768f13d29571b0f6e163d7d68/twotone'
+      },
+      'line': {
+        name: 'Line',
+        baseUrl: 'https://raw.githubusercontent.com/harsh2277/Vuesax-Icon/1fc373df0cef028768f13d29571b0f6e163d7d68/line'
+      },
+      'outline': {
+        name: 'Outline',
+        baseUrl: 'https://raw.githubusercontent.com/harsh2277/Vuesax-Icon/1fc373df0cef028768f13d29571b0f6e163d7d68/outline'
+      },
+      'linear': {
+        name: 'Linear',
+        baseUrl: 'https://raw.githubusercontent.com/harsh2277/Vuesax-Icon/1fc373df0cef028768f13d29571b0f6e163d7d68/linear'
+      },
+      'bulk': {
+        name: 'Bulk',
+        baseUrl: 'https://raw.githubusercontent.com/harsh2277/Vuesax-Icon/1fc373df0cef028768f13d29571b0f6e163d7d68/bulk'
+      },
+      'broken': {
+        name: 'Broken',
+        baseUrl: 'https://raw.githubusercontent.com/harsh2277/Vuesax-Icon/1fc373df0cef028768f13d29571b0f6e163d7d68/broken'
+      },
+      'bold': {
+        name: 'Bold',
+        baseUrl: 'https://raw.githubusercontent.com/harsh2277/Vuesax-Icon/1fc373df0cef028768f13d29571b0f6e163d7d68/bold'
+      }
     }
-}
+  },
+  'unicons': {
+    name: 'Unicons',
+    categories: {
+      'line': {
+        name: 'Line',
+        baseUrl: 'https://raw.githubusercontent.com/harsh2277/unicons/41643545a256b97c0c4cd646817cf352da4ce866/line'
+      },
+      'monochrome': {
+        name: 'Monochrome',
+        baseUrl: 'https://raw.githubusercontent.com/harsh2277/unicons/41643545a256b97c0c4cd646817cf352da4ce866/monochrome'
+      },
+      'solid': {
+        name: 'Solid',
+        baseUrl: 'https://raw.githubusercontent.com/harsh2277/unicons/41643545a256b97c0c4cd646817cf352da4ce866/solid'
+      },
+      'thinline': {
+        name: 'Thinline',
+        baseUrl: 'https://raw.githubusercontent.com/harsh2277/unicons/41643545a256b97c0c4cd646817cf352da4ce866/thinline'
+      }
+    }
+  }
 };
 
 // State

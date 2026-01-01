@@ -3090,6 +3090,27 @@ async function generateIconLibrary(libraryId, categoryId, iconList) {
                     baseUrl: 'https://raw.githubusercontent.com/harsh2277/Vuesax-Icon/1fc373df0cef028768f13d29571b0f6e163d7d68/bold'
                 }
             }
+        },
+        'unicons': {
+            name: 'Unicons',
+            categories: {
+                'line': {
+                    name: 'Line',
+                    baseUrl: 'https://raw.githubusercontent.com/harsh2277/unicons/41643545a256b97c0c4cd646817cf352da4ce866/line'
+                },
+                'monochrome': {
+                    name: 'Monochrome',
+                    baseUrl: 'https://raw.githubusercontent.com/harsh2277/unicons/41643545a256b97c0c4cd646817cf352da4ce866/monochrome'
+                },
+                'solid': {
+                    name: 'Solid',
+                    baseUrl: 'https://raw.githubusercontent.com/harsh2277/unicons/41643545a256b97c0c4cd646817cf352da4ce866/solid'
+                },
+                'thinline': {
+                    name: 'Thinline',
+                    baseUrl: 'https://raw.githubusercontent.com/harsh2277/unicons/41643545a256b97c0c4cd646817cf352da4ce866/thinline'
+                }
+            }
         }
     };
 
@@ -3251,6 +3272,27 @@ async function generateAllLibraryIcons(libraryId, categories) {
                 'bold': {
                     name: 'Bold',
                     baseUrl: 'https://raw.githubusercontent.com/harsh2277/Vuesax-Icon/1fc373df0cef028768f13d29571b0f6e163d7d68/bold'
+                }
+            }
+        },
+        'unicons': {
+            name: 'Unicons',
+            categories: {
+                'line': {
+                    name: 'Line',
+                    baseUrl: 'https://raw.githubusercontent.com/harsh2277/unicons/41643545a256b97c0c4cd646817cf352da4ce866/line'
+                },
+                'monochrome': {
+                    name: 'Monochrome',
+                    baseUrl: 'https://raw.githubusercontent.com/harsh2277/unicons/41643545a256b97c0c4cd646817cf352da4ce866/monochrome'
+                },
+                'solid': {
+                    name: 'Solid',
+                    baseUrl: 'https://raw.githubusercontent.com/harsh2277/unicons/41643545a256b97c0c4cd646817cf352da4ce866/solid'
+                },
+                'thinline': {
+                    name: 'Thinline',
+                    baseUrl: 'https://raw.githubusercontent.com/harsh2277/unicons/41643545a256b97c0c4cd646817cf352da4ce866/thinline'
                 }
             }
         }

@@ -245,5 +245,30 @@ const ICON_LIBRARIES = {
         icons: []
       }
     }
+  },
+  'unicons': {
+    name: 'Unicons',
+    categories: {
+      'line': {
+        name: 'Line',
+        baseUrl: 'https://raw.githubusercontent.com/harsh2277/unicons/41643545a256b97c0c4cd646817cf352da4ce866/line',
+        icons: []
+      },
+      'monochrome': {
+        name: 'Monochrome',
+        baseUrl: 'https://raw.githubusercontent.com/harsh2277/unicons/41643545a256b97c0c4cd646817cf352da4ce866/monochrome',
+        icons: []
+      },
+      'solid': {
+        name: 'Solid',
+        baseUrl: 'https://raw.githubusercontent.com/harsh2277/unicons/41643545a256b97c0c4cd646817cf352da4ce866/solid',
+        icons: []
+      },
+      'thinline': {
+        name: 'Thinline',
+        baseUrl: 'https://raw.githubusercontent.com/harsh2277/unicons/41643545a256b97c0c4cd646817cf352da4ce866/thinline',
+        icons: []
+      }
+    }
   }
 };
