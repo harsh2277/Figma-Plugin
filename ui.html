@@ -61,10 +61,159 @@
             font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
         }
 
+        /* Welcome Screen Styles */
+        .welcome-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            padding: 24px;
+            background: radial-gradient(circle at 50% 50%, rgba(200, 255, 0, 0.05) 0%, transparent 50%);
+            overflow-y: auto;
+        }
+
+        .welcome-screen.hidden {
+            display: none;
+        }
+
+        .welcome-card {
+            max-width: 850px;
+            width: 100%;
+            background: #1E1E1E;
+            border: 2px solid var(--border);
+            border-radius: 16px;
+            padding: 32px 40px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .welcome-logo-container {
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        .welcome-logo-container svg {
+            width: 60px;
+            height: 60px;
+        }
+
+        .welcome-logo-container svg path {
+            fill: var(--primary);
+        }
+
+        .welcome-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+        }
+
+        .welcome-subtitle {
+            font-size: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            line-height: 1.5;
+        }
+
+        .welcome-features-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .welcome-feature-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 16px 12px;
+            transition: all 0.3s ease;
+        }
+
+        .welcome-feature-item:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(200, 255, 0, 0.1);
+        }
+
+        .welcome-feature-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(200, 255, 0, 0.1);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+        }
+
+        .welcome-feature-icon svg {
+            width: 20px;
+            height: 20px;
+            color: var(--primary);
+        }
+
+        .welcome-feature-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--text-primary);
+        }
+
+        .welcome-feature-description {
+            font-size: 11px;
+            color: var(--text-tertiary);
+            line-height: 1.4;
+        }
+
+        .welcome-cta-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .welcome-version-badge {
+            display: inline-block;
+            background: rgba(200, 255, 0, 0.1);
+            color: var(--primary);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
         .app-container {
             display: flex;
             height: 100vh;
             background: var(--bg-app);
+        }
+
+        .app-container.hidden {
+            display: none;
         }
 
         /* Left Sidebar Navigation - Floating Modern Design */
@@ -208,7 +357,6 @@
             justify-content: center;
             overflow: hidden;
             background: transparent;
-            padding: 0 8px 8px 0;
         }
 
         .content {
@@ -812,7 +960,78 @@
 </head>
 
 <body>
-    <div class="app-container">
+    <!-- Welcome Screen -->
+    <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-card">
+            <div class="welcome-logo-container">
+                <svg viewBox="0 0 92 92" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M46 82.225C46 84.448 44.1934 86.2709 41.9816 86.0489C35.4407 85.3927 29.1381 83.1415 23.6383 79.4667C17.0192 75.0439 11.8603 68.7577 8.81387 61.403C5.76744 54.0483 4.97036 45.9554 6.52341 38.1476C8.07647 30.3399 11.9099 23.168 17.539 17.539C23.168 11.9099 30.3399 8.07646 38.1476 6.52341C45.9554 4.97036 54.0483 5.76744 61.403 8.81387C68.7578 11.8603 75.0439 17.0192 79.4667 23.6383C83.1415 29.1381 85.3927 35.4407 86.0489 41.9816C86.2709 44.1934 84.448 46 82.225 46V46C80.0021 46 78.2259 44.191 77.9488 41.9854C77.3273 37.0394 75.5631 32.2859 72.7733 28.1107C69.2352 22.8154 64.2062 18.6882 58.3224 16.2511C52.4386 13.814 45.9643 13.1763 39.7181 14.4187C33.4719 15.6612 27.7344 18.7279 23.2312 23.2312C18.7279 27.7344 15.6612 33.4719 14.4187 39.7181C13.1763 45.9643 13.814 52.4386 16.2511 58.3224C18.6882 64.2062 22.8154 69.2352 28.1107 72.7733C32.2859 75.5631 37.0394 77.3273 41.9854 77.9488C44.191 78.2259 46 80.0021 46 82.225V82.225Z" fill="white"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M70.8811 49.8738C69.7147 44.6855 62.416 44.7179 61.2942 49.9163L61.2515 50.1146L61.1682 50.4994C59.9448 56.0557 55.539 60.3194 50.0046 61.2959C44.6651 62.2381 44.6652 70.0119 50.0046 70.9541C55.5583 71.9339 59.9755 76.2241 61.1809 81.809L61.2942 82.3337C62.416 87.5321 69.7147 87.5645 70.8811 82.3762L71.019 81.7647C72.27 76.1998 76.6939 71.941 82.2386 70.9627C87.5871 70.0189 87.5871 62.2311 82.2386 61.2873C76.7234 60.3142 72.317 56.0952 71.039 50.5738C71.0033 50.4195 70.9701 50.272 70.9344 50.1114L70.8811 49.8738Z" fill="white"/>
+                </svg>
+            </div>
+
+            <div class="welcome-version-badge">v1.0.0</div>
+
+            <h1 class="welcome-title">Welcome to Design System Maker</h1>
+            <p class="welcome-subtitle">Create, manage, and export design tokens with ease. Build consistent design systems for your Figma projects.</p>
+
+            <div class="welcome-features-grid">
+                <div class="welcome-feature-item">
+                    <div class="welcome-feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                        </svg>
+                    </div>
+                    <div class="welcome-feature-title">Color Tokens</div>
+                    <div class="welcome-feature-description">Define and manage color palettes with shades and variants</div>
+                </div>
+
+                <div class="welcome-feature-item">
+                    <div class="welcome-feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+                        </svg>
+                    </div>
+                    <div class="welcome-feature-title">Typography</div>
+                    <div class="welcome-feature-description">Configure fonts, sizes, and text styles</div>
+                </div>
+
+                <div class="welcome-feature-item">
+                    <div class="welcome-feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
+                        </svg>
+                    </div>
+                    <div class="welcome-feature-title">Spacing</div>
+                    <div class="welcome-feature-description">Create consistent spacing scales</div>
+                </div>
+
+                <div class="welcome-feature-item">
+                    <div class="welcome-feature-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                        </svg>
+                    </div>
+                    <div class="welcome-feature-title">Export JSON</div>
+                    <div class="welcome-feature-description">Export design tokens as JSON for development</div>
+                </div>
+            </div>
+
+            <div class="welcome-cta-buttons">
+                <button class="btn btn-primary" onclick="startApp()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                    </svg>
+                    Get Started
+                </button>
+                <button class="btn btn-secondary" onclick="learnMore()">
+                    Learn More
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="app-container hidden" id="appContainer">
         <!-- Left Sidebar -->
         <div class="sidebar">
             <div class="sidebar-logo">
@@ -1311,7 +1530,7 @@
                                             Text</label>
                                         <input type="text" id="buttonText" value="Button"
                                             placeholder="Enter button text"
-                                            style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; transition: border-color 0.2s;"
+                                            style="width: 100%; padding: 10px 12px; background: #0A0A0A; color: var(--text-primary); border: 1px solid var(--border); border-radius: 6px; font-size: 13px; transition: border-color 0.2s;"
                                             onfocus="this.style.borderColor='var(--primary)'"
                                             onblur="this.style.borderColor='var(--border)'">
                                     </div>
@@ -1330,7 +1549,7 @@
                                                     style="width: 44px; height: 44px; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; padding: 2px;">
                                                 <input type="text" id="buttonBgColorHex" value="#0066FF" maxlength="7"
                                                     oninput="if(/^#[0-9A-F]{6}$/i.test(this.value)) document.getElementById('buttonBgColor').value = this.value"
-                                                    style="flex: 1; padding: 0 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px; font-family: 'Monaco', monospace; text-transform: uppercase; font-weight: 500;">
+                                                    style="flex: 1; padding: 0 12px; background: #0A0A0A; color: var(--text-primary); border: 1px solid var(--border); border-radius: 6px; font-size: 12px; font-family: 'Monaco', monospace; text-transform: uppercase; font-weight: 500;">
                                             </div>
                                         </div>
 
@@ -1345,7 +1564,7 @@
                                                     style="width: 44px; height: 44px; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; padding: 2px;">
                                                 <input type="text" id="buttonTextColorHex" value="#FFFFFF" maxlength="7"
                                                     oninput="if(/^#[0-9A-F]{6}$/i.test(this.value)) document.getElementById('buttonTextColor').value = this.value"
-                                                    style="flex: 1; padding: 0 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px; font-family: 'Monaco', monospace; text-transform: uppercase; font-weight: 500;">
+                                                    style="flex: 1; padding: 0 12px; background: #0A0A0A; color: var(--text-primary); border: 1px solid var(--border); border-radius: 6px; font-size: 12px; font-family: 'Monaco', monospace; text-transform: uppercase; font-weight: 500;">
                                             </div>
                                         </div>
                                     </div>
@@ -1459,7 +1678,7 @@
                                             Text</label>
                                         <input type="text" id="inputPlaceholder" value="Enter text..."
                                             placeholder="Enter placeholder text"
-                                            style="width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; transition: border-color 0.2s;"
+                                            style="width: 100%; padding: 10px 12px; background: #0A0A0A; color: var(--text-primary); border: 1px solid var(--border); border-radius: 6px; font-size: 13px; transition: border-color 0.2s;"
                                             onfocus="this.style.borderColor='var(--primary)'"
                                             onblur="this.style.borderColor='var(--border)'">
                                     </div>
@@ -1479,7 +1698,7 @@
                                                 <input type="text" id="inputBorderColorHex" value="#D1D5DB"
                                                     maxlength="7"
                                                     oninput="if(/^#[0-9A-F]{6}$/i.test(this.value)) document.getElementById('inputBorderColor').value = this.value"
-                                                    style="flex: 1; padding: 0 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px; font-family: 'Monaco', monospace; text-transform: uppercase; font-weight: 500;">
+                                                    style="flex: 1; padding: 0 12px; background: #0A0A0A; color: var(--text-primary); border: 1px solid var(--border); border-radius: 6px; font-size: 12px; font-family: 'Monaco', monospace; text-transform: uppercase; font-weight: 500;">
                                             </div>
                                         </div>
 
@@ -1494,7 +1713,7 @@
                                                     style="width: 44px; height: 44px; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; padding: 2px;">
                                                 <input type="text" id="inputTextColorHex" value="#1A1A1A" maxlength="7"
                                                     oninput="if(/^#[0-9A-F]{6}$/i.test(this.value)) document.getElementById('inputTextColor').value = this.value"
-                                                    style="flex: 1; padding: 0 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 12px; font-family: 'Monaco', monospace; text-transform: uppercase; font-weight: 500;">
+                                                    style="flex: 1; padding: 0 12px; background: #0A0A0A; color: var(--text-primary); border: 1px solid var(--border); border-radius: 6px; font-size: 12px; font-family: 'Monaco', monospace; text-transform: uppercase; font-weight: 500;">
                                             </div>
                                         </div>
                                     </div>
@@ -1621,6 +1840,52 @@
     </div>
 
     <script>
+        // Welcome Screen Functions
+        function startApp() {
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            document.getElementById('appContainer').classList.remove('hidden');
+            
+            // Initialize the app
+            initializeApp();
+        }
+
+        function learnMore() {
+            // You can add a link to documentation or show a help modal
+            alert('Design System Maker helps you create consistent design tokens for your Figma projects. Use the tabs to configure colors, typography, spacing, and more!');
+        }
+
+        function initializeApp() {
+            // Initialize all the default values and UI
+            generatePrimaryShades(document.getElementById('primaryColor').value);
+            generateSecondaryShades(document.getElementById('secondaryColor').value);
+            generateNeutralShades(); // No parameter needed
+            generateSuccessShades(document.getElementById('successColor').value);
+            generateWarningShades(document.getElementById('warningColor').value);
+            generateErrorShades(document.getElementById('errorColor').value);
+            generateInfoShades(document.getElementById('infoColor').value);
+            generateSpacingTokens();
+            generateRadiusTokens();
+            generateShadowTokens();
+            generateStrokeTokens();
+            syncColorPickers();
+
+            // Initialize range sliders
+            const radiusSlider = document.getElementById('buttonRadius');
+            if (radiusSlider) {
+                updateRangeSlider(radiusSlider);
+            }
+
+            const inputRadiusSlider = document.getElementById('inputRadius');
+            if (inputRadiusSlider) {
+                updateRangeSlider(inputRadiusSlider);
+            }
+
+            // Initialize typography
+            if (typeof initializeTypography === 'function') {
+                initializeTypography();
+            }
+        }
+
         // Color shade generation utilities
         function hexToRgb(hex) {
             const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -2312,31 +2577,31 @@
             }, '*');
         }
 
-        // Initialize on load
-        window.addEventListener('DOMContentLoaded', () => {
-            generatePrimaryShades('#0066FF');
-            generateSuccessShades('#00C853');
-            generateErrorShades('#FF3B30');
-            generateWarningShades('#FF9500');
-            generateInfoShades('#2196F3');
-            generateNeutralShades();
-            generateSpacingTokens();
-            generateRadiusTokens();
-            generateShadowTokens();
-            generateStrokeTokens();
-            syncColorPickers();
-
-            // Initialize range sliders
-            const radiusSlider = document.getElementById('buttonRadius');
-            if (radiusSlider) {
-                updateRangeSlider(radiusSlider);
-            }
-
-            const inputRadiusSlider = document.getElementById('inputRadius');
-            if (inputRadiusSlider) {
-                updateRangeSlider(inputRadiusSlider);
-            }
-        });
+        // Initialize on load - Removed, now called from startApp() after welcome screen
+        // window.addEventListener('DOMContentLoaded', () => {
+        //     generatePrimaryShades('#0066FF');
+        //     generateSuccessShades('#00C853');
+        //     generateErrorShades('#FF3B30');
+        //     generateWarningShades('#FF9500');
+        //     generateInfoShades('#2196F3');
+        //     generateNeutralShades();
+        //     generateSpacingTokens();
+        //     generateRadiusTokens();
+        //     generateShadowTokens();
+        //     generateStrokeTokens();
+        //     syncColorPickers();
+        //
+        //     // Initialize range sliders
+        //     const radiusSlider = document.getElementById('buttonRadius');
+        //     if (radiusSlider) {
+        //         updateRangeSlider(radiusSlider);
+        //     }
+        //
+        //     const inputRadiusSlider = document.getElementById('inputRadius');
+        //     if (inputRadiusSlider) {
+        //         updateRangeSlider(inputRadiusSlider);
+        //     }
+        // });
     </script>
     <script>
         // App.js content - State Management and Render Functions
@@ -2406,7 +2671,7 @@
             // Primary Font - Input Field
             html += '<div style="margin-bottom: 20px;">';
             html += '<label style="font-size: 11px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px;">Primary Font</label>';
-            html += '<input type="text" id="primaryFontInput" value="' + state.typography.primaryFont + '" placeholder="Enter font name (e.g., Inter, Roboto)" onchange="updatePrimaryFont(this.value)" style="width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; font-weight: 500; background: white; transition: all 0.2s;" onfocus="this.style.borderColor=\'var(--primary)\'" onblur="this.style.borderColor=\'var(--border)\'">';
+            html += '<input type="text" id="primaryFontInput" value="' + state.typography.primaryFont + '" placeholder="Enter font name (e.g., Inter, Roboto)" onchange="updatePrimaryFont(this.value)" style="width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; font-weight: 500; background: #0A0A0A; color: var(--text-primary); transition: all 0.2s;" onfocus="this.style.borderColor=\'var(--primary)\'" onblur="this.style.borderColor=\'var(--border)\'">';
             html += '</div>';
 
             // Secondary Font (Optional)
@@ -2417,7 +2682,7 @@
 
             // Secondary Font - Input Field
             html += '<div style="margin-bottom: 20px; opacity: ' + (state.typography.secondaryEnabled ? '1' : '0.4') + '; pointer-events: ' + (state.typography.secondaryEnabled ? 'auto' : 'none') + ';">';
-            html += '<input type="text" id="secondaryFontInput" value="' + (state.typography.secondaryFont || '') + '" placeholder="Enter font name (e.g., Poppins, Montserrat)" onchange="updateSecondaryFont(this.value)" style="width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; font-weight: 500; background: white; transition: all 0.2s;" onfocus="this.style.borderColor=\'var(--primary)\'" onblur="this.style.borderColor=\'var(--border)\'">';
+            html += '<input type="text" id="secondaryFontInput" value="' + (state.typography.secondaryFont || '') + '" placeholder="Enter font name (e.g., Poppins, Montserrat)" onchange="updateSecondaryFont(this.value)" style="width: 100%; padding: 12px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; font-weight: 500; background: #0A0A0A; color: var(--text-primary); transition: all 0.2s;" onfocus="this.style.borderColor=\'var(--primary)\'" onblur="this.style.borderColor=\'var(--border)\'">';
             html += '</div>';
 
             html += '</div></div>';
@@ -2435,7 +2700,7 @@
 
             Object.entries(state.typography.styles).forEach(([key, style]) => {
                 const fontFamily = state.typography.primaryFont;
-                html += '<div style="background: white; border: 1px solid var(--border-light); border-radius: 10px; padding: 20px; transition: all 0.2s;" onmouseover="this.style.borderColor=\'var(--primary)\'; this.style.boxShadow=\'0 4px 12px rgba(0,0,0,0.08)\'" onmouseout="this.style.borderColor=\'var(--border-light)\'; this.style.boxShadow=\'none\'">';
+                html += '<div style="background: #0A0A0A; border: 1px solid var(--border); border-radius: 10px; padding: 20px; transition: all 0.2s;" onmouseover="this.style.borderColor=\'var(--primary)\'; this.style.boxShadow=\'0 4px 12px rgba(200, 255, 0, 0.1)\'" onmouseout="this.style.borderColor=\'var(--border)\'; this.style.boxShadow=\'none\'">';
 
                 // Preview text
                 html += '<div style="font-family: ' + fontFamily + '; font-size: ' + style.size + 'px; font-weight: 400; line-height: ' + style.lineHeight + '; letter-spacing: ' + style.letterSpacing + 'px; color: var(--text-primary); margin-bottom: 16px;">The quick brown fox jumps over the lazy dog</div>';
@@ -2448,7 +2713,7 @@
                 html += '</div>';
 
                 // Size input only
-                html += '<input type="number" value="' + style.size + '" onchange="updateTypographySize(\'' + key + '\', this.value)" style="width: 80px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-weight: 500; text-align: center; transition: all 0.2s;" placeholder="Size" onfocus="this.style.borderColor=\'var(--primary)\'; this.style.boxShadow=\'0 0 0 3px rgba(99, 102, 241, 0.1)\'" onblur="this.style.borderColor=\'var(--border)\'; this.style.boxShadow=\'none\'">';
+                html += '<input type="number" value="' + style.size + '" onchange="updateTypographySize(\'' + key + '\', this.value)" style="width: 80px; padding: 10px 14px; background: #141414; color: var(--text-primary); border: 1px solid var(--border); border-radius: 6px; font-size: 13px; font-weight: 500; text-align: center; transition: all 0.2s;" placeholder="Size" onfocus="this.style.borderColor=\'var(--primary)\'; this.style.boxShadow=\'0 0 0 3px rgba(200, 255, 0, 0.1)\'" onblur="this.style.borderColor=\'var(--border)\'; this.style.boxShadow=\'none\'">';
                 html += '</div>';
 
                 html += '</div>';
@@ -2495,12 +2760,12 @@
             }, '*');
         }
 
-        // Initialize when DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initializeTypography);
-        } else {
-            initializeTypography();
-        }
+        // Initialize when DOM is ready - Removed, now called from startApp()
+        // if (document.readyState === 'loading') {
+        //     document.addEventListener('DOMContentLoaded', initializeTypography);
+        // } else {
+        //     initializeTypography();
+        // }
 
         function initializeTypography() {
             console.log('Initializing typography...');
