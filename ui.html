@@ -61,15 +61,15 @@
             font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
         }
 
-        /* Welcome Screen Styles */
+        /* Welcome Screen Styles - Minimal & Clean */
         .welcome-screen {
             display: flex;
             align-items: center;
             justify-content: center;
             height: 100vh;
-            padding: 24px;
-            background: radial-gradient(circle at 50% 50%, rgba(200, 255, 0, 0.05) 0%, transparent 50%);
-            overflow-y: auto;
+            padding: 20px;
+            background: var(--bg-app);
+            overflow: hidden;
         }
 
         .welcome-screen.hidden {
@@ -77,45 +77,26 @@
         }
 
         .welcome-card {
-            max-width: 850px;
-            width: 100%;
-            background: #1E1E1E;
-            border: 2px solid var(--border);
-            border-radius: 16px;
-            padding: 32px 40px;
+            width: 800px;
+            height: 500px;
             text-align: center;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-            animation: fadeInUp 0.6s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 40px 60px;
         }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .welcome-header {
+            flex-shrink: 0;
         }
 
         .welcome-logo-container {
-            margin-bottom: 20px;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-8px);
-            }
+            margin-bottom: 16px;
         }
 
         .welcome-logo-container svg {
-            width: 60px;
-            height: 60px;
+            width: 40px;
+            height: 40px;
         }
 
         .welcome-logo-container svg path {
@@ -123,87 +104,112 @@
         }
 
         .welcome-title {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 12px;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
             color: var(--text-primary);
-            letter-spacing: -0.5px;
+            letter-spacing: -0.3px;
         }
 
         .welcome-subtitle {
-            font-size: 15px;
+            font-size: 14px;
             color: var(--text-secondary);
-            margin-bottom: 32px;
             line-height: 1.5;
+            margin: 0;
         }
 
         .welcome-features-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 32px;
+            display: flex;
+            gap: 0;
+            justify-content: center;
+            align-items: stretch;
+            flex-shrink: 0;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
         }
 
         .welcome-feature-item {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 16px 12px;
-            transition: all 0.3s ease;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 16px;
+            gap: 10px;
+            border-right: 1px solid var(--border);
+            transition: background 0.2s ease;
+        }
+
+        .welcome-feature-item:last-child {
+            border-right: none;
         }
 
         .welcome-feature-item:hover {
-            border-color: var(--primary);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(200, 255, 0, 0.1);
+            background: var(--bg-card);
         }
 
         .welcome-feature-icon {
             width: 40px;
             height: 40px;
-            background: rgba(200, 255, 0, 0.1);
-            border-radius: var(--radius-md);
+            background: transparent;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 12px;
+            margin: 0;
         }
 
         .welcome-feature-icon svg {
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             color: var(--primary);
         }
 
         .welcome-feature-title {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
-            margin-bottom: 6px;
+            margin: 0;
             color: var(--text-primary);
         }
 
         .welcome-feature-description {
             font-size: 11px;
-            color: var(--text-tertiary);
-            line-height: 1.4;
+            color: var(--text-secondary);
+            line-height: 1.3;
+            margin: 0;
         }
 
         .welcome-cta-buttons {
             display: flex;
             gap: 12px;
             justify-content: center;
-            flex-wrap: wrap;
+            flex-shrink: 0;
+        }
+
+        .welcome-cta-buttons .btn {
+            padding: 10px 24px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .welcome-cta-buttons .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .welcome-cta-buttons .btn-secondary:hover {
+            background: var(--bg-hover);
+            border-color: var(--text-tertiary);
         }
 
         .welcome-version-badge {
             display: inline-block;
-            background: rgba(200, 255, 0, 0.1);
-            color: var(--primary);
-            padding: 4px 10px;
-            border-radius: 20px;
+            background: transparent;
+            color: var(--text-tertiary);
+            padding: 0;
             font-size: 11px;
-            font-weight: 600;
-            margin-bottom: 16px;
+            font-weight: 400;
+            margin-bottom: 12px;
+            border: none;
         }
 
         .app-container {
@@ -963,17 +969,19 @@
     <!-- Welcome Screen -->
     <div class="welcome-screen" id="welcomeScreen">
         <div class="welcome-card">
-            <div class="welcome-logo-container">
-                <svg viewBox="0 0 92 92" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M46 82.225C46 84.448 44.1934 86.2709 41.9816 86.0489C35.4407 85.3927 29.1381 83.1415 23.6383 79.4667C17.0192 75.0439 11.8603 68.7577 8.81387 61.403C5.76744 54.0483 4.97036 45.9554 6.52341 38.1476C8.07647 30.3399 11.9099 23.168 17.539 17.539C23.168 11.9099 30.3399 8.07646 38.1476 6.52341C45.9554 4.97036 54.0483 5.76744 61.403 8.81387C68.7578 11.8603 75.0439 17.0192 79.4667 23.6383C83.1415 29.1381 85.3927 35.4407 86.0489 41.9816C86.2709 44.1934 84.448 46 82.225 46V46C80.0021 46 78.2259 44.191 77.9488 41.9854C77.3273 37.0394 75.5631 32.2859 72.7733 28.1107C69.2352 22.8154 64.2062 18.6882 58.3224 16.2511C52.4386 13.814 45.9643 13.1763 39.7181 14.4187C33.4719 15.6612 27.7344 18.7279 23.2312 23.2312C18.7279 27.7344 15.6612 33.4719 14.4187 39.7181C13.1763 45.9643 13.814 52.4386 16.2511 58.3224C18.6882 64.2062 22.8154 69.2352 28.1107 72.7733C32.2859 75.5631 37.0394 77.3273 41.9854 77.9488C44.191 78.2259 46 80.0021 46 82.225V82.225Z" fill="white"/>
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M70.8811 49.8738C69.7147 44.6855 62.416 44.7179 61.2942 49.9163L61.2515 50.1146L61.1682 50.4994C59.9448 56.0557 55.539 60.3194 50.0046 61.2959C44.6651 62.2381 44.6652 70.0119 50.0046 70.9541C55.5583 71.9339 59.9755 76.2241 61.1809 81.809L61.2942 82.3337C62.416 87.5321 69.7147 87.5645 70.8811 82.3762L71.019 81.7647C72.27 76.1998 76.6939 71.941 82.2386 70.9627C87.5871 70.0189 87.5871 62.2311 82.2386 61.2873C76.7234 60.3142 72.317 56.0952 71.039 50.5738C71.0033 50.4195 70.9701 50.272 70.9344 50.1114L70.8811 49.8738Z" fill="white"/>
-                </svg>
+            <div class="welcome-header">
+                <div class="welcome-logo-container">
+                    <svg viewBox="0 0 92 92" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M46 82.225C46 84.448 44.1934 86.2709 41.9816 86.0489C35.4407 85.3927 29.1381 83.1415 23.6383 79.4667C17.0192 75.0439 11.8603 68.7577 8.81387 61.403C5.76744 54.0483 4.97036 45.9554 6.52341 38.1476C8.07647 30.3399 11.9099 23.168 17.539 17.539C23.168 11.9099 30.3399 8.07646 38.1476 6.52341C45.9554 4.97036 54.0483 5.76744 61.403 8.81387C68.7578 11.8603 75.0439 17.0192 79.4667 23.6383C83.1415 29.1381 85.3927 35.4407 86.0489 41.9816C86.2709 44.1934 84.448 46 82.225 46V46C80.0021 46 78.2259 44.191 77.9488 41.9854C77.3273 37.0394 75.5631 32.2859 72.7733 28.1107C69.2352 22.8154 64.2062 18.6882 58.3224 16.2511C52.4386 13.814 45.9643 13.1763 39.7181 14.4187C33.4719 15.6612 27.7344 18.7279 23.2312 23.2312C18.7279 27.7344 15.6612 33.4719 14.4187 39.7181C13.1763 45.9643 13.814 52.4386 16.2511 58.3224C18.6882 64.2062 22.8154 69.2352 28.1107 72.7733C32.2859 75.5631 37.0394 77.3273 41.9854 77.9488C44.191 78.2259 46 80.0021 46 82.225V82.225Z" fill="white"/>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M70.8811 49.8738C69.7147 44.6855 62.416 44.7179 61.2942 49.9163L61.2515 50.1146L61.1682 50.4994C59.9448 56.0557 55.539 60.3194 50.0046 61.2959C44.6651 62.2381 44.6652 70.0119 50.0046 70.9541C55.5583 71.9339 59.9755 76.2241 61.1809 81.809L61.2942 82.3337C62.416 87.5321 69.7147 87.5645 70.8811 82.3762L71.019 81.7647C72.27 76.1998 76.6939 71.941 82.2386 70.9627C87.5871 70.0189 87.5871 62.2311 82.2386 61.2873C76.7234 60.3142 72.317 56.0952 71.039 50.5738C71.0033 50.4195 70.9701 50.272 70.9344 50.1114L70.8811 49.8738Z" fill="white"/>
+                    </svg>
+                </div>
+
+                <div class="welcome-version-badge">Version 1.0</div>
+
+                <h1 class="welcome-title">Design System Maker</h1>
+                <p class="welcome-subtitle">Create and manage design tokens for Figma</p>
             </div>
-
-            <div class="welcome-version-badge">v1.0.0</div>
-
-            <h1 class="welcome-title">Welcome to Design System Maker</h1>
-            <p class="welcome-subtitle">Create, manage, and export design tokens with ease. Build consistent design systems for your Figma projects.</p>
 
             <div class="welcome-features-grid">
                 <div class="welcome-feature-item">
@@ -982,8 +990,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
                         </svg>
                     </div>
-                    <div class="welcome-feature-title">Color Tokens</div>
-                    <div class="welcome-feature-description">Define and manage color palettes with shades and variants</div>
+                    <div class="welcome-feature-title">Colors</div>
+                    <div class="welcome-feature-description">Palettes & shades</div>
                 </div>
 
                 <div class="welcome-feature-item">
@@ -993,7 +1001,7 @@
                         </svg>
                     </div>
                     <div class="welcome-feature-title">Typography</div>
-                    <div class="welcome-feature-description">Configure fonts, sizes, and text styles</div>
+                    <div class="welcome-feature-description">Fonts & scales</div>
                 </div>
 
                 <div class="welcome-feature-item">
@@ -1003,7 +1011,7 @@
                         </svg>
                     </div>
                     <div class="welcome-feature-title">Spacing</div>
-                    <div class="welcome-feature-description">Create consistent spacing scales</div>
+                    <div class="welcome-feature-description">Consistent sizing</div>
                 </div>
 
                 <div class="welcome-feature-item">
@@ -1012,20 +1020,14 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                         </svg>
                     </div>
-                    <div class="welcome-feature-title">Export JSON</div>
-                    <div class="welcome-feature-description">Export design tokens as JSON for development</div>
+                    <div class="welcome-feature-title">Export</div>
+                    <div class="welcome-feature-description">JSON tokens</div>
                 </div>
             </div>
 
             <div class="welcome-cta-buttons">
                 <button class="btn btn-primary" onclick="startApp()">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                    </svg>
                     Get Started
-                </button>
-                <button class="btn btn-secondary" onclick="learnMore()">
-                    Learn More
                 </button>
             </div>
         </div>
