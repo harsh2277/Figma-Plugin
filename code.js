@@ -4,7 +4,7 @@
 figma.showUI(__html__, { width: 424, height: 700, themeColors: true });
 
 // Function to create button component set
-async function createButtonComponentSet(buttonText, bgColor, textColor, radius) {
+async function createButtonComponentSet(buttonText, bgColor, textColor, radius, docType = 'web') {
     // Load fonts
     await figma.loadFontAsync({ family: "Inter", style: "Medium" });
 
@@ -274,7 +274,11 @@ async function createButtonComponentSet(buttonText, bgColor, textColor, radius) 
 
     // Combine all components into a component set
     const componentSet = figma.combineAsVariants(components, figma.currentPage);
-    componentSet.name = "Button";
+    
+    // Format document type for display
+    const docTypeFormatted = docType.charAt(0).toUpperCase() + docType.slice(1);
+    componentSet.name = `Button - ${docTypeFormatted}`;
+    componentSet.description = `Button component set for ${docTypeFormatted} application`;
 
     // Remove auto-layout and set manual positioning
     componentSet.layoutMode = 'NONE';
@@ -314,7 +318,7 @@ async function createButtonComponentSet(buttonText, bgColor, textColor, radius) 
 }
 
 // Function to create input component set
-async function createInputComponentSet(placeholder, borderColor, primaryColor, textColor, radius) {
+async function createInputComponentSet(placeholder, borderColor, primaryColor, textColor, radius, docType = 'web') {
     // Load fonts
     await figma.loadFontAsync({ family: "Inter", style: "Regular" });
     await figma.loadFontAsync({ family: "Inter", style: "Medium" });
@@ -714,7 +718,11 @@ async function createInputComponentSet(placeholder, borderColor, primaryColor, t
 
     // Combine all components into a component set
     const componentSet = figma.combineAsVariants(components, figma.currentPage);
-    componentSet.name = "Input";
+    
+    // Format document type for display
+    const docTypeFormatted = docType.charAt(0).toUpperCase() + docType.slice(1);
+    componentSet.name = `Input - ${docTypeFormatted}`;
+    componentSet.description = `Input component set for ${docTypeFormatted} application`;
 
     // Remove auto-layout and set manual positioning
     componentSet.layoutMode = 'NONE';
@@ -797,7 +805,7 @@ figma.ui.onmessage = async (msg) => {
 
     if (msg.type === 'create-button-component') {
         try {
-            await createButtonComponentSet(msg.buttonText, msg.bgColor, msg.textColor, msg.radius);
+            await createButtonComponentSet(msg.buttonText, msg.bgColor, msg.textColor, msg.radius, msg.docType);
         } catch (error) {
             figma.notify(`❌ Error creating button component: ${error.message}`);
             console.error('Button component error:', error);
@@ -806,7 +814,7 @@ figma.ui.onmessage = async (msg) => {
 
     if (msg.type === 'create-input-component') {
         try {
-            await createInputComponentSet(msg.placeholder, msg.borderColor, msg.primaryColor, msg.textColor, msg.radius);
+            await createInputComponentSet(msg.placeholder, msg.borderColor, msg.primaryColor, msg.textColor, msg.radius, msg.docType);
         } catch (error) {
             figma.notify(`❌ Error creating input component: ${error.message}`);
             console.error('Input component error:', error);

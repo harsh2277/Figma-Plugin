@@ -676,6 +676,7 @@
             display: inline-block;
             width: 40px;
             height: 22px;
+            flex-shrink: 0;
         }
 
         .toggle-switch input {
@@ -691,9 +692,10 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: var(--border-dark);
+            background: var(--border-hover);
             border-radius: 22px;
             border: 1px solid var(--border);
+            transition: all 0.2s ease;
         }
 
         .toggle-slider:before {
@@ -705,6 +707,8 @@
             bottom: 2px;
             background: var(--bg-card);
             border-radius: 50%;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         .toggle-switch input:checked+.toggle-slider {
@@ -714,6 +718,10 @@
 
         .toggle-switch input:checked+.toggle-slider:before {
             transform: translateX(18px);
+        }
+
+        .toggle-switch:hover .toggle-slider {
+            border-color: var(--border-focus);
         }
 
         /* Range Slider Styling - Minimal */
@@ -1155,10 +1163,13 @@
                                         </div>
                                     </div>
                                     <div class="card-header-right">
-                                        <label class="toggle-switch" onclick="event.stopPropagation()">
-                                            <input type="checkbox" id="secondaryToggle" onchange="toggleSecondary(this.checked)">
-                                            <span class="toggle-slider"></span>
-                                        </label>
+                                        <div style="display: flex; align-items: center; gap: 8px;" onclick="event.stopPropagation()">
+                                            <span style="font-size: 11px; font-weight: 500; color: var(--text-secondary);">Enable</span>
+                                            <label class="toggle-switch">
+                                                <input type="checkbox" id="secondaryToggle" onchange="toggleSecondary(this.checked)">
+                                                <span class="toggle-slider"></span>
+                                            </label>
+                                        </div>
                                         <div style="display: flex; align-items: center; gap: 10px;" onclick="event.stopPropagation()">
                                             <span style="font-size: 11px; font-weight: 500; color: var(--text-secondary);">Shades</span>
                                             <select id="secondaryShadeCount" onchange="generateSecondaryShades(document.getElementById('secondaryColor').value)" style="padding: 6px 10px; border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 12px; cursor: pointer; background: var(--bg-card);" disabled>
@@ -1492,64 +1503,70 @@
                                     </svg>
                                 </div>
                                 <div class="card-body">
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
-                                        <!-- Left Column - Settings -->
-                                        <div>
-                                            <div style="margin-bottom: 16px;">
-                                                <label style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; display: block;">Button Text</label>
-                                                <input type="text" id="buttonText" value="Button" placeholder="Enter button text"
-                                                    oninput="updateButtonPreview()"
-                                                    style="width: 100%; padding: 8px 12px; background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13px;">
-                                            </div>
-
-                                            <div style="margin-bottom: 16px;">
-                                                <label style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; display: block;">Background Color</label>
-                                                <div style="display: flex; gap: 8px;">
-                                                    <input type="color" id="buttonBgColor" value="#0066FF" 
-                                                        oninput="updateButtonPreview(); document.getElementById('buttonBgColorHex').value = this.value.toUpperCase()"
-                                                        style="width: 40px; height: 40px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer;">
-                                                    <input type="text" id="buttonBgColorHex" value="#0066FF" maxlength="7"
-                                                        oninput="if(/^#[0-9A-F]{6}$/i.test(this.value)) { document.getElementById('buttonBgColor').value = this.value; updateButtonPreview(); }"
-                                                        style="flex: 1; padding: 0 12px; background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 12px; font-family: monospace; text-transform: uppercase;">
-                                                </div>
-                                            </div>
-
-                                            <div style="margin-bottom: 16px;">
-                                                <label style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; display: block;">Text Color</label>
-                                                <div style="display: flex; gap: 8px;">
-                                                    <input type="color" id="buttonTextColor" value="#ffffff"
-                                                        oninput="updateButtonPreview(); document.getElementById('buttonTextColorHex').value = this.value.toUpperCase()"
-                                                        style="width: 40px; height: 40px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer;">
-                                                    <input type="text" id="buttonTextColorHex" value="#FFFFFF" maxlength="7"
-                                                        oninput="if(/^#[0-9A-F]{6}$/i.test(this.value)) { document.getElementById('buttonTextColor').value = this.value; updateButtonPreview(); }"
-                                                        style="flex: 1; padding: 0 12px; background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 12px; font-family: monospace; text-transform: uppercase;">
-                                                </div>
-                                            </div>
-
-                                            <div style="margin-bottom: 20px;">
-                                                <label style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; display: flex; justify-content: space-between;">
-                                                    <span>Border Radius</span>
-                                                    <span id="radiusValue" style="font-size: 11px; color: var(--text-secondary);">8px</span>
-                                                </label>
-                                                <input type="range" id="buttonRadius" value="8" min="0" max="50" step="1"
-                                                    oninput="document.getElementById('radiusValue').textContent = this.value + 'px'; updateButtonPreview(); updateRangeSlider(this)"
-                                                    style="width: 100%;">
-                                            </div>
-
-                                            <button class="btn btn-primary" onclick="createButtonComponent()" style="width: 100%;">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                                                </svg>
-                                                Create Button Component
-                                            </button>
+                                    <!-- Full Width Layout -->
+                                    <div style="max-width: 600px; margin: 0 auto;">
+                                        <!-- Button Text -->
+                                        <div style="margin-bottom: 20px;">
+                                            <label style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; display: block;">Button Text</label>
+                                            <input type="text" id="buttonText" value="Button" placeholder="Enter button text"
+                                                oninput="updateButtonPreview()"
+                                                style="width: 100%; padding: 10px 12px; background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 13px;">
                                         </div>
 
-                                        <!-- Right Column - Live Preview -->
-                                        <div style="background: var(--bg-hover); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 32px; display: flex; align-items: center; justify-content: center; min-height: 280px;">
-                                            <button id="buttonPreview" style="padding: 12px 24px; font-size: 14px; font-weight: 500; border: none; cursor: default; transition: all 0.2s ease;">
+                                        <!-- Color Settings Row -->
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+                                            <!-- Background Color -->
+                                            <div>
+                                                <label style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; display: block;">Background Color</label>
+                                                <div style="display: flex; gap: 8px; align-items: center;">
+                                                    <input type="color" id="buttonBgColor" value="#0066FF" 
+                                                        oninput="updateButtonPreview(); document.getElementById('buttonBgColorHex').value = this.value.toUpperCase()"
+                                                        style="width: 48px; height: 48px; border: 1px solid var(--border); border-radius: var(--radius-md); cursor: pointer;">
+                                                    <input type="text" id="buttonBgColorHex" value="#0066FF" maxlength="7"
+                                                        oninput="if(/^#[0-9A-F]{6}$/i.test(this.value)) { document.getElementById('buttonBgColor').value = this.value; updateButtonPreview(); }"
+                                                        style="flex: 1; padding: 0 12px; height: 48px; background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 12px; font-family: monospace; text-transform: uppercase; text-align: center;">
+                                                </div>
+                                            </div>
+
+                                            <!-- Text Color -->
+                                            <div>
+                                                <label style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; display: block;">Text Color</label>
+                                                <div style="display: flex; gap: 8px; align-items: center;">
+                                                    <input type="color" id="buttonTextColor" value="#ffffff"
+                                                        oninput="updateButtonPreview(); document.getElementById('buttonTextColorHex').value = this.value.toUpperCase()"
+                                                        style="width: 48px; height: 48px; border: 1px solid var(--border); border-radius: var(--radius-md); cursor: pointer;">
+                                                    <input type="text" id="buttonTextColorHex" value="#FFFFFF" maxlength="7"
+                                                        oninput="if(/^#[0-9A-F]{6}$/i.test(this.value)) { document.getElementById('buttonTextColor').value = this.value; updateButtonPreview(); }"
+                                                        style="flex: 1; padding: 0 12px; height: 48px; background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 12px; font-family: monospace; text-transform: uppercase; text-align: center;">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Border Radius -->
+                                        <div style="margin-bottom: 24px;">
+                                            <label style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; display: flex; justify-content: space-between;">
+                                                <span>Border Radius</span>
+                                                <span id="radiusValue" style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">8px</span>
+                                            </label>
+                                            <input type="range" id="buttonRadius" value="8" min="0" max="50" step="1"
+                                                oninput="document.getElementById('radiusValue').textContent = this.value + 'px'; updateButtonPreview(); updateRangeSlider(this)"
+                                                style="width: 100%;">
+                                        </div>
+
+                                        <!-- Live Preview -->
+                                        <div style="background: var(--bg-hover); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 40px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                                            <button id="buttonPreview" style="padding: 12px 28px; font-size: 14px; font-weight: 500; border: none; cursor: default; transition: all 0.2s ease; box-shadow: var(--shadow-sm);">
                                                 Button
                                             </button>
                                         </div>
+
+                                        <!-- Create Button -->
+                                        <button class="btn btn-primary" onclick="createButtonComponent()" style="width: 100%; padding: 14px 24px; font-size: 14px;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                                            </svg>
+                                            Create Button Component
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -1569,63 +1586,83 @@
                                     </svg>
                                 </div>
                                 <div class="card-body">
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
-                                        <!-- Left Column - Settings -->
-                                        <div>
-                                            <div style="margin-bottom: 16px;">
-                                                <label style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; display: block;">Placeholder Text</label>
-                                                <input type="text" id="inputPlaceholder" value="Enter text..." placeholder="Enter placeholder"
-                                                    oninput="updateInputPreview()"
-                                                    style="width: 100%; padding: 8px 12px; background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13px;">
-                                            </div>
+                                    <!-- Full Width Layout -->
+                                    <div style="max-width: 600px; margin: 0 auto;">
 
-                                            <div style="margin-bottom: 16px;">
+                                        <!-- Placeholder Text -->
+                                        <div style="margin-bottom: 20px;">
+                                            <label style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; display: block;">Placeholder Text</label>
+                                            <input type="text" id="inputPlaceholder" value="Enter text..." placeholder="Enter placeholder"
+                                                oninput="updateInputPreview()"
+                                                style="width: 100%; padding: 10px 12px; background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 13px;">
+                                        </div>
+
+                                        <!-- Primary Color -->
+                                        <div style="margin-bottom: 20px;">
+                                            <label style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; display: block;">Primary Color (Focus State)</label>
+                                            <div style="display: flex; gap: 8px; align-items: center;">
+                                                <input type="color" id="inputPrimaryColor" value="#0066FF"
+                                                    oninput="updateInputPreview(); document.getElementById('inputPrimaryColorHex').value = this.value.toUpperCase()"
+                                                    style="width: 48px; height: 48px; border: 1px solid var(--border); border-radius: var(--radius-md); cursor: pointer;">
+                                                <input type="text" id="inputPrimaryColorHex" value="#0066FF" maxlength="7"
+                                                    oninput="if(/^#[0-9A-F]{6}$/i.test(this.value)) { document.getElementById('inputPrimaryColor').value = this.value; updateInputPreview(); }"
+                                                    style="flex: 1; padding: 0 12px; height: 48px; background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 12px; font-family: monospace; text-transform: uppercase; text-align: center;">
+                                            </div>
+                                        </div>
+
+                                        <!-- Color Settings Row -->
+                                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+                                            <!-- Border Color -->
+                                            <div>
                                                 <label style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; display: block;">Border Color</label>
-                                                <div style="display: flex; gap: 8px;">
+                                                <div style="display: flex; gap: 8px; align-items: center;">
                                                     <input type="color" id="inputBorderColor" value="#d1d5db"
                                                         oninput="updateInputPreview(); document.getElementById('inputBorderColorHex').value = this.value.toUpperCase()"
-                                                        style="width: 40px; height: 40px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer;">
+                                                        style="width: 48px; height: 48px; border: 1px solid var(--border); border-radius: var(--radius-md); cursor: pointer;">
                                                     <input type="text" id="inputBorderColorHex" value="#D1D5DB" maxlength="7"
                                                         oninput="if(/^#[0-9A-F]{6}$/i.test(this.value)) { document.getElementById('inputBorderColor').value = this.value; updateInputPreview(); }"
-                                                        style="flex: 1; padding: 0 12px; background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 12px; font-family: monospace; text-transform: uppercase;">
+                                                        style="flex: 1; padding: 0 12px; height: 48px; background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 12px; font-family: monospace; text-transform: uppercase; text-align: center;">
                                                 </div>
                                             </div>
 
-                                            <div style="margin-bottom: 16px;">
+                                            <!-- Text Color -->
+                                            <div>
                                                 <label style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; display: block;">Text Color</label>
-                                                <div style="display: flex; gap: 8px;">
+                                                <div style="display: flex; gap: 8px; align-items: center;">
                                                     <input type="color" id="inputTextColor" value="#1a1a1a"
                                                         oninput="updateInputPreview(); document.getElementById('inputTextColorHex').value = this.value.toUpperCase()"
-                                                        style="width: 40px; height: 40px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer;">
+                                                        style="width: 48px; height: 48px; border: 1px solid var(--border); border-radius: var(--radius-md); cursor: pointer;">
                                                     <input type="text" id="inputTextColorHex" value="#1A1A1A" maxlength="7"
                                                         oninput="if(/^#[0-9A-F]{6}$/i.test(this.value)) { document.getElementById('inputTextColor').value = this.value; updateInputPreview(); }"
-                                                        style="flex: 1; padding: 0 12px; background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 12px; font-family: monospace; text-transform: uppercase;">
+                                                        style="flex: 1; padding: 0 12px; height: 48px; background: var(--bg-card); color: var(--text-primary); border: 1px solid var(--border); border-radius: var(--radius-md); font-size: 12px; font-family: monospace; text-transform: uppercase; text-align: center;">
                                                 </div>
                                             </div>
-
-                                            <div style="margin-bottom: 20px;">
-                                                <label style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; display: flex; justify-content: space-between;">
-                                                    <span>Border Radius</span>
-                                                    <span id="inputRadiusValue" style="font-size: 11px; color: var(--text-secondary);">6px</span>
-                                                </label>
-                                                <input type="range" id="inputRadius" value="6" min="0" max="50" step="1"
-                                                    oninput="document.getElementById('inputRadiusValue').textContent = this.value + 'px'; updateInputPreview(); updateRangeSlider(this)"
-                                                    style="width: 100%;">
-                                            </div>
-
-                                            <button class="btn btn-primary" onclick="createInputComponent()" style="width: 100%;">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                                                </svg>
-                                                Create Input Component
-                                            </button>
                                         </div>
 
-                                        <!-- Right Column - Live Preview -->
-                                        <div style="background: var(--bg-hover); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 32px; display: flex; align-items: center; justify-content: center; min-height: 280px;">
+                                        <!-- Border Radius -->
+                                        <div style="margin-bottom: 24px;">
+                                            <label style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 6px; display: flex; justify-content: space-between;">
+                                                <span>Border Radius</span>
+                                                <span id="inputRadiusValue" style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">6px</span>
+                                            </label>
+                                            <input type="range" id="inputRadius" value="6" min="0" max="50" step="1"
+                                                oninput="document.getElementById('inputRadiusValue').textContent = this.value + 'px'; updateInputPreview(); updateRangeSlider(this)"
+                                                style="width: 100%;">
+                                        </div>
+
+                                        <!-- Live Preview -->
+                                        <div style="background: var(--bg-hover); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 40px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
                                             <input id="inputPreview" type="text" placeholder="Enter text..." readonly
-                                                style="width: 100%; max-width: 320px; padding: 12px 16px; font-size: 14px; background: white; cursor: default; transition: all 0.2s ease;">
+                                                style="width: 100%; max-width: 400px; padding: 12px 16px; font-size: 14px; background: white; cursor: default; transition: all 0.2s ease; box-shadow: var(--shadow-sm);">
                                         </div>
+
+                                        <!-- Create Button -->
+                                        <button class="btn btn-primary" onclick="createInputComponent()" style="width: 100%; padding: 14px 24px; font-size: 14px;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                                            </svg>
+                                            Create Input Component
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -2566,6 +2603,7 @@
             const textColor = document.getElementById('buttonTextColor').value;
             const radiusValue = document.getElementById('buttonRadius').value;
             const radius = radiusValue !== '' ? parseInt(radiusValue) : 8;
+            const docType = document.getElementById('buttonDocType').value || 'web';
 
             // Send message to Figma plugin
             parent.postMessage({
@@ -2574,7 +2612,8 @@
                     buttonText: buttonText,
                     bgColor: bgColor,
                     textColor: textColor,
-                    radius: radius
+                    radius: radius,
+                    docType: docType
                 }
             }, '*');
         }
@@ -2583,11 +2622,12 @@
         function createInputComponent() {
             const placeholder = document.getElementById('inputPlaceholder').value || 'Enter text...';
             const borderColor = document.getElementById('inputBorderColor').value;
-            // Get primary color from Foundations tab
-            const primaryColor = document.getElementById('primaryColor').value;
+            // Get primary color from input component section
+            const primaryColor = document.getElementById('inputPrimaryColor') ? document.getElementById('inputPrimaryColor').value : document.getElementById('primaryColor').value;
             const textColor = document.getElementById('inputTextColor').value;
             const radiusValue = document.getElementById('inputRadius').value;
             const radius = radiusValue !== '' ? parseInt(radiusValue) : 6;
+            const docType = document.getElementById('inputDocType').value || 'web';
 
             // Send message to Figma plugin
             parent.postMessage({
@@ -2597,7 +2637,8 @@
                     borderColor: borderColor,
                     primaryColor: primaryColor,
                     textColor: textColor,
-                    radius: radius
+                    radius: radius,
+                    docType: docType
                 }
             }, '*');
         }
@@ -2706,7 +2747,7 @@
             html += '<div>';
             html += '<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px;">';
             html += '<label style="font-size: 11px; font-weight: 600; color: var(--text-primary);">Secondary Font</label>';
-            html += '<label class="toggle-switch"><input type="checkbox" id="secondaryToggle" ' + (state.typography.secondaryEnabled ? 'checked' : '') + ' onchange="toggleSecondaryFont(this.checked)"><span class="toggle-slider"></span></label>';
+            html += '<label class="toggle-switch"><input type="checkbox" id="secondaryFontToggle" ' + (state.typography.secondaryEnabled ? 'checked' : '') + ' onchange="toggleSecondaryFont(this.checked)"><span class="toggle-slider"></span></label>';
             html += '</div>';
             html += '<input type="text" id="secondaryFontInput" value="' + (state.typography.secondaryFont || '') + '" placeholder="e.g., Poppins" onchange="updateSecondaryFont(this.value)" style="width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; background: var(--bg-card); color: var(--text-primary); opacity: ' + (state.typography.secondaryEnabled ? '1' : '0.4') + '; pointer-events: ' + (state.typography.secondaryEnabled ? 'auto' : 'none') + ';">';
             html += '</div>';
