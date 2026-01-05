@@ -1,7 +1,7 @@
 // Figma plugin backend code
 // Import icon data
 // Note: In Figma plugins, we need to pass icon data through the UI
-figma.showUI(__html__, { width: 524, height: 800, themeColors: true });
+figma.showUI(__html__, { width: 424, height: 700, themeColors: true });
 
 // Function to create button component set
 async function createButtonComponentSet(buttonText, bgColor, textColor, radius) {
@@ -773,6 +773,10 @@ async function createInputComponentSet(placeholder, borderColor, primaryColor, t
 
 // Handle messages from the UI
 figma.ui.onmessage = async (msg) => {
+    if (msg.type === 'resize-window') {
+        figma.ui.resize(msg.width, msg.height);
+    }
+
     if (msg.type === 'copy-to-clipboard') {
         // Figma doesn't support clipboard API directly, so we'll handle this in the UI
         figma.ui.postMessage({ type: 'clipboard-ready' });
