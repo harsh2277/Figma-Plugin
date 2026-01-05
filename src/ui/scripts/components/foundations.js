@@ -10,6 +10,7 @@ function renderFoundations() {
   container.innerHTML =
     renderColorsSection() +
     renderSpacingSection() +
+    renderPaddingSection() +
     renderRadiusSection() +
     renderTypographySection() +
     renderShadowsSection();
@@ -56,12 +57,14 @@ function renderSpacingSection() {
   html += '<div class="section-title">📏 Spacing System</div>';
   html += '<div class="section-toggle">▼</div></div>';
   html += '<div class="section-content"><table class="token-table"><thead><tr>';
-  html += '<th>Token Name</th><th>Value (px)</th><th>Description</th><th>Actions</th>';
+  html += '<th>Token Name</th><th>Desktop (px)</th><th>Tablet (px)</th><th>Mobile (px)</th><th>Description</th><th>Actions</th>';
   html += '</tr></thead><tbody>';
 
   Object.entries(state.spacing).forEach(([key, data]) => {
     html += '<tr><td><input class="form-input" value="' + key + '" data-spacing-key="' + key + '" onchange="updateSpacingKey(this)"/></td>';
     html += '<td><input type="number" class="form-input" value="' + data.value + '" data-spacing="' + key + '" onchange="updateSpacing(this)"/></td>';
+    html += '<td><input type="number" class="form-input" value="' + (data.tablet || data.value) + '" data-spacing-tablet="' + key + '" onchange="updateSpacingTablet(this)"/></td>';
+    html += '<td><input type="number" class="form-input" value="' + (data.mobile || data.value) + '" data-spacing-mobile="' + key + '" onchange="updateSpacingMobile(this)"/></td>';
     html += '<td><input class="form-input" placeholder="Description" value="' + (data.description || '') + '" data-spacing-desc="' + key + '" onchange="updateSpacingDesc(this)"/></td>';
     html += '<td><button class="btn btn-sm btn-danger" onclick="deleteSpacing(\'' + key + '\')">Delete</button></td></tr>';
   });
@@ -80,15 +83,43 @@ function renderRadiusSection() {
   html += '<div class="section-title">⭕ Radius System</div>';
   html += '<div class="section-toggle">▼</div></div>';
   html += '<div class="section-content"><table class="token-table"><thead><tr>';
-  html += '<th>Token Name</th><th>Value (px)</th><th>Description</th></tr></thead><tbody>';
+  html += '<th>Token Name</th><th>Desktop (px)</th><th>Tablet (px)</th><th>Mobile (px)</th><th>Description</th></tr></thead><tbody>';
 
   Object.entries(state.radius).forEach(([key, data]) => {
     html += '<tr><td>' + key + '</td>';
     html += '<td><input type="number" class="form-input" value="' + data.value + '" data-radius="' + key + '" onchange="updateRadius(this)"/></td>';
+    html += '<td><input type="number" class="form-input" value="' + (data.tablet || data.value) + '" data-radius-tablet="' + key + '" onchange="updateRadiusTablet(this)"/></td>';
+    html += '<td><input type="number" class="form-input" value="' + (data.mobile || data.value) + '" data-radius-mobile="' + key + '" onchange="updateRadiusMobile(this)"/></td>';
     html += '<td><input class="form-input" placeholder="Description" value="' + (data.description || '') + '" data-radius-desc="' + key + '" onchange="updateRadiusDesc(this)"/></td></tr>';
   });
 
   html += '</tbody></table></div></div>';
+  return html;
+}
+
+/**
+ * Render padding section
+ */
+function renderPaddingSection() {
+  let html = '<div class="section collapsed"><div class="section-header" onclick="toggleSection(this)">';
+  html += '<div class="section-title">📦 Padding System</div>';
+  html += '<div class="section-toggle">▼</div></div>';
+  html += '<div class="section-content"><table class="token-table"><thead><tr>';
+  html += '<th>Token Name</th><th>Desktop (px)</th><th>Tablet (px)</th><th>Mobile (px)</th><th>Description</th><th>Actions</th>';
+  html += '</tr></thead><tbody>';
+
+  Object.entries(state.padding).forEach(([key, data]) => {
+    html += '<tr><td><input class="form-input" value="' + key + '" data-padding-key="' + key + '" onchange="updatePaddingKey(this)"/></td>';
+    html += '<td><input type="number" class="form-input" value="' + data.value + '" data-padding="' + key + '" onchange="updatePadding(this)"/></td>';
+    html += '<td><input type="number" class="form-input" value="' + (data.tablet || data.value) + '" data-padding-tablet="' + key + '" onchange="updatePaddingTablet(this)"/></td>';
+    html += '<td><input type="number" class="form-input" value="' + (data.mobile || data.value) + '" data-padding-mobile="' + key + '" onchange="updatePaddingMobile(this)"/></td>';
+    html += '<td><input class="form-input" placeholder="Description" value="' + (data.description || '') + '" data-padding-desc="' + key + '" onchange="updatePaddingDesc(this)"/></td>';
+    html += '<td><button class="btn btn-sm btn-danger" onclick="deletePadding(\'' + key + '\')">Delete</button></td></tr>';
+  });
+
+  html += '</tbody></table>';
+  html += '<button class="btn btn-secondary mt-16" onclick="addPadding()">+ Add Padding</button>';
+  html += '</div></div>';
   return html;
 }
 
@@ -126,10 +157,12 @@ function renderShadowsSection() {
     html += '</div></div>';
   });
 
-  html += '<h4 class="form-label mb-16 mt-16" style="font-size: 13px; font-weight: 600;">Border Widths</h4>';
+  html += '<h4 class="form-label mb-16 mt-16" style="font-size: 13px; font-weight: 600;">Border Widths (Stroke)</h4>';
   Object.entries(state.borders.widths).forEach(([key, data]) => {
     html += '<div class="form-group"><div class="form-row">';
     html += '<div><label class="form-label">' + key + '</label><input type="number" class="form-input" value="' + data.value + '" data-border-width="' + key + '" onchange="updateBorderWidth(this)"/></div>';
+    html += '<div><label class="form-label">Tablet (px)</label><input type="number" class="form-input" value="' + (data.tablet || data.value) + '" data-border-width-tablet="' + key + '" onchange="updateBorderWidthTablet(this)"/></div>';
+    html += '<div><label class="form-label">Mobile (px)</label><input type="number" class="form-input" value="' + (data.mobile || data.value) + '" data-border-width-mobile="' + key + '" onchange="updateBorderWidthMobile(this)"/></div>';
     html += '<div><label class="form-label">Description</label><input class="form-input" placeholder="Description" value="' + (data.description || '') + '" data-border-width-desc="' + key + '" onchange="updateBorderWidthDesc(this)"/></div>';
     html += '</div></div>';
   });
@@ -146,6 +179,7 @@ if (typeof module !== 'undefined' && module.exports) {
     renderFoundations,
     renderColorsSection,
     renderSpacingSection,
+    renderPaddingSection,
     renderRadiusSection,
     renderTypographySection,
     renderShadowsSection

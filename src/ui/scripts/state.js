@@ -22,26 +22,40 @@ const state = {
   },
   
   spacing: {
-    'spacing-0': { value: 0, description: 'No spacing' },
-    'spacing-1': { value: 4, description: 'Extra small' },
-    'spacing-2': { value: 8, description: 'Small' },
-    'spacing-3': { value: 12, description: '' },
-    'spacing-4': { value: 16, description: 'Medium' },
-    'spacing-5': { value: 20, description: '' },
-    'spacing-6': { value: 24, description: 'Large' },
-    'spacing-7': { value: 32, description: '' },
-    'spacing-8': { value: 40, description: 'Extra large' },
-    'spacing-9': { value: 48, description: '' },
-    'spacing-10': { value: 64, description: 'XXL' }
+    'spacing-0': { value: 0, mobile: 0, tablet: 0, description: 'No spacing' },
+    'spacing-1': { value: 4, mobile: 4, tablet: 4, description: 'Extra small' },
+    'spacing-2': { value: 8, mobile: 6, tablet: 8, description: 'Small' },
+    'spacing-3': { value: 12, mobile: 10, tablet: 12, description: '' },
+    'spacing-4': { value: 16, mobile: 12, tablet: 16, description: 'Medium' },
+    'spacing-5': { value: 20, mobile: 16, tablet: 20, description: '' },
+    'spacing-6': { value: 24, mobile: 20, tablet: 24, description: 'Large' },
+    'spacing-7': { value: 32, mobile: 24, tablet: 32, description: '' },
+    'spacing-8': { value: 40, mobile: 32, tablet: 40, description: 'Extra large' },
+    'spacing-9': { value: 48, mobile: 40, tablet: 48, description: '' },
+    'spacing-10': { value: 64, mobile: 48, tablet: 64, description: 'XXL' }
+  },
+  
+  padding: {
+    'padding-0': { value: 0, mobile: 0, tablet: 0, description: 'No padding' },
+    'padding-1': { value: 4, mobile: 4, tablet: 4, description: 'Extra small' },
+    'padding-2': { value: 8, mobile: 6, tablet: 8, description: 'Small' },
+    'padding-3': { value: 12, mobile: 10, tablet: 12, description: '' },
+    'padding-4': { value: 16, mobile: 12, tablet: 16, description: 'Medium' },
+    'padding-5': { value: 20, mobile: 16, tablet: 20, description: '' },
+    'padding-6': { value: 24, mobile: 20, tablet: 24, description: 'Large' },
+    'padding-7': { value: 32, mobile: 24, tablet: 32, description: '' },
+    'padding-8': { value: 40, mobile: 32, tablet: 40, description: 'Extra large' },
+    'padding-9': { value: 48, mobile: 40, tablet: 48, description: '' },
+    'padding-10': { value: 64, mobile: 48, tablet: 64, description: 'XXL' }
   },
   
   radius: {
-    none: { value: 0, description: 'No radius' },
-    sm: { value: 4, description: 'Small radius' },
-    md: { value: 6, description: 'Medium radius' },
-    lg: { value: 8, description: 'Large radius' },
-    xl: { value: 12, description: 'Extra large radius' },
-    full: { value: 9999, description: 'Fully rounded' }
+    none: { value: 0, mobile: 0, tablet: 0, description: 'No radius' },
+    sm: { value: 4, mobile: 4, tablet: 4, description: 'Small radius' },
+    md: { value: 6, mobile: 6, tablet: 6, description: 'Medium radius' },
+    lg: { value: 8, mobile: 8, tablet: 8, description: 'Large radius' },
+    xl: { value: 12, mobile: 10, tablet: 12, description: 'Extra large radius' },
+    full: { value: 9999, mobile: 9999, tablet: 9999, description: 'Fully rounded' }
   },
   
   typography: {
@@ -72,9 +86,9 @@ const state = {
   
   borders: {
     widths: {
-      thin: { value: 1, description: 'Thin border' },
-      medium: { value: 2, description: 'Medium border' },
-      thick: { value: 4, description: 'Thick border' }
+      thin: { value: 1, mobile: 1, tablet: 1, description: 'Thin border' },
+      medium: { value: 2, mobile: 2, tablet: 2, description: 'Medium border' },
+      thick: { value: 4, mobile: 3, tablet: 4, description: 'Thick border' }
     },
     styles: ['solid', 'dashed', 'dotted']
   },

@@ -1057,7 +1057,7 @@
                                                  <option value="15">15</option>
                                                 <option value="20">20</option>
                                                  <option value="25">25</option>
-                                                <option value="30">00</option>
+                                                <option value="30">30</option>
                                             </select>
                                         </div>
                                         <input type="color" id="primaryColor" value="#0066FF" onchange="generatePrimaryShades(this.value)" onclick="event.stopPropagation()" style="width: 32px; height: 32px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer;">
@@ -1095,7 +1095,7 @@
                                                  <option value="15">15</option>
                                                 <option value="20">20</option>
                                                  <option value="25">25</option>
-                                                <option value="30">00</option>
+                                                <option value="30">30</option>
                                             </select>
                                         </div>
                                         <input type="color" id="secondaryColor" value="#8b5cf6" onchange="generateSecondaryShades(this.value)" onclick="event.stopPropagation()" style="width: 32px; height: 32px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; opacity: 0.3;" disabled>
@@ -1129,7 +1129,7 @@
                                                  <option value="15">15</option>
                                                 <option value="20">20</option>
                                                  <option value="25">25</option>
-                                                <option value="30">00</option>
+                                                <option value="30">30</option>
                                             </select>
                                         </div>
                                         <svg class="collapse-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1238,6 +1238,26 @@
                                 </div>
                                 <div class="card-body">
                                     <div id="spacingPreview" class="spacing-list"></div>
+                                </div>
+                            </div>
+
+                            <!-- Padding Tokens -->
+                            <div class="card collapsed">
+                                <div class="card-header" onclick="toggleCard(this)">
+                                    <div class="card-title">Padding</div>
+                                    <div class="card-header-right">
+                                        <div style="display: flex; align-items: center; gap: 6px;" onclick="event.stopPropagation()">
+                                            <span style="font-size: 10px; font-weight: 500; color: var(--text-secondary);">Base</span>
+                                            <input type="number" id="paddingBaseUnit" value="4" min="1" max="16" onchange="generatePaddingTokens()" style="width: 45px; padding: 3px 6px; border: 1px solid var(--border); border-radius: 4px; font-size: 11px; text-align: center;">
+                                            <span style="font-size: 10px; color: var(--text-secondary);">px</span>
+                                        </div>
+                                        <svg class="collapse-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="6 9 12 15 18 9"></polyline>
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div id="paddingPreview" class="spacing-list"></div>
                                 </div>
                             </div>
 
@@ -1548,6 +1568,7 @@
             generateErrorShades(document.getElementById('errorColor').value);
             generateInfoShades(document.getElementById('infoColor').value);
             generateSpacingTokens();
+            generatePaddingTokens();
             generateRadiusTokens();
             generateShadowTokens();
             generateStrokeTokens();
@@ -1902,6 +1923,9 @@
             // Collect spacing data
             const spacingData = collectSpacingTokens();
 
+            // Collect padding data
+            const paddingData = collectPaddingTokens();
+
             // Collect radius data
             const radiusData = collectRadiusTokens();
 
@@ -1913,6 +1937,7 @@
 
             console.log('Collected color data:', colorData);
             console.log('Collected spacing data:', spacingData);
+            console.log('Collected padding data:', paddingData);
             console.log('Collected radius data:', radiusData);
             console.log('Collected shadow data:', shadowData);
             console.log('Collected stroke data:', strokeData);
@@ -1923,6 +1948,7 @@
                     type: 'create-variables',
                     colors: colorData,
                     spacing: spacingData,
+                    padding: paddingData,
                     radius: radiusData,
                     shadows: shadowData,
                     strokes: strokeData
@@ -2022,19 +2048,79 @@
             document.getElementById('spacingPreview').innerHTML = html;
         }
 
-        // Collect spacing tokens for variable creation
+        // Collect spacing tokens for variable creation with responsive values
         function collectSpacingTokens() {
             const baseUnit = parseInt(document.getElementById('spacingBaseUnit').value) || 4;
             const spacingValues = [0, 1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 48, 64];
 
             const spacing = {};
             spacingValues.forEach(multiplier => {
-                const value = multiplier * baseUnit;
+                const desktopValue = multiplier * baseUnit;
+                // Tablet: 80% of desktop value, rounded to even number
+                let tabletValue = Math.round(desktopValue * 0.8);
+                if (tabletValue % 2 !== 0 && tabletValue > 0) tabletValue = tabletValue + 1;
+                
+                // Mobile: 65% of desktop value, rounded to even number
+                let mobileValue = Math.round(desktopValue * 0.65);
+                if (mobileValue % 2 !== 0 && mobileValue > 0) mobileValue = mobileValue + 1;
+                
                 const tokenName = `spacing-${multiplier}`;
-                spacing[tokenName] = value;
+                spacing[tokenName] = {
+                    desktop: desktopValue,
+                    tablet: tabletValue,
+                    mobile: mobileValue
+                };
             });
 
             return spacing;
+        }
+
+        // Generate padding tokens
+        function generatePaddingTokens() {
+            const baseUnit = parseInt(document.getElementById('paddingBaseUnit').value) || 4;
+            const paddingValues = [0, 1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 48, 64];
+
+            let html = '';
+            paddingValues.forEach(multiplier => {
+                const value = multiplier * baseUnit;
+                const tokenName = `${multiplier}`;
+
+                html += `
+                    <div class="spacing-token" onclick="copyToClipboard('${value}px')" title="Click to copy ${value}px">
+                        <span class="spacing-token-name">padding/${tokenName}</span>
+                        <span class="spacing-token-value">${value}px</span>
+                    </div>
+                `;
+            });
+
+            document.getElementById('paddingPreview').innerHTML = html;
+        }
+
+        // Collect padding tokens for variable creation with responsive values
+        function collectPaddingTokens() {
+            const baseUnit = parseInt(document.getElementById('paddingBaseUnit').value) || 4;
+            const paddingValues = [0, 1, 2, 3, 4, 6, 8, 12, 16, 24, 32, 48, 64];
+
+            const padding = {};
+            paddingValues.forEach(multiplier => {
+                const desktopValue = multiplier * baseUnit;
+                // Tablet: 80% of desktop value, rounded to even number
+                let tabletValue = Math.round(desktopValue * 0.8);
+                if (tabletValue % 2 !== 0 && tabletValue > 0) tabletValue = tabletValue + 1;
+                
+                // Mobile: 65% of desktop value, rounded to even number
+                let mobileValue = Math.round(desktopValue * 0.65);
+                if (mobileValue % 2 !== 0 && mobileValue > 0) mobileValue = mobileValue + 1;
+                
+                const tokenName = `padding-${multiplier}`;
+                padding[tokenName] = {
+                    desktop: desktopValue,
+                    tablet: tabletValue,
+                    mobile: mobileValue
+                };
+            });
+
+            return padding;
         }
 
         // Generate radius tokens
@@ -2065,7 +2151,7 @@
             document.getElementById('radiusPreview').innerHTML = html;
         }
 
-        // Collect radius tokens for variable creation
+        // Collect radius tokens for variable creation with responsive values
         function collectRadiusTokens() {
             const radiusValues = [
                 { name: 'none', value: 0 },
@@ -2082,7 +2168,29 @@
             const radius = {};
             radiusValues.forEach(({ name, value }) => {
                 const tokenName = `radius-${name}`;
-                radius[tokenName] = value;
+                
+                if (value === 9999 || value === 0) {
+                    // Full and none stay the same across all devices
+                    radius[tokenName] = {
+                        desktop: value,
+                        tablet: value,
+                        mobile: value
+                    };
+                } else {
+                    // Tablet: 85% of desktop value, rounded to even number
+                    let tabletValue = Math.round(value * 0.85);
+                    if (tabletValue % 2 !== 0 && tabletValue > 0) tabletValue = tabletValue + 1;
+                    
+                    // Mobile: 75% of desktop value, rounded to even number
+                    let mobileValue = Math.round(value * 0.75);
+                    if (mobileValue % 2 !== 0 && mobileValue > 0) mobileValue = mobileValue + 1;
+                    
+                    radius[tokenName] = {
+                        desktop: value,
+                        tablet: tabletValue,
+                        mobile: mobileValue
+                    };
+                }
             });
 
             return radius;
@@ -2160,7 +2268,7 @@
             document.getElementById('strokePreview').innerHTML = html;
         }
 
-        // Collect stroke tokens for variable creation
+        // Collect stroke tokens for variable creation with responsive values
         function collectStrokeTokens() {
             const strokeValues = [
                 { name: 'none', value: 0 },
@@ -2174,7 +2282,25 @@
             const strokes = {};
             strokeValues.forEach(({ name, value }) => {
                 const tokenName = `stroke-${name}`;
-                strokes[tokenName] = value;
+                
+                if (value === 0) {
+                    // None stays 0 across all devices
+                    strokes[tokenName] = {
+                        desktop: value,
+                        tablet: value,
+                        mobile: value
+                    };
+                } else {
+                    // Tablet: same as desktop for stroke (borders should stay consistent)
+                    // Mobile: reduce by 1px if > 1, otherwise keep same
+                    const mobileValue = value > 1 ? value - 1 : value;
+                    
+                    strokes[tokenName] = {
+                        desktop: value,
+                        tablet: value,
+                        mobile: mobileValue
+                    };
+                }
             });
 
             return strokes;
@@ -3652,6 +3778,186 @@
                 }
             }
         });
+    </script>
+
+    <script>
+        // Handler functions for Foundations - Spacing, Padding, Radius, and Border Width updates
+
+        // Spacing handlers
+        function updateSpacing(input) {
+            const key = input.dataset.spacing;
+            const value = parseInt(input.value);
+            if (state.spacing[key]) {
+                state.spacing[key].value = value;
+            }
+        }
+
+        function updateSpacingTablet(input) {
+            const key = input.dataset.spacingTablet;
+            const value = parseInt(input.value);
+            if (state.spacing[key]) {
+                state.spacing[key].tablet = value;
+            }
+        }
+
+        function updateSpacingMobile(input) {
+            const key = input.dataset.spacingMobile;
+            const value = parseInt(input.value);
+            if (state.spacing[key]) {
+                state.spacing[key].mobile = value;
+            }
+        }
+
+        function updateSpacingKey(input) {
+            const oldKey = input.dataset.spacingKey;
+            const newKey = input.value;
+            if (oldKey !== newKey && state.spacing[oldKey]) {
+                state.spacing[newKey] = state.spacing[oldKey];
+                delete state.spacing[oldKey];
+                input.dataset.spacingKey = newKey;
+            }
+        }
+
+        function updateSpacingDesc(input) {
+            const key = input.dataset.spacingDesc;
+            if (state.spacing[key]) {
+                state.spacing[key].description = input.value;
+            }
+        }
+
+        function addSpacing() {
+            const count = Object.keys(state.spacing).length;
+            const newKey = `spacing-${count}`;
+            state.spacing[newKey] = { value: 0, mobile: 0, tablet: 0, description: '' };
+            renderFoundations();
+        }
+
+        function deleteSpacing(key) {
+            if (confirm(`Delete spacing token "${key}"?`)) {
+                delete state.spacing[key];
+                renderFoundations();
+            }
+        }
+
+        // Padding handlers
+        function updatePadding(input) {
+            const key = input.dataset.padding;
+            const value = parseInt(input.value);
+            if (state.padding[key]) {
+                state.padding[key].value = value;
+            }
+        }
+
+        function updatePaddingTablet(input) {
+            const key = input.dataset.paddingTablet;
+            const value = parseInt(input.value);
+            if (state.padding[key]) {
+                state.padding[key].tablet = value;
+            }
+        }
+
+        function updatePaddingMobile(input) {
+            const key = input.dataset.paddingMobile;
+            const value = parseInt(input.value);
+            if (state.padding[key]) {
+                state.padding[key].mobile = value;
+            }
+        }
+
+        function updatePaddingKey(input) {
+            const oldKey = input.dataset.paddingKey;
+            const newKey = input.value;
+            if (oldKey !== newKey && state.padding[oldKey]) {
+                state.padding[newKey] = state.padding[oldKey];
+                delete state.padding[oldKey];
+                input.dataset.paddingKey = newKey;
+            }
+        }
+
+        function updatePaddingDesc(input) {
+            const key = input.dataset.paddingDesc;
+            if (state.padding[key]) {
+                state.padding[key].description = input.value;
+            }
+        }
+
+        function addPadding() {
+            const count = Object.keys(state.padding).length;
+            const newKey = `padding-${count}`;
+            state.padding[newKey] = { value: 0, mobile: 0, tablet: 0, description: '' };
+            renderFoundations();
+        }
+
+        function deletePadding(key) {
+            if (confirm(`Delete padding token "${key}"?`)) {
+                delete state.padding[key];
+                renderFoundations();
+            }
+        }
+
+        // Radius handlers
+        function updateRadius(input) {
+            const key = input.dataset.radius;
+            const value = parseInt(input.value);
+            if (state.radius[key]) {
+                state.radius[key].value = value;
+            }
+        }
+
+        function updateRadiusTablet(input) {
+            const key = input.dataset.radiusTablet;
+            const value = parseInt(input.value);
+            if (state.radius[key]) {
+                state.radius[key].tablet = value;
+            }
+        }
+
+        function updateRadiusMobile(input) {
+            const key = input.dataset.radiusMobile;
+            const value = parseInt(input.value);
+            if (state.radius[key]) {
+                state.radius[key].mobile = value;
+            }
+        }
+
+        function updateRadiusDesc(input) {
+            const key = input.dataset.radiusDesc;
+            if (state.radius[key]) {
+                state.radius[key].description = input.value;
+            }
+        }
+
+        // Border width handlers
+        function updateBorderWidth(input) {
+            const key = input.dataset.borderWidth;
+            const value = parseInt(input.value);
+            if (state.borders.widths[key]) {
+                state.borders.widths[key].value = value;
+            }
+        }
+
+        function updateBorderWidthTablet(input) {
+            const key = input.dataset.borderWidthTablet;
+            const value = parseInt(input.value);
+            if (state.borders.widths[key]) {
+                state.borders.widths[key].tablet = value;
+            }
+        }
+
+        function updateBorderWidthMobile(input) {
+            const key = input.dataset.borderWidthMobile;
+            const value = parseInt(input.value);
+            if (state.borders.widths[key]) {
+                state.borders.widths[key].mobile = value;
+            }
+        }
+
+        function updateBorderWidthDesc(input) {
+            const key = input.dataset.borderWidthDesc;
+            if (state.borders.widths[key]) {
+                state.borders.widths[key].description = input.value;
+            }
+        }
     </script>
 </body>
 

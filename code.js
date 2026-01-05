@@ -1035,7 +1035,7 @@ figma.ui.onmessage = async (msg) => {
                 }
             }
 
-            // Create spacing variables if spacing data exists
+            // Create spacing variables with responsive modes (Desktop, Tablet, Mobile)
             let spacingCollection;
             let spacingCount = 0;
 
@@ -1045,27 +1045,117 @@ figma.ui.onmessage = async (msg) => {
 
                 if (existingSpacingCollection) {
                     spacingCollection = existingSpacingCollection;
+                    
+                    // Ensure all three modes exist
+                    const hasDesktop = spacingCollection.modes.some(m => m.name === 'Desktop');
+                    const hasTablet = spacingCollection.modes.some(m => m.name === 'Tablet');
+                    const hasMobile = spacingCollection.modes.some(m => m.name === 'Mobile');
+                    
+                    if (!hasDesktop) {
+                        spacingCollection.renameMode(spacingCollection.modes[0].modeId, 'Desktop');
+                    }
+                    if (!hasTablet) {
+                        spacingCollection.addMode('Tablet');
+                    }
+                    if (!hasMobile) {
+                        spacingCollection.addMode('Mobile');
+                    }
                 } else {
                     spacingCollection = figma.variables.createVariableCollection('Design System Spacing');
+                    spacingCollection.renameMode(spacingCollection.modes[0].modeId, 'Desktop');
+                    spacingCollection.addMode('Tablet');
+                    spacingCollection.addMode('Mobile');
                 }
 
+                const desktopModeId = spacingCollection.modes.find(m => m.name === 'Desktop').modeId;
+                const tabletModeId = spacingCollection.modes.find(m => m.name === 'Tablet').modeId;
+                const mobileModeId = spacingCollection.modes.find(m => m.name === 'Mobile').modeId;
+
                 // Create spacing variables
-                for (const [name, value] of Object.entries(msg.spacing)) {
-                    // Check if variable already exists
+                for (const [name, valueData] of Object.entries(msg.spacing)) {
                     const existingVariables = await figma.variables.getLocalVariablesAsync('FLOAT');
                     const existingVar = existingVariables.find(v => v.name === name && v.variableCollectionId === spacingCollection.id);
 
+                    // Handle both old format (number) and new format (object with desktop/tablet/mobile)
+                    const desktopValue = typeof valueData === 'object' ? valueData.desktop : valueData;
+                    const tabletValue = typeof valueData === 'object' ? valueData.tablet : valueData;
+                    const mobileValue = typeof valueData === 'object' ? valueData.mobile : valueData;
+
                     if (existingVar) {
-                        existingVar.setValueForMode(spacingCollection.modes[0].modeId, value);
+                        existingVar.setValueForMode(desktopModeId, desktopValue);
+                        existingVar.setValueForMode(tabletModeId, tabletValue);
+                        existingVar.setValueForMode(mobileModeId, mobileValue);
                     } else {
                         const variable = figma.variables.createVariable(name, spacingCollection, 'FLOAT');
-                        variable.setValueForMode(spacingCollection.modes[0].modeId, value);
+                        variable.setValueForMode(desktopModeId, desktopValue);
+                        variable.setValueForMode(tabletModeId, tabletValue);
+                        variable.setValueForMode(mobileModeId, mobileValue);
                     }
                     spacingCount++;
                 }
             }
 
-            // Create radius variables if radius data exists
+            // Create padding variables with responsive modes (Desktop, Tablet, Mobile)
+            let paddingCollection;
+            let paddingCount = 0;
+
+            if (msg.padding && Object.keys(msg.padding).length > 0) {
+                // Get or create padding variable collection
+                const existingPaddingCollection = (await figma.variables.getLocalVariableCollectionsAsync()).find(c => c.name === 'Design System Padding');
+
+                if (existingPaddingCollection) {
+                    paddingCollection = existingPaddingCollection;
+                    
+                    // Ensure all three modes exist
+                    const hasDesktop = paddingCollection.modes.some(m => m.name === 'Desktop');
+                    const hasTablet = paddingCollection.modes.some(m => m.name === 'Tablet');
+                    const hasMobile = paddingCollection.modes.some(m => m.name === 'Mobile');
+                    
+                    if (!hasDesktop) {
+                        paddingCollection.renameMode(paddingCollection.modes[0].modeId, 'Desktop');
+                    }
+                    if (!hasTablet) {
+                        paddingCollection.addMode('Tablet');
+                    }
+                    if (!hasMobile) {
+                        paddingCollection.addMode('Mobile');
+                    }
+                } else {
+                    paddingCollection = figma.variables.createVariableCollection('Design System Padding');
+                    paddingCollection.renameMode(paddingCollection.modes[0].modeId, 'Desktop');
+                    paddingCollection.addMode('Tablet');
+                    paddingCollection.addMode('Mobile');
+                }
+
+                const desktopModeId = paddingCollection.modes.find(m => m.name === 'Desktop').modeId;
+                const tabletModeId = paddingCollection.modes.find(m => m.name === 'Tablet').modeId;
+                const mobileModeId = paddingCollection.modes.find(m => m.name === 'Mobile').modeId;
+
+                // Create padding variables
+                for (const [name, valueData] of Object.entries(msg.padding)) {
+                    const existingVariables = await figma.variables.getLocalVariablesAsync('FLOAT');
+                    const existingVar = existingVariables.find(v => v.name === name && v.variableCollectionId === paddingCollection.id);
+
+                    // Handle both old format (number) and new format (object with desktop/tablet/mobile)
+                    const desktopValue = typeof valueData === 'object' ? valueData.desktop : valueData;
+                    const tabletValue = typeof valueData === 'object' ? valueData.tablet : valueData;
+                    const mobileValue = typeof valueData === 'object' ? valueData.mobile : valueData;
+
+                    if (existingVar) {
+                        existingVar.setValueForMode(desktopModeId, desktopValue);
+                        existingVar.setValueForMode(tabletModeId, tabletValue);
+                        existingVar.setValueForMode(mobileModeId, mobileValue);
+                    } else {
+                        const variable = figma.variables.createVariable(name, paddingCollection, 'FLOAT');
+                        variable.setValueForMode(desktopModeId, desktopValue);
+                        variable.setValueForMode(tabletModeId, tabletValue);
+                        variable.setValueForMode(mobileModeId, mobileValue);
+                    }
+                    paddingCount++;
+                }
+            }
+
+            // Create radius variables with responsive modes (Desktop, Tablet, Mobile)
             let radiusCollection;
             let radiusCount = 0;
 
@@ -1075,27 +1165,57 @@ figma.ui.onmessage = async (msg) => {
 
                 if (existingRadiusCollection) {
                     radiusCollection = existingRadiusCollection;
+                    
+                    // Ensure all three modes exist
+                    const hasDesktop = radiusCollection.modes.some(m => m.name === 'Desktop');
+                    const hasTablet = radiusCollection.modes.some(m => m.name === 'Tablet');
+                    const hasMobile = radiusCollection.modes.some(m => m.name === 'Mobile');
+                    
+                    if (!hasDesktop) {
+                        radiusCollection.renameMode(radiusCollection.modes[0].modeId, 'Desktop');
+                    }
+                    if (!hasTablet) {
+                        radiusCollection.addMode('Tablet');
+                    }
+                    if (!hasMobile) {
+                        radiusCollection.addMode('Mobile');
+                    }
                 } else {
                     radiusCollection = figma.variables.createVariableCollection('Design System Radius');
+                    radiusCollection.renameMode(radiusCollection.modes[0].modeId, 'Desktop');
+                    radiusCollection.addMode('Tablet');
+                    radiusCollection.addMode('Mobile');
                 }
 
+                const desktopModeId = radiusCollection.modes.find(m => m.name === 'Desktop').modeId;
+                const tabletModeId = radiusCollection.modes.find(m => m.name === 'Tablet').modeId;
+                const mobileModeId = radiusCollection.modes.find(m => m.name === 'Mobile').modeId;
+
                 // Create radius variables
-                for (const [name, value] of Object.entries(msg.radius)) {
-                    // Check if variable already exists
+                for (const [name, valueData] of Object.entries(msg.radius)) {
                     const existingVariables = await figma.variables.getLocalVariablesAsync('FLOAT');
                     const existingVar = existingVariables.find(v => v.name === name && v.variableCollectionId === radiusCollection.id);
 
+                    // Handle both old format (number) and new format (object with desktop/tablet/mobile)
+                    const desktopValue = typeof valueData === 'object' ? valueData.desktop : valueData;
+                    const tabletValue = typeof valueData === 'object' ? valueData.tablet : valueData;
+                    const mobileValue = typeof valueData === 'object' ? valueData.mobile : valueData;
+
                     if (existingVar) {
-                        existingVar.setValueForMode(radiusCollection.modes[0].modeId, value);
+                        existingVar.setValueForMode(desktopModeId, desktopValue);
+                        existingVar.setValueForMode(tabletModeId, tabletValue);
+                        existingVar.setValueForMode(mobileModeId, mobileValue);
                     } else {
                         const variable = figma.variables.createVariable(name, radiusCollection, 'FLOAT');
-                        variable.setValueForMode(radiusCollection.modes[0].modeId, value);
+                        variable.setValueForMode(desktopModeId, desktopValue);
+                        variable.setValueForMode(tabletModeId, tabletValue);
+                        variable.setValueForMode(mobileModeId, mobileValue);
                     }
                     radiusCount++;
                 }
             }
 
-            // Create stroke variables if stroke data exists
+            // Create stroke variables with responsive modes (Desktop, Tablet, Mobile)
             let strokeCollection;
             let strokeCount = 0;
 
@@ -1105,21 +1225,51 @@ figma.ui.onmessage = async (msg) => {
 
                 if (existingStrokeCollection) {
                     strokeCollection = existingStrokeCollection;
+                    
+                    // Ensure all three modes exist
+                    const hasDesktop = strokeCollection.modes.some(m => m.name === 'Desktop');
+                    const hasTablet = strokeCollection.modes.some(m => m.name === 'Tablet');
+                    const hasMobile = strokeCollection.modes.some(m => m.name === 'Mobile');
+                    
+                    if (!hasDesktop) {
+                        strokeCollection.renameMode(strokeCollection.modes[0].modeId, 'Desktop');
+                    }
+                    if (!hasTablet) {
+                        strokeCollection.addMode('Tablet');
+                    }
+                    if (!hasMobile) {
+                        strokeCollection.addMode('Mobile');
+                    }
                 } else {
                     strokeCollection = figma.variables.createVariableCollection('Design System Stroke');
+                    strokeCollection.renameMode(strokeCollection.modes[0].modeId, 'Desktop');
+                    strokeCollection.addMode('Tablet');
+                    strokeCollection.addMode('Mobile');
                 }
 
+                const desktopModeId = strokeCollection.modes.find(m => m.name === 'Desktop').modeId;
+                const tabletModeId = strokeCollection.modes.find(m => m.name === 'Tablet').modeId;
+                const mobileModeId = strokeCollection.modes.find(m => m.name === 'Mobile').modeId;
+
                 // Create stroke variables
-                for (const [name, value] of Object.entries(msg.strokes)) {
-                    // Check if variable already exists
+                for (const [name, valueData] of Object.entries(msg.strokes)) {
                     const existingVariables = await figma.variables.getLocalVariablesAsync('FLOAT');
                     const existingVar = existingVariables.find(v => v.name === name && v.variableCollectionId === strokeCollection.id);
 
+                    // Handle both old format (number) and new format (object with desktop/tablet/mobile)
+                    const desktopValue = typeof valueData === 'object' ? valueData.desktop : valueData;
+                    const tabletValue = typeof valueData === 'object' ? valueData.tablet : valueData;
+                    const mobileValue = typeof valueData === 'object' ? valueData.mobile : valueData;
+
                     if (existingVar) {
-                        existingVar.setValueForMode(strokeCollection.modes[0].modeId, value);
+                        existingVar.setValueForMode(desktopModeId, desktopValue);
+                        existingVar.setValueForMode(tabletModeId, tabletValue);
+                        existingVar.setValueForMode(mobileModeId, mobileValue);
                     } else {
                         const variable = figma.variables.createVariable(name, strokeCollection, 'FLOAT');
-                        variable.setValueForMode(strokeCollection.modes[0].modeId, value);
+                        variable.setValueForMode(desktopModeId, desktopValue);
+                        variable.setValueForMode(tabletModeId, tabletValue);
+                        variable.setValueForMode(mobileModeId, mobileValue);
                     }
                     strokeCount++;
                 }
@@ -1195,7 +1345,7 @@ figma.ui.onmessage = async (msg) => {
             }
 
             // Check if we created any variables or styles
-            if (createdCount === 0 && spacingCount === 0 && radiusCount === 0 && strokeCount === 0 && shadowCount === 0) {
+            if (createdCount === 0 && spacingCount === 0 && paddingCount === 0 && radiusCount === 0 && strokeCount === 0 && shadowCount === 0) {
                 figma.notify('⚠️ No data found to create variables or styles. Please expand sections and ensure tokens are generated.');
                 return;
             }
@@ -1274,11 +1424,12 @@ figma.ui.onmessage = async (msg) => {
             statsRow.counterAxisSizingMode = 'AUTO';
             statsRow.itemSpacing = 24;
 
-            const totalVars = createdCount + spacingCount + radiusCount + strokeCount;
+            const totalVars = createdCount + spacingCount + paddingCount + radiusCount + strokeCount;
             const stats = [
                 { label: 'Total Variables', value: totalVars },
                 { label: 'Colors', value: createdCount },
                 { label: 'Spacing', value: spacingCount },
+                { label: 'Padding', value: paddingCount },
                 { label: 'Radius', value: radiusCount },
                 { label: 'Stroke', value: strokeCount },
                 { label: 'Shadows', value: shadowCount }
@@ -1505,7 +1656,10 @@ figma.ui.onmessage = async (msg) => {
                 spacingSection.paddingBottom = 24;
                 spacingSection.layoutWrap = 'WRAP';
 
-                Object.entries(msg.spacing).forEach(([name, value]) => {
+                Object.entries(msg.spacing).forEach(([name, valueData]) => {
+                    // Handle both old format (number) and new format (object with desktop/tablet/mobile)
+                    const displayValue = typeof valueData === 'object' ? valueData.desktop : valueData;
+                    
                     const tokenCard = figma.createFrame();
                     tokenCard.name = name;
                     tokenCard.resize(90, 90);
@@ -1541,7 +1695,7 @@ figma.ui.onmessage = async (msg) => {
                         // Fallback
                     }
                     valueText.fontSize = 20;
-                    valueText.characters = `${value}`;
+                    valueText.characters = `${displayValue}`;
                     valueText.fills = [{ type: 'SOLID', color: { r: 0.78, g: 1, b: 0 } }]; // Neon green
                     tokenCard.appendChild(valueText);
 
@@ -1562,30 +1716,33 @@ figma.ui.onmessage = async (msg) => {
                 frame.appendChild(spacingSection);
             }
 
-            // RADIUS CATEGORY
-            if (msg.radius && Object.keys(msg.radius).length > 0) {
-                createCategorySection("Border Radius", "Corner radius tokens", frame);
+            // PADDING CATEGORY
+            if (msg.padding && Object.keys(msg.padding).length > 0) {
+                createCategorySection("Padding", "Component padding tokens", frame);
 
-                const radiusSection = figma.createFrame();
-                radiusSection.name = "Radius Tokens";
-                radiusSection.fills = [{ type: 'SOLID', color: { r: 0.08, g: 0.08, b: 0.08 } }];
-                radiusSection.cornerRadius = 12;
-                radiusSection.layoutMode = 'HORIZONTAL';
-                radiusSection.primaryAxisSizingMode = 'AUTO';
-                radiusSection.counterAxisSizingMode = 'AUTO'; // Hug width
-                radiusSection.itemSpacing = 16;
-                radiusSection.paddingLeft = 24;
-                radiusSection.paddingRight = 24;
-                radiusSection.paddingTop = 24;
-                radiusSection.paddingBottom = 24;
-                radiusSection.layoutWrap = 'WRAP';
+                const paddingSection = figma.createFrame();
+                paddingSection.name = "Padding Tokens";
+                paddingSection.fills = [{ type: 'SOLID', color: { r: 0.08, g: 0.08, b: 0.08 } }];
+                paddingSection.cornerRadius = 12;
+                paddingSection.layoutMode = 'HORIZONTAL';
+                paddingSection.primaryAxisSizingMode = 'AUTO';
+                paddingSection.counterAxisSizingMode = 'AUTO'; // Hug width
+                paddingSection.itemSpacing = 16;
+                paddingSection.paddingLeft = 24;
+                paddingSection.paddingRight = 24;
+                paddingSection.paddingTop = 24;
+                paddingSection.paddingBottom = 24;
+                paddingSection.layoutWrap = 'WRAP';
 
-                Object.entries(msg.radius).forEach(([name, value]) => {
+                Object.entries(msg.padding).forEach(([name, valueData]) => {
+                    // Handle both old format (number) and new format (object with desktop/tablet/mobile)
+                    const displayValue = typeof valueData === 'object' ? valueData.desktop : valueData;
+                    
                     const tokenCard = figma.createFrame();
                     tokenCard.name = name;
                     tokenCard.resize(90, 90);
                     tokenCard.fills = [{ type: 'SOLID', color: { r: 0.04, g: 0.04, b: 0.04 } }];
-                    tokenCard.cornerRadius = value === 9999 ? 45 : Math.min(value, 20);
+                    tokenCard.cornerRadius = 10;
                     tokenCard.strokes = [{ type: 'SOLID', color: { r: 0.16, g: 0.16, b: 0.16 } }];
                     tokenCard.strokeWeight = 1;
                     tokenCard.layoutMode = 'VERTICAL';
@@ -1616,11 +1773,89 @@ figma.ui.onmessage = async (msg) => {
                         // Fallback
                     }
                     valueText.fontSize = 20;
-                    valueText.characters = value === 9999 ? '∞' : `${value}`;
+                    valueText.characters = `${displayValue}`;
+                    valueText.fills = [{ type: 'SOLID', color: { r: 0.78, g: 1, b: 0 } }]; // Neon green
+                    tokenCard.appendChild(valueText);
+
+                    const unitText = figma.createText();
+                    try {
+                        unitText.fontName = { family: "Inter", style: "Regular" };
+                    } catch (e) {
+                        // Fallback
+                    }
+                    unitText.fontSize = 10;
+                    unitText.characters = "px";
+                    unitText.fills = [{ type: 'SOLID', color: { r: 0.63, g: 0.63, b: 0.63 } }];
+                    tokenCard.appendChild(unitText);
+
+                    paddingSection.appendChild(tokenCard);
+                });
+
+                frame.appendChild(paddingSection);
+            }
+
+            // RADIUS CATEGORY
+            if (msg.radius && Object.keys(msg.radius).length > 0) {
+                createCategorySection("Border Radius", "Corner radius tokens", frame);
+
+                const radiusSection = figma.createFrame();
+                radiusSection.name = "Radius Tokens";
+                radiusSection.fills = [{ type: 'SOLID', color: { r: 0.08, g: 0.08, b: 0.08 } }];
+                radiusSection.cornerRadius = 12;
+                radiusSection.layoutMode = 'HORIZONTAL';
+                radiusSection.primaryAxisSizingMode = 'AUTO';
+                radiusSection.counterAxisSizingMode = 'AUTO'; // Hug width
+                radiusSection.itemSpacing = 16;
+                radiusSection.paddingLeft = 24;
+                radiusSection.paddingRight = 24;
+                radiusSection.paddingTop = 24;
+                radiusSection.paddingBottom = 24;
+                radiusSection.layoutWrap = 'WRAP';
+
+                Object.entries(msg.radius).forEach(([name, valueData]) => {
+                    // Handle both old format (number) and new format (object with desktop/tablet/mobile)
+                    const displayValue = typeof valueData === 'object' ? valueData.desktop : valueData;
+                    
+                    const tokenCard = figma.createFrame();
+                    tokenCard.name = name;
+                    tokenCard.resize(90, 90);
+                    tokenCard.fills = [{ type: 'SOLID', color: { r: 0.04, g: 0.04, b: 0.04 } }];
+                    tokenCard.cornerRadius = displayValue === 9999 ? 45 : Math.min(displayValue, 20);
+                    tokenCard.strokes = [{ type: 'SOLID', color: { r: 0.16, g: 0.16, b: 0.16 } }];
+                    tokenCard.strokeWeight = 1;
+                    tokenCard.layoutMode = 'VERTICAL';
+                    tokenCard.primaryAxisSizingMode = 'AUTO';
+                    tokenCard.counterAxisSizingMode = 'FIXED';
+                    tokenCard.itemSpacing = 6;
+                    tokenCard.paddingLeft = 12;
+                    tokenCard.paddingRight = 12;
+                    tokenCard.paddingTop = 16;
+                    tokenCard.paddingBottom = 16;
+                    tokenCard.primaryAxisAlignItems = 'CENTER';
+
+                    const nameText = figma.createText();
+                    try {
+                        nameText.fontName = { family: "Inter", style: "Medium" };
+                    } catch (e) {
+                        // Fallback
+                    }
+                    nameText.fontSize = 10;
+                    nameText.characters = name;
+                    nameText.fills = [{ type: 'SOLID', color: { r: 0.45, g: 0.45, b: 0.45 } }];
+                    tokenCard.appendChild(nameText);
+
+                    const valueText = figma.createText();
+                    try {
+                        valueText.fontName = { family: "Inter", style: "Bold" };
+                    } catch (e) {
+                        // Fallback
+                    }
+                    valueText.fontSize = 20;
+                    valueText.characters = displayValue === 9999 ? '∞' : `${displayValue}`;
                     valueText.fills = [{ type: 'SOLID', color: { r: 0.78, g: 1, b: 0 } }];
                     tokenCard.appendChild(valueText);
 
-                    if (value !== 9999) {
+                    if (displayValue !== 9999) {
                         const unitText = figma.createText();
                         try {
                             unitText.fontName = { family: "Inter", style: "Regular" };
@@ -1657,14 +1892,17 @@ figma.ui.onmessage = async (msg) => {
                 strokeSection.paddingBottom = 24;
                 strokeSection.layoutWrap = 'WRAP';
 
-                Object.entries(msg.strokes).forEach(([name, value]) => {
+                Object.entries(msg.strokes).forEach(([name, valueData]) => {
+                    // Handle both old format (number) and new format (object with desktop/tablet/mobile)
+                    const displayValue = typeof valueData === 'object' ? valueData.desktop : valueData;
+                    
                     const tokenCard = figma.createFrame();
                     tokenCard.name = name;
                     tokenCard.resize(90, 90);
                     tokenCard.fills = [{ type: 'SOLID', color: { r: 0.04, g: 0.04, b: 0.04 } }];
                     tokenCard.cornerRadius = 10;
                     tokenCard.strokes = [{ type: 'SOLID', color: { r: 0.78, g: 1, b: 0 } }]; // Neon green
-                    tokenCard.strokeWeight = Math.min(value, 4);
+                    tokenCard.strokeWeight = Math.min(displayValue, 4);
                     tokenCard.layoutMode = 'VERTICAL';
                     tokenCard.primaryAxisSizingMode = 'AUTO';
                     tokenCard.counterAxisSizingMode = 'FIXED';
@@ -1693,7 +1931,7 @@ figma.ui.onmessage = async (msg) => {
                         // Fallback
                     }
                     valueText.fontSize = 20;
-                    valueText.characters = `${value}`;
+                    valueText.characters = `${displayValue}`;
                     valueText.fills = [{ type: 'SOLID', color: { r: 0.78, g: 1, b: 0 } }];
                     tokenCard.appendChild(valueText);
 
@@ -1803,9 +2041,9 @@ figma.ui.onmessage = async (msg) => {
             // Center the frame in viewport
             figma.viewport.scrollAndZoomIntoView([frame]);
 
-            const varMessage = `${createdCount} colors (Light + Dark modes), ${spacingCount} spacing, ${radiusCount} radius, ${strokeCount} stroke`;
+            const varMessage = `${createdCount} colors (Light + Dark modes), ${spacingCount} spacing, ${paddingCount} padding, ${radiusCount} radius, ${strokeCount} stroke`;
             const shadowMessage = shadowCount > 0 ? ` + ${shadowCount} shadow styles` : '';
-            figma.notify(`✅ Created ${createdCount + spacingCount + radiusCount + strokeCount} variables (${varMessage})${shadowMessage} and documentation frame!`);
+            figma.notify(`✅ Created ${createdCount + spacingCount + paddingCount + radiusCount + strokeCount} variables (${varMessage})${shadowMessage} with Desktop/Tablet/Mobile modes!`);
         } catch (error) {
             const errorMsg = (error && error.message) || (error && error.toString()) || 'Unknown error';
             figma.notify(`❌ Error creating variables: ${errorMsg}`);
