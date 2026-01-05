@@ -1043,53 +1043,36 @@
                 <div class="content">
                     <!-- Foundations Tab -->
                     <div class="tab-content active" id="foundations">
-                        <div style="max-width: 1200px; width: 100%;">
+                        <div style="max-width: 1000px; width: 100%; margin: 0 auto;">
                             <!-- Primary Color -->
-                            <div class="card collapsed">
+                            <div class="card">
                                 <div class="card-header" onclick="toggleCard(this)">
-                                    <div class="card-title">
-                                        Primary Color
-                                    </div>
+                                    <div class="card-title">Primary Color</div>
                                     <div class="card-header-right">
-                                        <div style="display: flex; align-items: center; gap: 8px;"
-                                            onclick="event.stopPropagation()">
-                                            <span
-                                                style="font-size: 10px; font-weight: 500; color: var(--text-secondary);">Shades</span>
-                                            <select id="primaryShadeCount"
-                                                onchange="generatePrimaryShades(document.getElementById('primaryColor').value)"
-                                                style="padding: 4px 8px; border: 1px solid var(--border); border-radius: 4px; font-size: 11px; cursor: pointer;">
+                                        <div style="display: flex; align-items: center; gap: 8px;" onclick="event.stopPropagation()">
+                                            <span style="font-size: 10px; font-weight: 500; color: var(--text-secondary);">Shades</span>
+                                            <select id="primaryShadeCount" onchange="generatePrimaryShades(document.getElementById('primaryColor').value)" style="padding: 4px 8px; border: 1px solid var(--border); border-radius: 4px; font-size: 11px; cursor: pointer;">
                                                 <option value="5">5</option>
-                                                <option value="10">10</option>
-                                                <option value="11" selected>11</option>
-                                                <option value="15">15</option>
+                                                <option value="10" selected>10</option>
+                                                 <option value="15">15</option>
                                                 <option value="20">20</option>
-                                                <option value="25">25</option>
-                                                <option value="30">30</option>
-                                                <option value="35">35</option>
+                                                 <option value="25">25</option>
+                                                <option value="30">00</option>
                                             </select>
                                         </div>
-                                        <input type="color" id="primaryColor" value="#0066FF"
-                                            onchange="generatePrimaryShades(this.value)"
-                                            onclick="event.stopPropagation()"
-                                            style="width: 32px; height: 32px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer;">
-                                        <svg class="collapse-arrow" xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round">
+                                        <input type="color" id="primaryColor" value="#0066FF" onchange="generatePrimaryShades(this.value)" onclick="event.stopPropagation()" style="width: 32px; height: 32px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer;">
+                                        <svg class="collapse-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <polyline points="6 9 12 15 18 9"></polyline>
                                         </svg>
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <div style="margin-bottom: 16px;">
-                                        <div
-                                            style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;">
-                                            Light Mode</div>
+                                    <div style="margin-bottom: 20px;">
+                                        <div style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 10px;">Light Mode</div>
                                         <div id="primaryShades" class="color-shades-grid"></div>
                                     </div>
                                     <div>
-                                        <div
-                                            style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;">
-                                            Dark Mode</div>
+                                        <div style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 10px;">Dark Mode</div>
                                         <div id="primaryShadesDark" class="color-shades-grid"></div>
                                     </div>
                                 </div>
@@ -1098,56 +1081,36 @@
                             <!-- Secondary Color (Optional) -->
                             <div class="card collapsed">
                                 <div class="card-header" onclick="toggleCard(this)">
-                                    <div class="card-title">
-                                        Secondary Color (Optional)
-                                    </div>
+                                    <div class="card-title">Secondary Color</div>
                                     <div class="card-header-right">
                                         <label class="toggle-switch" onclick="event.stopPropagation()">
-                                            <input type="checkbox" id="secondaryToggle"
-                                                onchange="toggleSecondary(this.checked)">
+                                            <input type="checkbox" id="secondaryToggle" onchange="toggleSecondary(this.checked)">
                                             <span class="toggle-slider"></span>
                                         </label>
-                                        <div style="display: flex; align-items: center; gap: 8px;"
-                                            onclick="event.stopPropagation()">
-                                            <span
-                                                style="font-size: 10px; font-weight: 500; color: var(--text-secondary);">Shades</span>
-                                            <select id="secondaryShadeCount"
-                                                onchange="generateSecondaryShades(document.getElementById('secondaryColor').value)"
-                                                style="padding: 4px 8px; border: 1px solid var(--border); border-radius: 4px; font-size: 11px; cursor: pointer;"
-                                                disabled>
-                                                <option value="5">5</option>
-                                                <option value="10">10</option>
-                                                <option value="11" selected>11</option>
-                                                <option value="15">15</option>
+                                        <div style="display: flex; align-items: center; gap: 8px;" onclick="event.stopPropagation()">
+                                            <span style="font-size: 10px; font-weight: 500; color: var(--text-secondary);">Shades</span>
+                                            <select id="secondaryShadeCount" onchange="generateSecondaryShades(document.getElementById('secondaryColor').value)" style="padding: 4px 8px; border: 1px solid var(--border); border-radius: 4px; font-size: 11px; cursor: pointer;" disabled>
+                                                 <option value="5">5</option>
+                                                <option value="10" selected>10</option>
+                                                 <option value="15">15</option>
                                                 <option value="20">20</option>
-                                                <option value="25">25</option>
-                                                <option value="30">30</option>
-                                                <option value="35">35</option>
+                                                 <option value="25">25</option>
+                                                <option value="30">00</option>
                                             </select>
                                         </div>
-                                        <input type="color" id="secondaryColor" value="#8b5cf6"
-                                            onchange="generateSecondaryShades(this.value)"
-                                            onclick="event.stopPropagation()"
-                                            style="width: 32px; height: 32px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; opacity: 0.3;"
-                                            disabled>
-                                        <svg class="collapse-arrow" xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round">
+                                        <input type="color" id="secondaryColor" value="#8b5cf6" onchange="generateSecondaryShades(this.value)" onclick="event.stopPropagation()" style="width: 32px; height: 32px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; opacity: 0.3;" disabled>
+                                        <svg class="collapse-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <polyline points="6 9 12 15 18 9"></polyline>
                                         </svg>
                                     </div>
                                 </div>
                                 <div class="card-body" style="display: none;">
-                                    <div style="margin-bottom: 16px;">
-                                        <div
-                                            style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;">
-                                            Light Mode</div>
+                                    <div style="margin-bottom: 20px;">
+                                        <div style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 10px;">Light Mode</div>
                                         <div id="secondaryShades" class="color-shades-grid"></div>
                                     </div>
                                     <div>
-                                        <div
-                                            style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;">
-                                            Dark Mode</div>
+                                        <div style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 10px;">Dark Mode</div>
                                         <div id="secondaryShadesDark" class="color-shades-grid"></div>
                                     </div>
                                 </div>
@@ -1158,53 +1121,38 @@
                                 <div class="card-header" onclick="toggleCard(this)">
                                     <div class="card-title">Status Colors</div>
                                     <div class="card-header-right">
-                                        <div style="display: flex; align-items: center; gap: 8px;"
-                                            onclick="event.stopPropagation()">
-                                            <span
-                                                style="font-size: 10px; font-weight: 500; color: var(--text-secondary);">Shades</span>
-                                            <select id="statusShadeCount" onchange="regenerateAllStatusShades()"
-                                                style="padding: 4px 8px; border: 1px solid var(--border); border-radius: 4px; font-size: 11px; cursor: pointer;">
-                                                <option value="3" selected>3</option>
-                                                <option value="5">5</option>
-                                                <option value="10">10</option>
-                                                <option value="11">11</option>
-                                                <option value="15">15</option>
+                                        <div style="display: flex; align-items: center; gap: 8px;" onclick="event.stopPropagation()">
+                                            <span style="font-size: 10px; font-weight: 500; color: var(--text-secondary);">Shades</span>
+                                            <select id="statusShadeCount" onchange="regenerateAllStatusShades()" style="padding: 4px 8px; border: 1px solid var(--border); border-radius: 4px; font-size: 11px; cursor: pointer;">
+                                                 <option value="5">5</option>
+                                                <option value="10" selected>10</option>
+                                                 <option value="15">15</option>
                                                 <option value="20">20</option>
+                                                 <option value="25">25</option>
+                                                <option value="30">00</option>
                                             </select>
                                         </div>
-                                        <svg class="collapse-arrow" xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round">
+                                        <svg class="collapse-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <polyline points="6 9 12 15 18 9"></polyline>
                                         </svg>
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <div style="display: grid; gap: 16px;">
+                                    <div style="display: grid; gap: 20px;">
                                         <!-- Success -->
                                         <div>
-                                            <div
-                                                style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                                                <span
-                                                    style="font-size: 12px; font-weight: 500; color: var(--text-primary);">Success
-                                                    (Green)</span>
-                                                <input type="color" id="successColor" value="#00C853"
-                                                    onchange="generateSuccessShades(this.value)"
-                                                    style="width: 32px; height: 32px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer;">
+                                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                                                <span style="font-size: 12px; font-weight: 500; color: var(--text-primary);">Success</span>
+                                                <input type="color" id="successColor" value="#00C853" onchange="generateSuccessShades(this.value)" style="width: 32px; height: 32px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer;">
                                             </div>
                                             <div id="successShades" class="color-shades-grid-small"></div>
                                         </div>
 
                                         <!-- Error -->
                                         <div>
-                                            <div
-                                                style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                                                <span
-                                                    style="font-size: 12px; font-weight: 500; color: var(--text-primary);">Error
-                                                    (Red)</span>
-                                                <input type="color" id="errorColor" value="#FF3B30"
-                                                    onchange="generateErrorShades(this.value)"
-                                                    style="width: 32px; height: 32px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer;">
+                                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                                                <span style="font-size: 12px; font-weight: 500; color: var(--text-primary);">Error</span>
+                                                <input type="color" id="errorColor" value="#FF3B30" onchange="generateErrorShades(this.value)" style="width: 32px; height: 32px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer;">
                                             </div>
                                             <div id="errorShades" class="color-shades-grid-small"></div>
                                         </div>
@@ -1245,40 +1193,29 @@
                                 <div class="card-header" onclick="toggleCard(this)">
                                     <div class="card-title">Neutral Colors</div>
                                     <div class="card-header-right">
-                                        <div style="display: flex; align-items: center; gap: 8px;"
-                                            onclick="event.stopPropagation()">
-                                            <span
-                                                style="font-size: 10px; font-weight: 500; color: var(--text-secondary);">Shades</span>
-                                            <select id="neutralShadeCount" onchange="generateNeutralShades()"
-                                                style="padding: 4px 8px; border: 1px solid var(--border); border-radius: 4px; font-size: 11px; cursor: pointer;">
-                                                <option value="5">5</option>
-                                                <option value="10">10</option>
-                                                <option value="11" selected>11</option>
-                                                <option value="15">15</option>
+                                        <div style="display: flex; align-items: center; gap: 8px;" onclick="event.stopPropagation()">
+                                            <span style="font-size: 10px; font-weight: 500; color: var(--text-secondary);">Shades</span>
+                                            <select id="neutralShadeCount" onchange="generateNeutralShades()" style="padding: 4px 8px; border: 1px solid var(--border); border-radius: 4px; font-size: 11px; cursor: pointer;">
+                                                 <option value="5">5</option>
+                                                <option value="10" selected>10</option>
+                                                 <option value="15">15</option>
                                                 <option value="20">20</option>
-                                                <option value="25">25</option>
+                                                 <option value="25">25</option>
                                                 <option value="30">30</option>
-                                                <option value="35">35</option>
                                             </select>
                                         </div>
-                                        <svg class="collapse-arrow" xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round">
+                                        <svg class="collapse-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <polyline points="6 9 12 15 18 9"></polyline>
                                         </svg>
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <div style="margin-bottom: 16px;">
-                                        <div
-                                            style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;">
-                                            Light Mode</div>
+                                    <div style="margin-bottom: 20px;">
+                                        <div style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 10px;">Light Mode</div>
                                         <div id="neutralShades" class="color-shades-grid"></div>
                                     </div>
                                     <div>
-                                        <div
-                                            style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px;">
-                                            Dark Mode</div>
+                                        <div style="font-size: 11px; font-weight: 600; color: var(--text-primary); margin-bottom: 10px;">Dark Mode</div>
                                         <div id="neutralShadesDark" class="color-shades-grid"></div>
                                     </div>
                                 </div>
@@ -1287,20 +1224,14 @@
                             <!-- Spacing Tokens -->
                             <div class="card collapsed">
                                 <div class="card-header" onclick="toggleCard(this)">
-                                    <div class="card-title">Spacing Tokens</div>
+                                    <div class="card-title">Spacing</div>
                                     <div class="card-header-right">
-                                        <div style="display: flex; align-items: center; gap: 6px;"
-                                            onclick="event.stopPropagation()">
-                                            <span
-                                                style="font-size: 10px; font-weight: 500; color: var(--text-secondary);">Base</span>
-                                            <input type="number" id="spacingBaseUnit" value="4" min="1" max="16"
-                                                onchange="generateSpacingTokens()"
-                                                style="width: 45px; padding: 3px 6px; border: 1px solid var(--border); border-radius: 4px; font-size: 11px; text-align: center;">
-                                            <span style="font-size: 10px; color: var(--text-muted);">px</span>
+                                        <div style="display: flex; align-items: center; gap: 6px;" onclick="event.stopPropagation()">
+                                            <span style="font-size: 10px; font-weight: 500; color: var(--text-secondary);">Base</span>
+                                            <input type="number" id="spacingBaseUnit" value="4" min="1" max="16" onchange="generateSpacingTokens()" style="width: 45px; padding: 3px 6px; border: 1px solid var(--border); border-radius: 4px; font-size: 11px; text-align: center;">
+                                            <span style="font-size: 10px; color: var(--text-secondary);">px</span>
                                         </div>
-                                        <svg class="collapse-arrow" xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round">
+                                        <svg class="collapse-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                             <polyline points="6 9 12 15 18 9"></polyline>
                                         </svg>
                                     </div>
@@ -1313,10 +1244,8 @@
                             <!-- Radius Tokens -->
                             <div class="card collapsed">
                                 <div class="card-header" onclick="toggleCard(this)">
-                                    <div class="card-title">Radius Tokens</div>
-                                    <svg class="collapse-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round">
+                                    <div class="card-title">Border Radius</div>
+                                    <svg class="collapse-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <polyline points="6 9 12 15 18 9"></polyline>
                                     </svg>
                                 </div>
@@ -1328,10 +1257,8 @@
                             <!-- Shadow Tokens -->
                             <div class="card collapsed">
                                 <div class="card-header" onclick="toggleCard(this)">
-                                    <div class="card-title">Shadow Tokens</div>
-                                    <svg class="collapse-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round">
+                                    <div class="card-title">Shadows</div>
+                                    <svg class="collapse-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <polyline points="6 9 12 15 18 9"></polyline>
                                     </svg>
                                 </div>
@@ -1343,10 +1270,8 @@
                             <!-- Stroke Tokens -->
                             <div class="card collapsed">
                                 <div class="card-header" onclick="toggleCard(this)">
-                                    <div class="card-title">Stroke Tokens</div>
-                                    <svg class="collapse-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round">
+                                    <div class="card-title">Borders</div>
+                                    <svg class="collapse-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                         <polyline points="6 9 12 15 18 9"></polyline>
                                     </svg>
                                 </div>
@@ -1357,9 +1282,9 @@
                         </div>
 
                         <!-- Create Variables Button -->
-                        <div style="margin-top: 32px; display: flex; justify-content: center;">
-                            <button class="btn btn-primary" id="create-variable-btn" style="padding: 12px 32px; font-size: 14px;">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <div style="margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--border); display: flex; justify-content: center;">
+                            <button class="btn btn-primary" id="create-variable-btn" style="padding: 12px 32px; font-size: 13px; font-weight: 500;">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
                                     <line x1="12" y1="5" x2="12" y2="19"/>
                                     <line x1="5" y1="12" x2="19" y2="12"/>
                                 </svg>
@@ -1783,7 +1708,7 @@
 
             // Generate dark mode shades (reversed)
             const darkShades = [...shades].reverse();
-            renderColorShades(darkShades, 'primary', 'primaryShadesDark');
+            renderColorShades(darkShades, 'primaryDark', 'primaryShadesDark');
 
             // Auto-sync button background color with primary color
             const buttonBgColor = document.getElementById('buttonBgColor');
@@ -1802,7 +1727,7 @@
 
             // Generate dark mode shades (reversed)
             const darkShades = [...shades].reverse();
-            renderColorShades(darkShades, 'secondary', 'secondaryShadesDark');
+            renderColorShades(darkShades, 'secondaryDark', 'secondaryShadesDark');
         }
 
         // Toggle secondary color
@@ -1899,7 +1824,7 @@
 
             // Generate dark mode shades (reversed)
             const darkShades = [...shades].reverse();
-            renderColorShades(darkShades, 'neutral', 'neutralShadesDark');
+            renderColorShades(darkShades, 'neutralDark', 'neutralShadesDark');
         }
 
         // Copy to clipboard
