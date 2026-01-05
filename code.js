@@ -1350,20 +1350,20 @@ figma.ui.onmessage = async (msg) => {
                 return;
             }
 
-            // Create visual documentation frame with organized card layout (Dark Mode)
+            // Create visual documentation frame with organized card layout (Light Mode)
             const frame = figma.createFrame();
             frame.name = "Design System Tokens";
-            frame.fills = [{ type: 'SOLID', color: { r: 0.04, g: 0.04, b: 0.04 } }]; // #0A0A0A - Dark background
+            frame.fills = [{ type: 'SOLID', color: { r: 0.96, g: 0.96, b: 0.97 } }]; // #F5F5F7 - Subtle gray background
             
             // Enable auto-layout with hug contents for both width and height
             frame.layoutMode = 'VERTICAL';
             frame.primaryAxisSizingMode = 'AUTO'; // Hug height
             frame.counterAxisSizingMode = 'AUTO'; // Hug width
-            frame.itemSpacing = 32;
-            frame.paddingLeft = 48;
-            frame.paddingRight = 48;
-            frame.paddingTop = 48;
-            frame.paddingBottom = 48;
+            frame.itemSpacing = 48;
+            frame.paddingLeft = 80;
+            frame.paddingRight = 80;
+            frame.paddingTop = 72;
+            frame.paddingBottom = 72;
 
             // Load all required fonts upfront
             try {
@@ -1398,22 +1398,45 @@ figma.ui.onmessage = async (msg) => {
             headerFrame.layoutMode = 'VERTICAL';
             headerFrame.primaryAxisSizingMode = 'AUTO';
             headerFrame.counterAxisSizingMode = 'AUTO'; // Hug width
-            headerFrame.itemSpacing = 12;
+            headerFrame.itemSpacing = 20;
             
             frame.appendChild(headerFrame);
 
-            // Add title
+            // Add title with subtitle
+            const titleContainer = figma.createFrame();
+            titleContainer.name = "Title Container";
+            titleContainer.fills = [];
+            titleContainer.layoutMode = 'VERTICAL';
+            titleContainer.primaryAxisSizingMode = 'AUTO';
+            titleContainer.counterAxisSizingMode = 'AUTO';
+            titleContainer.itemSpacing = 8;
+            
             const title = figma.createText();
             try {
                 title.fontName = { family: "Inter", style: "Bold" };
             } catch (e) {
                 // Fallback to default font
             }
-            title.fontSize = 36;
+            title.fontSize = 40;
             title.characters = "Design System Tokens";
-            title.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }]; // White text
-            title.letterSpacing = { value: -1, unit: "PIXELS" };
-            headerFrame.appendChild(title);
+            title.fills = [{ type: 'SOLID', color: { r: 0.08, g: 0.08, b: 0.08 } }];
+            title.letterSpacing = { value: -1.2, unit: "PIXELS" };
+            titleContainer.appendChild(title);
+            
+            // Add subtitle with timestamp
+            const subtitle = figma.createText();
+            try {
+                subtitle.fontName = { family: "Inter", style: "Regular" };
+            } catch (e) {
+                // Fallback
+            }
+            subtitle.fontSize = 14;
+            const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            subtitle.characters = `Generated on ${date} • Complete token documentation`;
+            subtitle.fills = [{ type: 'SOLID', color: { r: 0.45, g: 0.45, b: 0.47 } }];
+            titleContainer.appendChild(subtitle);
+            
+            headerFrame.appendChild(titleContainer);
 
             // Add stats row
             const statsRow = figma.createFrame();
@@ -1438,17 +1461,18 @@ figma.ui.onmessage = async (msg) => {
             stats.forEach(stat => {
                 const statItem = figma.createFrame();
                 statItem.name = stat.label;
-                statItem.resize(100, 32);
-                statItem.fills = [{ type: 'SOLID', color: { r: 0.08, g: 0.08, b: 0.08 } }];
+                statItem.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
                 statItem.cornerRadius = 8;
-                statItem.layoutMode = 'HORIZONTAL';
+                statItem.strokes = [{ type: 'SOLID', color: { r: 0.88, g: 0.88, b: 0.89 } }];
+                statItem.strokeWeight = 1;
+                statItem.layoutMode = 'VERTICAL';
                 statItem.primaryAxisSizingMode = 'AUTO';
                 statItem.counterAxisSizingMode = 'AUTO';
-                statItem.itemSpacing = 8;
-                statItem.paddingLeft = 12;
-                statItem.paddingRight = 12;
-                statItem.paddingTop = 6;
-                statItem.paddingBottom = 6;
+                statItem.itemSpacing = 4;
+                statItem.paddingLeft = 16;
+                statItem.paddingRight = 16;
+                statItem.paddingTop = 12;
+                statItem.paddingBottom = 12;
                 statItem.primaryAxisAlignItems = 'CENTER';
 
                 const valueText = figma.createText();
@@ -1457,20 +1481,21 @@ figma.ui.onmessage = async (msg) => {
                 } catch (e) {
                     // Fallback
                 }
-                valueText.fontSize = 14;
+                valueText.fontSize = 24;
                 valueText.characters = `${stat.value}`;
-                valueText.fills = [{ type: 'SOLID', color: { r: 0.78, g: 1, b: 0 } }]; // Neon green
+                valueText.fills = [{ type: 'SOLID', color: { r: 0.08, g: 0.08, b: 0.08 } }];
                 statItem.appendChild(valueText);
 
                 const labelText = figma.createText();
                 try {
-                    labelText.fontName = { family: "Inter", style: "Regular" };
+                    labelText.fontName = { family: "Inter", style: "Medium" };
                 } catch (e) {
                     // Fallback
                 }
-                labelText.fontSize = 12;
-                labelText.characters = stat.label;
-                labelText.fills = [{ type: 'SOLID', color: { r: 0.63, g: 0.63, b: 0.63 } }];
+                labelText.fontSize = 11;
+                labelText.characters = stat.label.toUpperCase();
+                labelText.fills = [{ type: 'SOLID', color: { r: 0.55, g: 0.55, b: 0.57 } }];
+                labelText.letterSpacing = { value: 0.5, unit: "PIXELS" };
                 statItem.appendChild(labelText);
 
                 statsRow.appendChild(statItem);
@@ -1486,7 +1511,7 @@ figma.ui.onmessage = async (msg) => {
                 categoryHeader.layoutMode = 'VERTICAL';
                 categoryHeader.primaryAxisSizingMode = 'AUTO';
                 categoryHeader.counterAxisSizingMode = 'AUTO'; // Hug width
-                categoryHeader.itemSpacing = 4;
+                categoryHeader.itemSpacing = 6;
 
                 const titleText = figma.createText();
                 try {
@@ -1496,8 +1521,8 @@ figma.ui.onmessage = async (msg) => {
                 }
                 titleText.fontSize = 24;
                 titleText.characters = categoryTitle;
-                titleText.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
-                titleText.letterSpacing = { value: -0.5, unit: "PIXELS" };
+                titleText.fills = [{ type: 'SOLID', color: { r: 0.08, g: 0.08, b: 0.08 } }];
+                titleText.letterSpacing = { value: -0.6, unit: "PIXELS" };
                 categoryHeader.appendChild(titleText);
 
                 const descText = figma.createText();
@@ -1506,9 +1531,9 @@ figma.ui.onmessage = async (msg) => {
                 } catch (e) {
                     // Fallback
                 }
-                descText.fontSize = 13;
+                descText.fontSize = 14;
                 descText.characters = categoryDescription;
-                descText.fills = [{ type: 'SOLID', color: { r: 0.45, g: 0.45, b: 0.45 } }];
+                descText.fills = [{ type: 'SOLID', color: { r: 0.45, g: 0.45, b: 0.47 } }];
                 categoryHeader.appendChild(descText);
 
                 parent.appendChild(categoryHeader);
@@ -1521,16 +1546,18 @@ figma.ui.onmessage = async (msg) => {
 
                 const colorSection = figma.createFrame();
                 colorSection.name = colorName;
-                colorSection.fills = [{ type: 'SOLID', color: { r: 0.08, g: 0.08, b: 0.08 } }];
+                colorSection.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
                 colorSection.cornerRadius = 12;
+                colorSection.strokes = [{ type: 'SOLID', color: { r: 0.88, g: 0.88, b: 0.89 } }];
+                colorSection.strokeWeight = 1.5;
                 colorSection.layoutMode = 'VERTICAL';
                 colorSection.primaryAxisSizingMode = 'AUTO';
                 colorSection.counterAxisSizingMode = 'AUTO'; // Hug width
-                colorSection.itemSpacing = 16;
-                colorSection.paddingLeft = 24;
-                colorSection.paddingRight = 24;
-                colorSection.paddingTop = 20;
-                colorSection.paddingBottom = 20;
+                colorSection.itemSpacing = 20;
+                colorSection.paddingLeft = 28;
+                colorSection.paddingRight = 28;
+                colorSection.paddingTop = 24;
+                colorSection.paddingBottom = 24;
 
                 // Section title
                 const sectionTitle = figma.createText();
@@ -1541,7 +1568,8 @@ figma.ui.onmessage = async (msg) => {
                 }
                 sectionTitle.fontSize = 16;
                 sectionTitle.characters = colorName;
-                sectionTitle.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
+                sectionTitle.fills = [{ type: 'SOLID', color: { r: 0.15, g: 0.15, b: 0.15 } }];
+                sectionTitle.letterSpacing = { value: -0.2, unit: "PIXELS" };
                 colorSection.appendChild(sectionTitle);
 
                 // Color grid
@@ -1557,35 +1585,53 @@ figma.ui.onmessage = async (msg) => {
                 Object.entries(colorShades).forEach(([shadeName, hexColor]) => {
                     const colorCard = figma.createFrame();
                     colorCard.name = shadeName;
-                    colorCard.resize(100, 120);
                     colorCard.fills = [];
                     colorCard.layoutMode = 'VERTICAL';
                     colorCard.primaryAxisSizingMode = 'AUTO';
                     colorCard.counterAxisSizingMode = 'FIXED';
-                    colorCard.itemSpacing = 8;
+                    colorCard.itemSpacing = 10;
+                    colorCard.resize(110, 140);
 
-                    // Color swatch
+                    // Color swatch with shadow
                     const swatch = figma.createFrame();
                     swatch.name = "Swatch";
-                    swatch.resize(100, 80);
+                    swatch.resize(110, 88);
                     const rgb = hexToRgb(hexColor);
                     swatch.fills = [{ type: 'SOLID', color: rgb }];
                     swatch.cornerRadius = 8;
-                    swatch.strokes = [{ type: 'SOLID', color: { r: 0.16, g: 0.16, b: 0.16 } }];
+                    swatch.strokes = [{ type: 'SOLID', color: { r: 0.88, g: 0.88, b: 0.89 } }];
                     swatch.strokeWeight = 1;
+                    swatch.effects = [{
+                        type: 'DROP_SHADOW',
+                        color: { r: 0, g: 0, b: 0, a: 0.06 },
+                        offset: { x: 0, y: 2 },
+                        radius: 8,
+                        visible: true,
+                        blendMode: 'NORMAL'
+                    }];
                     colorCard.appendChild(swatch);
+
+                    // Info container
+                    const infoContainer = figma.createFrame();
+                    infoContainer.name = "Info";
+                    infoContainer.fills = [];
+                    infoContainer.layoutMode = 'VERTICAL';
+                    infoContainer.primaryAxisSizingMode = 'AUTO';
+                    infoContainer.counterAxisSizingMode = 'FIXED';
+                    infoContainer.itemSpacing = 2;
+                    infoContainer.resize(110, 40);
 
                     // Shade name
                     const nameText = figma.createText();
                     try {
-                        nameText.fontName = { family: "Inter", style: "Medium" };
+                        nameText.fontName = { family: "Inter", style: "Semi Bold" };
                     } catch (e) {
                         // Fallback
                     }
-                    nameText.fontSize = 11;
+                    nameText.fontSize = 12;
                     nameText.characters = shadeName.split('-')[1] || shadeName;
-                    nameText.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
-                    colorCard.appendChild(nameText);
+                    nameText.fills = [{ type: 'SOLID', color: { r: 0.15, g: 0.15, b: 0.15 } }];
+                    infoContainer.appendChild(nameText);
 
                     // Hex value
                     const hexText = figma.createText();
@@ -1594,11 +1640,12 @@ figma.ui.onmessage = async (msg) => {
                     } catch (e) {
                         // Fallback
                     }
-                    hexText.fontSize = 10;
+                    hexText.fontSize = 11;
                     hexText.characters = hexColor.toUpperCase();
-                    hexText.fills = [{ type: 'SOLID', color: { r: 0.45, g: 0.45, b: 0.45 } }];
-                    colorCard.appendChild(hexText);
+                    hexText.fills = [{ type: 'SOLID', color: { r: 0.55, g: 0.55, b: 0.57 } }];
+                    infoContainer.appendChild(hexText);
 
+                    colorCard.appendChild(infoContainer);
                     colorGrid.appendChild(colorCard);
                 });
 
@@ -1644,16 +1691,18 @@ figma.ui.onmessage = async (msg) => {
 
                 const spacingSection = figma.createFrame();
                 spacingSection.name = "Spacing Tokens";
-                spacingSection.fills = [{ type: 'SOLID', color: { r: 0.08, g: 0.08, b: 0.08 } }];
+                spacingSection.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
+                spacingSection.strokes = [{ type: 'SOLID', color: { r: 0.88, g: 0.88, b: 0.89 } }];
+                spacingSection.strokeWeight = 1.5;
                 spacingSection.cornerRadius = 12;
                 spacingSection.layoutMode = 'HORIZONTAL';
                 spacingSection.primaryAxisSizingMode = 'AUTO';
                 spacingSection.counterAxisSizingMode = 'AUTO'; // Hug width
                 spacingSection.itemSpacing = 16;
-                spacingSection.paddingLeft = 24;
-                spacingSection.paddingRight = 24;
-                spacingSection.paddingTop = 24;
-                spacingSection.paddingBottom = 24;
+                spacingSection.paddingLeft = 28;
+                spacingSection.paddingRight = 28;
+                spacingSection.paddingTop = 28;
+                spacingSection.paddingBottom = 28;
                 spacingSection.layoutWrap = 'WRAP';
 
                 Object.entries(msg.spacing).forEach(([name, valueData]) => {
@@ -1662,19 +1711,19 @@ figma.ui.onmessage = async (msg) => {
                     
                     const tokenCard = figma.createFrame();
                     tokenCard.name = name;
-                    tokenCard.resize(90, 90);
-                    tokenCard.fills = [{ type: 'SOLID', color: { r: 0.04, g: 0.04, b: 0.04 } }];
-                    tokenCard.cornerRadius = 10;
-                    tokenCard.strokes = [{ type: 'SOLID', color: { r: 0.16, g: 0.16, b: 0.16 } }];
+                    tokenCard.resize(100, 110);
+                    tokenCard.fills = [{ type: 'SOLID', color: { r: 0.98, g: 0.98, b: 0.99 } }];
+                    tokenCard.cornerRadius = 8;
+                    tokenCard.strokes = [{ type: 'SOLID', color: { r: 0.92, g: 0.92, b: 0.93 } }];
                     tokenCard.strokeWeight = 1;
                     tokenCard.layoutMode = 'VERTICAL';
                     tokenCard.primaryAxisSizingMode = 'AUTO';
                     tokenCard.counterAxisSizingMode = 'FIXED';
-                    tokenCard.itemSpacing = 6;
-                    tokenCard.paddingLeft = 12;
-                    tokenCard.paddingRight = 12;
-                    tokenCard.paddingTop = 16;
-                    tokenCard.paddingBottom = 16;
+                    tokenCard.itemSpacing = 8;
+                    tokenCard.paddingLeft = 14;
+                    tokenCard.paddingRight = 14;
+                    tokenCard.paddingTop = 18;
+                    tokenCard.paddingBottom = 18;
                     tokenCard.primaryAxisAlignItems = 'CENTER';
 
                     const nameText = figma.createText();
@@ -1684,8 +1733,9 @@ figma.ui.onmessage = async (msg) => {
                         // Fallback
                     }
                     nameText.fontSize = 10;
-                    nameText.characters = name;
-                    nameText.fills = [{ type: 'SOLID', color: { r: 0.45, g: 0.45, b: 0.45 } }];
+                    nameText.characters = name.toUpperCase();
+                    nameText.fills = [{ type: 'SOLID', color: { r: 0.55, g: 0.55, b: 0.57 } }];
+                    nameText.letterSpacing = { value: 0.4, unit: "PIXELS" };
                     tokenCard.appendChild(nameText);
 
                     const valueText = figma.createText();
@@ -1694,9 +1744,10 @@ figma.ui.onmessage = async (msg) => {
                     } catch (e) {
                         // Fallback
                     }
-                    valueText.fontSize = 20;
+                    valueText.fontSize = 28;
                     valueText.characters = `${displayValue}`;
-                    valueText.fills = [{ type: 'SOLID', color: { r: 0.78, g: 1, b: 0 } }]; // Neon green
+                    valueText.fills = [{ type: 'SOLID', color: { r: 0.08, g: 0.08, b: 0.08 } }];
+                    valueText.letterSpacing = { value: -0.5, unit: "PIXELS" };
                     tokenCard.appendChild(valueText);
 
                     const unitText = figma.createText();
@@ -1722,16 +1773,18 @@ figma.ui.onmessage = async (msg) => {
 
                 const paddingSection = figma.createFrame();
                 paddingSection.name = "Padding Tokens";
-                paddingSection.fills = [{ type: 'SOLID', color: { r: 0.08, g: 0.08, b: 0.08 } }];
+                paddingSection.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
+                paddingSection.strokes = [{ type: 'SOLID', color: { r: 0.88, g: 0.88, b: 0.89 } }];
+                paddingSection.strokeWeight = 1.5;
                 paddingSection.cornerRadius = 12;
                 paddingSection.layoutMode = 'HORIZONTAL';
                 paddingSection.primaryAxisSizingMode = 'AUTO';
                 paddingSection.counterAxisSizingMode = 'AUTO'; // Hug width
                 paddingSection.itemSpacing = 16;
-                paddingSection.paddingLeft = 24;
-                paddingSection.paddingRight = 24;
-                paddingSection.paddingTop = 24;
-                paddingSection.paddingBottom = 24;
+                paddingSection.paddingLeft = 28;
+                paddingSection.paddingRight = 28;
+                paddingSection.paddingTop = 28;
+                paddingSection.paddingBottom = 28;
                 paddingSection.layoutWrap = 'WRAP';
 
                 Object.entries(msg.padding).forEach(([name, valueData]) => {
@@ -1740,19 +1793,19 @@ figma.ui.onmessage = async (msg) => {
                     
                     const tokenCard = figma.createFrame();
                     tokenCard.name = name;
-                    tokenCard.resize(90, 90);
-                    tokenCard.fills = [{ type: 'SOLID', color: { r: 0.04, g: 0.04, b: 0.04 } }];
-                    tokenCard.cornerRadius = 10;
-                    tokenCard.strokes = [{ type: 'SOLID', color: { r: 0.16, g: 0.16, b: 0.16 } }];
+                    tokenCard.resize(100, 110);
+                    tokenCard.fills = [{ type: 'SOLID', color: { r: 0.98, g: 0.98, b: 0.99 } }];
+                    tokenCard.cornerRadius = 8;
+                    tokenCard.strokes = [{ type: 'SOLID', color: { r: 0.92, g: 0.92, b: 0.93 } }];
                     tokenCard.strokeWeight = 1;
                     tokenCard.layoutMode = 'VERTICAL';
                     tokenCard.primaryAxisSizingMode = 'AUTO';
                     tokenCard.counterAxisSizingMode = 'FIXED';
-                    tokenCard.itemSpacing = 6;
-                    tokenCard.paddingLeft = 12;
-                    tokenCard.paddingRight = 12;
-                    tokenCard.paddingTop = 16;
-                    tokenCard.paddingBottom = 16;
+                    tokenCard.itemSpacing = 8;
+                    tokenCard.paddingLeft = 14;
+                    tokenCard.paddingRight = 14;
+                    tokenCard.paddingTop = 18;
+                    tokenCard.paddingBottom = 18;
                     tokenCard.primaryAxisAlignItems = 'CENTER';
 
                     const nameText = figma.createText();
@@ -1762,8 +1815,9 @@ figma.ui.onmessage = async (msg) => {
                         // Fallback
                     }
                     nameText.fontSize = 10;
-                    nameText.characters = name;
-                    nameText.fills = [{ type: 'SOLID', color: { r: 0.45, g: 0.45, b: 0.45 } }];
+                    nameText.characters = name.toUpperCase();
+                    nameText.fills = [{ type: 'SOLID', color: { r: 0.55, g: 0.55, b: 0.57 } }];
+                    nameText.letterSpacing = { value: 0.4, unit: "PIXELS" };
                     tokenCard.appendChild(nameText);
 
                     const valueText = figma.createText();
@@ -1772,20 +1826,21 @@ figma.ui.onmessage = async (msg) => {
                     } catch (e) {
                         // Fallback
                     }
-                    valueText.fontSize = 20;
+                    valueText.fontSize = 28;
                     valueText.characters = `${displayValue}`;
-                    valueText.fills = [{ type: 'SOLID', color: { r: 0.78, g: 1, b: 0 } }]; // Neon green
+                    valueText.fills = [{ type: 'SOLID', color: { r: 0.08, g: 0.08, b: 0.08 } }];
+                    valueText.letterSpacing = { value: -0.5, unit: "PIXELS" };
                     tokenCard.appendChild(valueText);
 
                     const unitText = figma.createText();
                     try {
-                        unitText.fontName = { family: "Inter", style: "Regular" };
+                        unitText.fontName = { family: "Inter", style: "Medium" };
                     } catch (e) {
                         // Fallback
                     }
-                    unitText.fontSize = 10;
-                    unitText.characters = "px";
-                    unitText.fills = [{ type: 'SOLID', color: { r: 0.63, g: 0.63, b: 0.63 } }];
+                    unitText.fontSize = 11;
+                    unitText.characters = "pixels";
+                    unitText.fills = [{ type: 'SOLID', color: { r: 0.45, g: 0.45, b: 0.47 } }];
                     tokenCard.appendChild(unitText);
 
                     paddingSection.appendChild(tokenCard);
@@ -1800,16 +1855,18 @@ figma.ui.onmessage = async (msg) => {
 
                 const radiusSection = figma.createFrame();
                 radiusSection.name = "Radius Tokens";
-                radiusSection.fills = [{ type: 'SOLID', color: { r: 0.08, g: 0.08, b: 0.08 } }];
+                radiusSection.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
+                radiusSection.strokes = [{ type: 'SOLID', color: { r: 0.88, g: 0.88, b: 0.89 } }];
+                radiusSection.strokeWeight = 1.5;
                 radiusSection.cornerRadius = 12;
                 radiusSection.layoutMode = 'HORIZONTAL';
                 radiusSection.primaryAxisSizingMode = 'AUTO';
                 radiusSection.counterAxisSizingMode = 'AUTO'; // Hug width
                 radiusSection.itemSpacing = 16;
-                radiusSection.paddingLeft = 24;
-                radiusSection.paddingRight = 24;
-                radiusSection.paddingTop = 24;
-                radiusSection.paddingBottom = 24;
+                radiusSection.paddingLeft = 28;
+                radiusSection.paddingRight = 28;
+                radiusSection.paddingTop = 28;
+                radiusSection.paddingBottom = 28;
                 radiusSection.layoutWrap = 'WRAP';
 
                 Object.entries(msg.radius).forEach(([name, valueData]) => {
@@ -1818,19 +1875,19 @@ figma.ui.onmessage = async (msg) => {
                     
                     const tokenCard = figma.createFrame();
                     tokenCard.name = name;
-                    tokenCard.resize(90, 90);
-                    tokenCard.fills = [{ type: 'SOLID', color: { r: 0.04, g: 0.04, b: 0.04 } }];
-                    tokenCard.cornerRadius = displayValue === 9999 ? 45 : Math.min(displayValue, 20);
-                    tokenCard.strokes = [{ type: 'SOLID', color: { r: 0.16, g: 0.16, b: 0.16 } }];
+                    tokenCard.resize(100, 110);
+                    tokenCard.fills = [{ type: 'SOLID', color: { r: 0.98, g: 0.98, b: 0.99 } }];
+                    tokenCard.cornerRadius = displayValue === 9999 ? 50 : Math.min(displayValue, 24);
+                    tokenCard.strokes = [{ type: 'SOLID', color: { r: 0.92, g: 0.92, b: 0.93 } }];
                     tokenCard.strokeWeight = 1;
                     tokenCard.layoutMode = 'VERTICAL';
                     tokenCard.primaryAxisSizingMode = 'AUTO';
                     tokenCard.counterAxisSizingMode = 'FIXED';
-                    tokenCard.itemSpacing = 6;
-                    tokenCard.paddingLeft = 12;
-                    tokenCard.paddingRight = 12;
-                    tokenCard.paddingTop = 16;
-                    tokenCard.paddingBottom = 16;
+                    tokenCard.itemSpacing = 8;
+                    tokenCard.paddingLeft = 14;
+                    tokenCard.paddingRight = 14;
+                    tokenCard.paddingTop = 18;
+                    tokenCard.paddingBottom = 18;
                     tokenCard.primaryAxisAlignItems = 'CENTER';
 
                     const nameText = figma.createText();
@@ -1840,8 +1897,9 @@ figma.ui.onmessage = async (msg) => {
                         // Fallback
                     }
                     nameText.fontSize = 10;
-                    nameText.characters = name;
-                    nameText.fills = [{ type: 'SOLID', color: { r: 0.45, g: 0.45, b: 0.45 } }];
+                    nameText.characters = name.toUpperCase();
+                    nameText.fills = [{ type: 'SOLID', color: { r: 0.55, g: 0.55, b: 0.57 } }];
+                    nameText.letterSpacing = { value: 0.4, unit: "PIXELS" };
                     tokenCard.appendChild(nameText);
 
                     const valueText = figma.createText();
@@ -1850,21 +1908,22 @@ figma.ui.onmessage = async (msg) => {
                     } catch (e) {
                         // Fallback
                     }
-                    valueText.fontSize = 20;
+                    valueText.fontSize = 28;
                     valueText.characters = displayValue === 9999 ? '∞' : `${displayValue}`;
-                    valueText.fills = [{ type: 'SOLID', color: { r: 0.78, g: 1, b: 0 } }];
+                    valueText.fills = [{ type: 'SOLID', color: { r: 0.08, g: 0.08, b: 0.08 } }];
+                    valueText.letterSpacing = { value: -0.5, unit: "PIXELS" };
                     tokenCard.appendChild(valueText);
 
                     if (displayValue !== 9999) {
                         const unitText = figma.createText();
                         try {
-                            unitText.fontName = { family: "Inter", style: "Regular" };
+                            unitText.fontName = { family: "Inter", style: "Medium" };
                         } catch (e) {
                             // Fallback
                         }
-                        unitText.fontSize = 10;
-                        unitText.characters = "px";
-                        unitText.fills = [{ type: 'SOLID', color: { r: 0.63, g: 0.63, b: 0.63 } }];
+                        unitText.fontSize = 11;
+                        unitText.characters = "pixels";
+                        unitText.fills = [{ type: 'SOLID', color: { r: 0.45, g: 0.45, b: 0.47 } }];
                         tokenCard.appendChild(unitText);
                     }
 
@@ -1880,16 +1939,18 @@ figma.ui.onmessage = async (msg) => {
 
                 const strokeSection = figma.createFrame();
                 strokeSection.name = "Stroke Tokens";
-                strokeSection.fills = [{ type: 'SOLID', color: { r: 0.08, g: 0.08, b: 0.08 } }];
+                strokeSection.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
+                strokeSection.strokes = [{ type: 'SOLID', color: { r: 0.88, g: 0.88, b: 0.89 } }];
+                strokeSection.strokeWeight = 1.5;
                 strokeSection.cornerRadius = 12;
                 strokeSection.layoutMode = 'HORIZONTAL';
                 strokeSection.primaryAxisSizingMode = 'AUTO';
                 strokeSection.counterAxisSizingMode = 'AUTO'; // Hug width
                 strokeSection.itemSpacing = 16;
-                strokeSection.paddingLeft = 24;
-                strokeSection.paddingRight = 24;
-                strokeSection.paddingTop = 24;
-                strokeSection.paddingBottom = 24;
+                strokeSection.paddingLeft = 28;
+                strokeSection.paddingRight = 28;
+                strokeSection.paddingTop = 28;
+                strokeSection.paddingBottom = 28;
                 strokeSection.layoutWrap = 'WRAP';
 
                 Object.entries(msg.strokes).forEach(([name, valueData]) => {
@@ -1898,19 +1959,19 @@ figma.ui.onmessage = async (msg) => {
                     
                     const tokenCard = figma.createFrame();
                     tokenCard.name = name;
-                    tokenCard.resize(90, 90);
-                    tokenCard.fills = [{ type: 'SOLID', color: { r: 0.04, g: 0.04, b: 0.04 } }];
-                    tokenCard.cornerRadius = 10;
-                    tokenCard.strokes = [{ type: 'SOLID', color: { r: 0.78, g: 1, b: 0 } }]; // Neon green
-                    tokenCard.strokeWeight = Math.min(displayValue, 4);
+                    tokenCard.resize(100, 110);
+                    tokenCard.fills = [{ type: 'SOLID', color: { r: 0.98, g: 0.98, b: 0.99 } }];
+                    tokenCard.cornerRadius = 8;
+                    tokenCard.strokes = [{ type: 'SOLID', color: { r: 0.08, g: 0.08, b: 0.08 } }];
+                    tokenCard.strokeWeight = Math.min(displayValue, 3);
                     tokenCard.layoutMode = 'VERTICAL';
                     tokenCard.primaryAxisSizingMode = 'AUTO';
                     tokenCard.counterAxisSizingMode = 'FIXED';
-                    tokenCard.itemSpacing = 6;
-                    tokenCard.paddingLeft = 12;
-                    tokenCard.paddingRight = 12;
-                    tokenCard.paddingTop = 16;
-                    tokenCard.paddingBottom = 16;
+                    tokenCard.itemSpacing = 8;
+                    tokenCard.paddingLeft = 14;
+                    tokenCard.paddingRight = 14;
+                    tokenCard.paddingTop = 18;
+                    tokenCard.paddingBottom = 18;
                     tokenCard.primaryAxisAlignItems = 'CENTER';
 
                     const nameText = figma.createText();
@@ -1920,8 +1981,9 @@ figma.ui.onmessage = async (msg) => {
                         // Fallback
                     }
                     nameText.fontSize = 10;
-                    nameText.characters = name;
-                    nameText.fills = [{ type: 'SOLID', color: { r: 0.45, g: 0.45, b: 0.45 } }];
+                    nameText.characters = name.toUpperCase();
+                    nameText.fills = [{ type: 'SOLID', color: { r: 0.55, g: 0.55, b: 0.57 } }];
+                    nameText.letterSpacing = { value: 0.4, unit: "PIXELS" };
                     tokenCard.appendChild(nameText);
 
                     const valueText = figma.createText();
@@ -1930,14 +1992,15 @@ figma.ui.onmessage = async (msg) => {
                     } catch (e) {
                         // Fallback
                     }
-                    valueText.fontSize = 20;
+                    valueText.fontSize = 28;
                     valueText.characters = `${displayValue}`;
-                    valueText.fills = [{ type: 'SOLID', color: { r: 0.78, g: 1, b: 0 } }];
+                    valueText.fills = [{ type: 'SOLID', color: { r: 0.08, g: 0.08, b: 0.08 } }];
+                    valueText.letterSpacing = { value: -0.5, unit: "PIXELS" };
                     tokenCard.appendChild(valueText);
 
                     const unitText = figma.createText();
                     try {
-                        unitText.fontName = { family: "Inter", style: "Regular" };
+                        unitText.fontName = { family: "Inter", style: "Medium" };
                     } catch (e) {
                         // Fallback
                     }
@@ -1958,25 +2021,27 @@ figma.ui.onmessage = async (msg) => {
 
                 const shadowSection = figma.createFrame();
                 shadowSection.name = "Shadow Tokens";
-                shadowSection.fills = [{ type: 'SOLID', color: { r: 0.08, g: 0.08, b: 0.08 } }];
+                shadowSection.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
+                shadowSection.strokes = [{ type: 'SOLID', color: { r: 0.88, g: 0.88, b: 0.89 } }];
+                shadowSection.strokeWeight = 1.5;
                 shadowSection.cornerRadius = 12;
                 shadowSection.layoutMode = 'HORIZONTAL';
                 shadowSection.primaryAxisSizingMode = 'AUTO';
                 shadowSection.counterAxisSizingMode = 'AUTO'; // Hug width
                 shadowSection.itemSpacing = 16;
-                shadowSection.paddingLeft = 24;
-                shadowSection.paddingRight = 24;
-                shadowSection.paddingTop = 24;
-                shadowSection.paddingBottom = 24;
+                shadowSection.paddingLeft = 28;
+                shadowSection.paddingRight = 28;
+                shadowSection.paddingTop = 28;
+                shadowSection.paddingBottom = 28;
                 shadowSection.layoutWrap = 'WRAP';
 
                 Object.entries(msg.shadows).forEach(([name, value]) => {
                     const tokenCard = figma.createFrame();
                     tokenCard.name = name;
-                    tokenCard.resize(90, 90);
-                    tokenCard.fills = [{ type: 'SOLID', color: { r: 0.04, g: 0.04, b: 0.04 } }];
-                    tokenCard.cornerRadius = 10;
-                    tokenCard.strokes = [{ type: 'SOLID', color: { r: 0.16, g: 0.16, b: 0.16 } }];
+                    tokenCard.resize(100, 110);
+                    tokenCard.fills = [{ type: 'SOLID', color: { r: 0.98, g: 0.98, b: 0.99 } }];
+                    tokenCard.cornerRadius = 8;
+                    tokenCard.strokes = [{ type: 'SOLID', color: { r: 0.92, g: 0.92, b: 0.93 } }];
                     tokenCard.strokeWeight = 1;
 
                     // Apply shadow effect
@@ -1990,7 +2055,7 @@ figma.ui.onmessage = async (msg) => {
                                     r: parseInt(r) / 255,
                                     g: parseInt(g) / 255,
                                     b: parseInt(b) / 255,
-                                    a: parseFloat(a) * 2
+                                    a: parseFloat(a) * 1.5
                                 },
                                 offset: { x: parseInt(x), y: parseInt(y) },
                                 radius: parseInt(blur),
@@ -2003,11 +2068,11 @@ figma.ui.onmessage = async (msg) => {
                     tokenCard.layoutMode = 'VERTICAL';
                     tokenCard.primaryAxisSizingMode = 'AUTO';
                     tokenCard.counterAxisSizingMode = 'FIXED';
-                    tokenCard.itemSpacing = 6;
-                    tokenCard.paddingLeft = 12;
-                    tokenCard.paddingRight = 12;
-                    tokenCard.paddingTop = 16;
-                    tokenCard.paddingBottom = 16;
+                    tokenCard.itemSpacing = 8;
+                    tokenCard.paddingLeft = 14;
+                    tokenCard.paddingRight = 14;
+                    tokenCard.paddingTop = 18;
+                    tokenCard.paddingBottom = 18;
                     tokenCard.primaryAxisAlignItems = 'CENTER';
 
                     const nameText = figma.createText();
@@ -2017,19 +2082,20 @@ figma.ui.onmessage = async (msg) => {
                         // Fallback
                     }
                     nameText.fontSize = 10;
-                    nameText.characters = name.replace('shadow-', '');
-                    nameText.fills = [{ type: 'SOLID', color: { r: 0.45, g: 0.45, b: 0.45 } }];
+                    nameText.characters = name.replace('shadow-', '').toUpperCase();
+                    nameText.fills = [{ type: 'SOLID', color: { r: 0.55, g: 0.55, b: 0.57 } }];
+                    nameText.letterSpacing = { value: 0.4, unit: "PIXELS" };
                     tokenCard.appendChild(nameText);
 
                     const valueText = figma.createText();
                     try {
-                        valueText.fontName = { family: "Inter", style: "Bold" };
+                        valueText.fontName = { family: "Inter", style: "Semi Bold" };
                     } catch (e) {
                         // Fallback
                     }
-                    valueText.fontSize = 16;
-                    valueText.characters = name.replace('shadow-', '').toUpperCase();
-                    valueText.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
+                    valueText.fontSize = 18;
+                    valueText.characters = name.replace('shadow-', '').charAt(0).toUpperCase() + name.replace('shadow-', '').slice(1);
+                    valueText.fills = [{ type: 'SOLID', color: { r: 0.15, g: 0.15, b: 0.15 } }];
                     tokenCard.appendChild(valueText);
 
                     shadowSection.appendChild(tokenCard);
