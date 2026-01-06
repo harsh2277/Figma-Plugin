@@ -1981,7 +1981,15 @@
                         </div>
                     <!-- Components Tab -->
                     <div class="tab-content" id="components">
-                        <div style="max-width: 1200px; width: 100%;">
+                        <div style="max-width: 1200px; width: 100%; margin: 0 auto;">
+
+                            <!-- Components Header -->
+                            <div style="margin-bottom: 32px;">
+                                <h2
+                                    style="font-size: 20px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; letter-spacing: -0.02em;">
+                                    Components</h2>
+                                <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6;">Design and customize reusable UI components for your design system.</p>
+                            </div>
 
                             <!-- Button Component -->
                             <div class="card">
@@ -2204,20 +2212,53 @@
 
                     <!-- Typography Tab -->
                     <div class="tab-content" id="typography">
-                        <div id="typography-content"></div>
+                        <div style="max-width: 1200px; width: 100%; margin: 0 auto;">
+
+                            <!-- Typography Header -->
+                            <div style="margin-bottom: 32px;">
+                                <h2
+                                    style="font-size: 20px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; letter-spacing: -0.02em;">
+                                    Typography</h2>
+                                <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6;">Define your typography system including fonts, sizes, and text styles.</p>
+                            </div>
+
+                            <div id="typography-content"></div>
+                        </div>
                     </div>
 
                     <!-- Icons Tab -->
                     <div class="tab-content" id="icons">
-                        <div id="iconLibraryContent"></div>
+                        <div style="max-width: 1200px; width: 100%; margin: 0 auto;">
+
+                            <!-- Icons Header -->
+                            <div style="margin-bottom: 32px;">
+                                <h2
+                                    style="font-size: 20px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; letter-spacing: -0.02em;">
+                                    Icon Library</h2>
+                                <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6;">Browse and manage your icon library with popular icon sets.</p>
+                            </div>
+
+                            <div id="iconLibraryContent" style="margin-top: -30px;"></div>
+                        </div>
                     </div>
 
                     <!-- Export Tab -->
                     <div class="tab-content" id="export">
-                        <div class="empty-state">
-                            <div class="empty-state-icon">📤</div>
-                            <div class="empty-state-title">Export</div>
-                            <div class="empty-state-description">Generate and download your design system JSON</div>
+                        <div style="max-width: 1200px; width: 100%; margin: 0 auto;">
+
+                            <!-- Export Header -->
+                            <div style="margin-bottom: 32px;">
+                                <h2
+                                    style="font-size: 20px; font-weight: 600; color: var(--text-primary); margin-bottom: 8px; letter-spacing: -0.02em;">
+                                    Export</h2>
+                                <p style="font-size: 13px; color: var(--text-secondary); line-height: 1.6;">Export your design system as JSON or other formats.</p>
+                            </div>
+
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📤</div>
+                                <div class="empty-state-title">Export</div>
+                                <div class="empty-state-description">Generate and download your design system JSON</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -3576,17 +3617,6 @@
 
             container.innerHTML = `
             <div style="max-width: 680px; margin: 0 auto; padding: 48px 0;">
-              
-              <!-- Header -->
-              <div style="margin-bottom: 48px;">
-                <h2 style="font-size: 32px; font-weight: 600; margin: 0 0 12px 0; color: var(--text-primary); letter-spacing: -0.5px;">
-                  Icon Library
-                </h2>
-                <p style="color: var(--text-secondary); font-size: 15px; margin: 0; line-height: 1.5;">
-                  Select an icon library and generate icons for your design
-                </p>
-              </div>
-
               <!-- Form Section -->
               <div style="margin-bottom: 32px;">
                 
