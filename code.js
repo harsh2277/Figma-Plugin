@@ -2357,14 +2357,14 @@ figma.ui.onmessage = async (msg) => {
                         console.log('Updating existing grid style:', style.name);
                     }
 
-                    // Create column grid
+                    // Create column grid with STRETCH alignment
                     const columnGrid = {
                         pattern: 'COLUMNS',
-                        sectionSize: config.maxWidth / config.columns,
                         count: config.columns,
                         gutterSize: config.gutter,
-                        alignment: 'CENTER',
-                        color: { r: 0.96, g: 0.27, b: 0.33, a: 0.1 },
+                        alignment: 'STRETCH',
+                        offset: config.margin,
+                        color: { r: 1, g: 0, b: 0, a: 0.1 },
                         visible: true
                     };
 
@@ -2394,7 +2394,7 @@ figma.ui.onmessage = async (msg) => {
             const varMessage = `${createdCount} colors (Light + Dark modes), ${spacingCount} spacing, ${paddingCount} padding, ${radiusCount} radius, ${strokeCount} stroke`;
             const shadowMessage = shadowCount > 0 ? ` + ${shadowCount} shadow styles` : '';
             const gridMessage = gridCount > 0 ? ` + ${gridCount} layout grid styles` : '';
-            figma.notify(`✅ Created ${createdCount + spacingCount + paddingCount + radiusCount + strokeCount} variables (${varMessage})${shadowMessage}${gridMessage} with Desktop/Tablet/Mobile modes!`);
+            figma.notify(`✅ Created ${createdCount + spacingCount + paddingCount + radiusCount + strokeCount} variables (${varMessage})${shadowMessage}${gridMessage}!`);
         } catch (error) {
             const errorMsg = (error && error.message) || (error && error.toString()) || 'Unknown error';
             figma.notify(`❌ Error creating variables: ${errorMsg}`);
