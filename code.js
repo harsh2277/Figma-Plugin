@@ -1025,20 +1025,22 @@ figma.ui.onmessage = async (msg) => {
 
     if (msg.type === 'create-variables') {
         try {
-            if (!msg.colors) throw new Error('No color data received');
+            if (!msg.colors) {
+                throw new Error('No color data received');
+            }
 
             // Get or create variable collection
             const collections = await figma.variables.getLocalVariableCollectionsAsync();
             let collection = collections.find(c => c.name === 'Design System Tokens');
 
-            if (collection) {
+            if (!collection) {
+                collection = figma.variables.createVariableCollection('Design System Tokens');
+                collection.renameMode(collection.modes[0].modeId, 'Light');
+                collection.addMode('Dark');
+            } else {
                 if (!collection.modes.some(mode => mode.name === 'Dark')) {
                     collection.addMode('Dark');
                 }
-            } else {
-                collection = figma.variables.createVariableCollection('Colors');
-                collection.renameMode(collection.modes[0].modeId, 'Light');
-                collection.addMode('Dark');
             }
 
             const lightModeId = collection.modes.find(m => m.name === 'Light').modeId;
@@ -1205,11 +1207,17 @@ figma.ui.onmessage = async (msg) => {
             const totalVars = createdCount + spacingCount + paddingCount + radiusCount + strokeCount;
             if (totalVars === 0 && shadowCount === 0 && gridCount === 0) {
                 figma.notify('⚠️ No data found to create variables.');
+                figma.ui.postMessage({ type: 'loading-complete' });
                 return;
             }
 
             // Create documentation frame
-            await createTokenDocumentation(colors, msg, createdCount, spacingCount, paddingCount, radiusCount, strokeCount, shadowCount, gridCount);
+            try {
+                await createTokenDocumentation(colors, msg, createdCount, spacingCount, paddingCount, radiusCount, strokeCount, shadowCount, gridCount);
+            } catch (docError) {
+                console.error('Error creating documentation:', docError);
+                figma.notify(`⚠️ Variables created but documentation failed: ${docError.message}`);
+            }
 
             figma.notify(`✅ Created ${totalVars} variables, ${shadowCount} shadows, ${gridCount} grid styles!`);
             figma.ui.postMessage({ type: 'loading-complete' });
@@ -1294,10 +1302,43 @@ figma.ui.onmessage = async (msg) => {
 // ============================================
 
 async function createTokenDocumentation(colors, msg, createdCount, spacingCount, paddingCount, radiusCount, strokeCount, shadowCount, gridCount = 0) {
-    await figma.loadFontAsync({ family: "Poppins", style: "Bold" });
-    await figma.loadFontAsync({ family: "Poppins", style: "Semi Bold" });
-    await figma.loadFontAsync({ family: "Poppins", style: "Medium" });
-    await figma.loadFontAsync({ family: "Poppins", style: "Regular" });
+    // Try to load fonts with fallback
+    let fontFamily = "Inter";
+    let fontStyles = {
+        bold: "Bold",
+        semiBold: "Semi Bold",
+        medium: "Medium",
+        regular: "Regular"
+    };
+
+    try {
+        await figma.loadFontAsync({ family: "Poppins", style: "Bold" });
+        await figma.loadFontAsync({ family: "Poppins", style: "Semi Bold" });
+        await figma.loadFontAsync({ family: "Poppins", style: "Medium" });
+        await figma.loadFontAsync({ family: "Poppins", style: "Regular" });
+        fontFamily = "Poppins";
+    } catch (poppinsError) {
+        console.log('Poppins not available, trying Inter...');
+        try {
+            await figma.loadFontAsync({ family: "Inter", style: "Bold" });
+            await figma.loadFontAsync({ family: "Inter", style: "Semi Bold" });
+            await figma.loadFontAsync({ family: "Inter", style: "Medium" });
+            await figma.loadFontAsync({ family: "Inter", style: "Regular" });
+            fontFamily = "Inter";
+        } catch (interError) {
+            console.log('Inter not available, trying Roboto...');
+            try {
+                await figma.loadFontAsync({ family: "Roboto", style: "Bold" });
+                await figma.loadFontAsync({ family: "Roboto", style: "Medium" });
+                await figma.loadFontAsync({ family: "Roboto", style: "Regular" });
+                fontFamily = "Roboto";
+                fontStyles.semiBold = "Bold"; // Roboto doesn't have Semi Bold
+            } catch (robotoError) {
+                console.error('No suitable fonts available');
+                throw new Error('Failed to load any suitable font (tried Poppins, Inter, Roboto)');
+            }
+        }
+    }
 
     const frame = figma.createFrame();
     frame.name = "Design System Tokens";
@@ -1329,7 +1370,7 @@ async function createTokenDocumentation(colors, msg, createdCount, spacingCount,
     titleContainer.itemSpacing = 8;
 
     const title = figma.createText();
-    title.fontName = { family: "Poppins", style: "Bold" };
+    title.fontName = { family: fontFamily, style: fontStyles.bold };
     title.fontSize = 40;
     title.characters = "Design System Tokens";
     title.fills = [{ type: 'SOLID', color: { r: 0.08, g: 0.08, b: 0.08 } }];
@@ -1337,7 +1378,7 @@ async function createTokenDocumentation(colors, msg, createdCount, spacingCount,
     titleContainer.appendChild(title);
 
     const subtitle = figma.createText();
-    subtitle.fontName = { family: "Poppins", style: "Regular" };
+    subtitle.fontName = { family: fontFamily, style: fontStyles.regular };
     subtitle.fontSize = 14;
     const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
     subtitle.characters = `Generated on ${date} • Complete token documentation`;
@@ -1385,14 +1426,14 @@ async function createTokenDocumentation(colors, msg, createdCount, spacingCount,
         statItem.primaryAxisAlignItems = 'CENTER';
 
         const valueText = figma.createText();
-        valueText.fontName = { family: "Poppins", style: "Bold" };
+        valueText.fontName = { family: fontFamily, style: fontStyles.bold };
         valueText.fontSize = 24;
         safeSetCharacters(valueText, `${stat.value}`);
         valueText.fills = [{ type: 'SOLID', color: { r: 0.08, g: 0.08, b: 0.08 } }];
         statItem.appendChild(valueText);
 
         const labelText = figma.createText();
-        labelText.fontName = { family: "Poppins", style: "Medium" };
+        labelText.fontName = { family: fontFamily, style: fontStyles.medium };
         labelText.fontSize = 11;
         labelText.characters = stat.label.toUpperCase();
         labelText.fills = [{ type: 'SOLID', color: { r: 0.55, g: 0.55, b: 0.57 } }];
@@ -1405,37 +1446,55 @@ async function createTokenDocumentation(colors, msg, createdCount, spacingCount,
     headerFrame.appendChild(statsRow);
     frame.appendChild(headerFrame);
 
-    // Color sections
-    const colorCategories = ['primary', 'secondary', 'success', 'error', 'warning', 'info', 'neutral'];
-    for (const cat of colorCategories) {
-        let colorData = null;
-        if (cat === 'primary' || cat === 'secondary' || cat === 'neutral') {
-            if (colors[cat] && colors[cat].light) colorData = colors[cat].light;
-        } else {
-            if (colors[cat]) colorData = colors[cat];
-        }
+    // Color sections - with safety checks
+    if (colors && typeof colors === 'object') {
+        const colorCategories = ['primary', 'secondary', 'success', 'error', 'warning', 'info', 'neutral'];
+        for (const cat of colorCategories) {
+            let colorData = null;
+            if (cat === 'primary' || cat === 'secondary' || cat === 'neutral') {
+                if (colors[cat] && colors[cat].light) colorData = colors[cat].light;
+            } else {
+                if (colors[cat]) colorData = colors[cat];
+            }
 
-        if (colorData && Object.keys(colorData).length > 0) {
-            createColorSection(cat.charAt(0).toUpperCase() + cat.slice(1), colorData, frame);
+            if (colorData && Object.keys(colorData).length > 0) {
+                try {
+                    createColorSection(cat.charAt(0).toUpperCase() + cat.slice(1), colorData, frame, fontFamily, fontStyles);
+                } catch (colorError) {
+                    console.error(`Error creating color section for ${cat}:`, colorError);
+                }
+            }
         }
     }
 
-    // Spacing/Padding/Radius sections
-    if (msg.spacing && Object.keys(msg.spacing).length > 0) {
-        createTokenSection("Spacing", msg.spacing, frame);
+    // Spacing/Padding/Radius sections - with safety checks
+    if (msg && msg.spacing && Object.keys(msg.spacing).length > 0) {
+        try {
+            createTokenSection("Spacing", msg.spacing, frame, fontFamily, fontStyles);
+        } catch (e) {
+            console.error('Error creating spacing section:', e);
+        }
     }
-    if (msg.padding && Object.keys(msg.padding).length > 0) {
-        createTokenSection("Padding", msg.padding, frame);
+    if (msg && msg.padding && Object.keys(msg.padding).length > 0) {
+        try {
+            createTokenSection("Padding", msg.padding, frame, fontFamily, fontStyles);
+        } catch (e) {
+            console.error('Error creating padding section:', e);
+        }
     }
-    if (msg.radius && Object.keys(msg.radius).length > 0) {
-        createTokenSection("Radius", msg.radius, frame);
+    if (msg && msg.radius && Object.keys(msg.radius).length > 0) {
+        try {
+            createTokenSection("Radius", msg.radius, frame, fontFamily, fontStyles);
+        } catch (e) {
+            console.error('Error creating radius section:', e);
+        }
     }
 
     figma.currentPage.appendChild(frame);
     figma.viewport.scrollAndZoomIntoView([frame]);
 }
 
-function createColorSection(name, colorData, parent) {
+function createColorSection(name, colorData, parent, fontFamily = "Inter", fontStyles = { bold: "Bold", semiBold: "Semi Bold", medium: "Medium", regular: "Regular" }) {
     const section = figma.createFrame();
     section.name = name;
     section.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
@@ -1452,7 +1511,7 @@ function createColorSection(name, colorData, parent) {
     section.paddingBottom = 24;
 
     const sectionTitle = figma.createText();
-    sectionTitle.fontName = { family: "Poppins", style: "Semi Bold" };
+    sectionTitle.fontName = { family: fontFamily, style: fontStyles.semiBold };
     sectionTitle.fontSize = 16;
     sectionTitle.characters = name;
     sectionTitle.fills = [{ type: 'SOLID', color: { r: 0.15, g: 0.15, b: 0.15 } }];
@@ -1496,14 +1555,14 @@ function createColorSection(name, colorData, parent) {
         infoContainer.resize(110, 40);
 
         const nameText = figma.createText();
-        nameText.fontName = { family: "Poppins", style: "Semi Bold" };
+        nameText.fontName = { family: fontFamily, style: fontStyles.semiBold };
         nameText.fontSize = 12;
         nameText.characters = shadeName.split('-')[1] || shadeName;
         nameText.fills = [{ type: 'SOLID', color: { r: 0.15, g: 0.15, b: 0.15 } }];
         infoContainer.appendChild(nameText);
 
         const hexText = figma.createText();
-        hexText.fontName = { family: "Poppins", style: "Regular" };
+        hexText.fontName = { family: fontFamily, style: fontStyles.regular };
         hexText.fontSize = 11;
         hexText.characters = hexColor.toUpperCase();
         hexText.fills = [{ type: 'SOLID', color: { r: 0.55, g: 0.55, b: 0.57 } }];
@@ -1517,7 +1576,7 @@ function createColorSection(name, colorData, parent) {
     parent.appendChild(section);
 }
 
-function createTokenSection(name, tokenData, parent) {
+function createTokenSection(name, tokenData, parent, fontFamily = "Inter", fontStyles = { bold: "Bold", semiBold: "Semi Bold", medium: "Medium", regular: "Regular" }) {
     const section = figma.createFrame();
     section.name = `${name} Tokens`;
     section.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
@@ -1558,7 +1617,7 @@ function createTokenSection(name, tokenData, parent) {
         tokenCard.primaryAxisAlignItems = 'CENTER';
 
         const nameText = figma.createText();
-        nameText.fontName = { family: "Poppins", style: "Medium" };
+        nameText.fontName = { family: fontFamily, style: fontStyles.medium };
         nameText.fontSize = 10;
         safeSetCharacters(nameText, tokenName.toUpperCase());
         nameText.fills = [{ type: 'SOLID', color: { r: 0.55, g: 0.55, b: 0.57 } }];
@@ -1566,7 +1625,7 @@ function createTokenSection(name, tokenData, parent) {
         tokenCard.appendChild(nameText);
 
         const valueText = figma.createText();
-        valueText.fontName = { family: "Poppins", style: "Bold" };
+        valueText.fontName = { family: fontFamily, style: fontStyles.bold };
         valueText.fontSize = 28;
         safeSetCharacters(valueText, `${displayValue}`);
         valueText.fills = [{ type: 'SOLID', color: { r: 0.08, g: 0.08, b: 0.08 } }];
@@ -1574,7 +1633,7 @@ function createTokenSection(name, tokenData, parent) {
         tokenCard.appendChild(valueText);
 
         const unitText = figma.createText();
-        unitText.fontName = { family: "Poppins", style: "Regular" };
+        unitText.fontName = { family: fontFamily, style: fontStyles.regular };
         unitText.fontSize = 10;
         safeSetCharacters(unitText, "px");
         unitText.fills = [{ type: 'SOLID', color: { r: 0.63, g: 0.63, b: 0.63 } }];
