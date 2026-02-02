@@ -2498,6 +2498,210 @@ async function createRadioComponentSet(primaryColor, textColor, radius) {
     const disabledRgb = hexToRgb('#D1D5DB');
     const borderRgb = hexToRgb('#E5E7EB');
 
+    // ============================================
+    // CREATE RADIO SPACING VARIABLES - START
+    // ============================================
+
+    const collections = await figma.variables.getLocalVariableCollectionsAsync();
+    let radioSpacingCollection = collections.find(c => c.name === 'Radio/Spacing');
+
+    if (!radioSpacingCollection) {
+        radioSpacingCollection = figma.variables.createVariableCollection('Radio/Spacing');
+    }
+
+    const spacingModeId = radioSpacingCollection.modes[0].modeId;
+    const existingFloatVars = await figma.variables.getLocalVariablesAsync('FLOAT');
+
+    function createOrUpdateFloatVar(name, value) {
+        let floatVar = existingFloatVars.find(v => v.name === name && v.variableCollectionId === radioSpacingCollection.id);
+        if (!floatVar) {
+            floatVar = figma.variables.createVariable(name, radioSpacingCollection, 'FLOAT');
+            existingFloatVars.push(floatVar);
+        }
+        floatVar.setValueForMode(spacingModeId, value);
+        return floatVar;
+    }
+
+    // Radio size configurations
+    const radioSizeConfigs = [
+        { size: 'SM', fontSize: 13, padding: 12, gap: 16, cardPadding: 12, hintFontSize: 12 },
+        { size: 'MD', fontSize: 14, padding: 16, gap: 18, cardPadding: 16, hintFontSize: 12 },
+        { size: 'LG', fontSize: 16, padding: 20, gap: 20, cardPadding: 20, hintFontSize: 12 }
+    ];
+
+    const radioSpacingVariables = {};
+
+    for (const config of radioSizeConfigs) {
+        const sizeKey = config.size.toLowerCase();
+        radioSpacingVariables[sizeKey] = {
+            fontSize: createOrUpdateFloatVar(`radio/${sizeKey}/font-size`, config.fontSize),
+            padding: createOrUpdateFloatVar(`radio/${sizeKey}/padding`, config.padding),
+            gap: createOrUpdateFloatVar(`radio/${sizeKey}/gap`, config.gap),
+            cardPadding: createOrUpdateFloatVar(`radio/${sizeKey}/card-padding`, config.cardPadding),
+            hintFontSize: createOrUpdateFloatVar(`radio/${sizeKey}/hint-font-size`, config.hintFontSize)
+        };
+    }
+
+    const radioRadiusVar = createOrUpdateFloatVar('radio/radius', radius);
+    const radioCircleSizeVar = createOrUpdateFloatVar('radio/circle-size', 24);
+    const radioInnerDotSizeVar = createOrUpdateFloatVar('radio/inner-dot-size', 12);
+
+    // ============================================
+    // CREATE RADIO SPACING VARIABLES - END
+    // ============================================
+
+    // ============================================
+    // CREATE RADIO COLOR VARIABLES - START
+    // ============================================
+
+    let radioColorCollection = collections.find(c => c.name === 'Radio/Colors');
+
+    if (!radioColorCollection) {
+        radioColorCollection = figma.variables.createVariableCollection('Radio/Colors');
+    }
+
+    const colorModeId = radioColorCollection.modes[0].modeId;
+    const existingColorVars = await figma.variables.getLocalVariablesAsync('COLOR');
+
+    function createOrUpdateColorVar(name, color) {
+        let colorVar = existingColorVars.find(v => v.name === name && v.variableCollectionId === radioColorCollection.id);
+        if (!colorVar) {
+            colorVar = figma.variables.createVariable(name, radioColorCollection, 'COLOR');
+            existingColorVars.push(colorVar);
+        }
+        colorVar.setValueForMode(colorModeId, color);
+        return colorVar;
+    }
+
+    // Radio colors
+    const radioColorVariables = {
+        primary: createOrUpdateColorVar('radio/primary', primaryRgb),
+        text: createOrUpdateColorVar('radio/text', textRgb),
+        muted: createOrUpdateColorVar('radio/muted', mutedRgb),
+        disabled: createOrUpdateColorVar('radio/disabled', disabledRgb),
+        border: createOrUpdateColorVar('radio/border', borderRgb),
+        white: createOrUpdateColorVar('radio/white', { r: 1, g: 1, b: 1 }),
+        cardBg: createOrUpdateColorVar('radio/card-bg', { r: 1, g: 1, b: 1 }),
+        radioFill: {
+            unchecked: createOrUpdateColorVar('radio/fill/unchecked', { r: 1, g: 1, b: 1 }),
+            checked: createOrUpdateColorVar('radio/fill/checked', { r: 1, g: 1, b: 1 }),
+            disabled: createOrUpdateColorVar('radio/fill/disabled', { r: 0.98, g: 0.98, b: 0.98 })
+        },
+        radioBorder: {
+            unchecked: createOrUpdateColorVar('radio/border/unchecked', borderRgb),
+            checked: createOrUpdateColorVar('radio/border/checked', primaryRgb),
+            disabled: createOrUpdateColorVar('radio/border/disabled', disabledRgb)
+        },
+        radioInner: {
+            checked: createOrUpdateColorVar('radio/inner/checked', primaryRgb),
+            disabled: createOrUpdateColorVar('radio/inner/disabled', disabledRgb)
+        },
+        label: {
+            normal: createOrUpdateColorVar('radio/label/normal', textRgb),
+            disabled: createOrUpdateColorVar('radio/label/disabled', disabledRgb)
+        },
+        hint: {
+            normal: createOrUpdateColorVar('radio/hint/normal', mutedRgb),
+            disabled: createOrUpdateColorVar('radio/hint/disabled', disabledRgb)
+        },
+        link: createOrUpdateColorVar('radio/link', primaryRgb),
+        cardBorder: {
+            unchecked: createOrUpdateColorVar('radio/card-border/unchecked', borderRgb),
+            checked: createOrUpdateColorVar('radio/card-border/checked', primaryRgb),
+            disabled: createOrUpdateColorVar('radio/card-border/disabled', borderRgb)
+        }
+    };
+
+    // ============================================
+    // CREATE RADIO COLOR VARIABLES - END
+    // ============================================
+
+    // ============================================
+    // CREATE RADIO TEXT STYLES - START
+    // ============================================
+
+    const existingTextStyles = await figma.getLocalTextStylesAsync();
+    const radioTextStyles = {};
+
+    for (const config of radioSizeConfigs) {
+        const sizeKey = config.size;
+
+        // Label text style
+        let labelStyle = existingTextStyles.find(s => s.name === `Radio/Label/${sizeKey}`);
+        if (!labelStyle) {
+            labelStyle = figma.createTextStyle();
+            labelStyle.name = `Radio/Label/${sizeKey}`;
+        }
+        labelStyle.fontName = { family: "Poppins", style: "Medium" };
+        labelStyle.fontSize = config.fontSize;
+        labelStyle.lineHeight = { value: 150, unit: 'PERCENT' };
+        try {
+            labelStyle.setBoundVariable('fontSize', radioSpacingVariables[sizeKey.toLowerCase()].fontSize);
+        } catch (e) {
+            console.warn(`Could not bind fontSize variable for Radio/Label/${sizeKey}:`, e);
+        }
+
+        // Hint text style
+        let hintStyle = existingTextStyles.find(s => s.name === `Radio/Hint/${sizeKey}`);
+        if (!hintStyle) {
+            hintStyle = figma.createTextStyle();
+            hintStyle.name = `Radio/Hint/${sizeKey}`;
+        }
+        hintStyle.fontName = { family: "Poppins", style: "Regular" };
+        hintStyle.fontSize = config.hintFontSize;
+        hintStyle.lineHeight = { value: 150, unit: 'PERCENT' };
+        try {
+            hintStyle.setBoundVariable('fontSize', radioSpacingVariables[sizeKey.toLowerCase()].hintFontSize);
+        } catch (e) {
+            console.warn(`Could not bind fontSize variable for Radio/Hint/${sizeKey}:`, e);
+        }
+
+        radioTextStyles[sizeKey] = {
+            label: labelStyle,
+            hint: hintStyle
+        };
+    }
+
+    // ============================================
+    // CREATE RADIO TEXT STYLES - END
+    // ============================================
+
+    // Helper function to bind color variable to vector nodes only
+    function bindColorVariableToNode(node, colorVar) {
+        try {
+            const vectorTypes = ['VECTOR', 'LINE', 'ELLIPSE', 'RECTANGLE', 'POLYGON', 'STAR', 'BOOLEAN_OPERATION'];
+            const containerTypes = ['FRAME', 'GROUP', 'COMPONENT', 'INSTANCE'];
+            
+            const bindFills = (n) => {
+                if (vectorTypes.includes(n.type)) {
+                    if (n.fills && Array.isArray(n.fills) && n.fills.length > 0) {
+                        n.fills = [{
+                            type: 'SOLID',
+                            color: { r: 0, g: 0, b: 0 },
+                            boundVariables: { color: { type: 'VARIABLE_ALIAS', id: colorVar.id } }
+                        }];
+                    }
+                    if (n.strokes && Array.isArray(n.strokes) && n.strokes.length > 0) {
+                        n.strokes = [{
+                            type: 'SOLID',
+                            color: { r: 0, g: 0, b: 0 },
+                            boundVariables: { color: { type: 'VARIABLE_ALIAS', id: colorVar.id } }
+                        }];
+                    }
+                }
+                if (containerTypes.includes(n.type) && n.fills && n.fills.length > 0) {
+                    n.fills = [];
+                }
+                if ('children' in n) {
+                    n.children.forEach(child => bindFills(child));
+                }
+            };
+            bindFills(node);
+        } catch (e) {
+            console.warn('Could not bind color variable to node:', e);
+        }
+    }
+
     const types = [
         { name: 'Radio Button', isButton: true },
         { name: 'Radio Card', isCard: true }
@@ -2546,6 +2750,8 @@ async function createRadioComponentSet(primaryColor, textColor, radius) {
                 let radioFill, radioBorder, radioInnerFill, labelColor, hintColor;
                 const isChecked = state === 'Checked';
                 const isDisabled = state === 'Disabled';
+                const stateKey = state.toLowerCase();
+                const sizeKey = size.name.toLowerCase();
 
                 if (isDisabled) {
                     radioFill = { r: 0.98, g: 0.98, b: 0.98 };
@@ -2587,6 +2793,45 @@ async function createRadioComponentSet(primaryColor, textColor, radius) {
                     mainContainer.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
                     mainContainer.strokes = [{ type: 'SOLID', color: isChecked && !isDisabled ? primaryRgb : borderRgb }];
                     mainContainer.strokeWeight = 1.5;
+
+                    // Bind card spacing variables
+                    try {
+                        mainContainer.setBoundVariable('paddingLeft', radioSpacingVariables[sizeKey].cardPadding);
+                        mainContainer.setBoundVariable('paddingRight', radioSpacingVariables[sizeKey].cardPadding);
+                        mainContainer.setBoundVariable('paddingTop', radioSpacingVariables[sizeKey].cardPadding);
+                        mainContainer.setBoundVariable('paddingBottom', radioSpacingVariables[sizeKey].cardPadding);
+                        mainContainer.setBoundVariable('itemSpacing', radioSpacingVariables[sizeKey].gap);
+                        mainContainer.setBoundVariable('topLeftRadius', radioRadiusVar);
+                        mainContainer.setBoundVariable('topRightRadius', radioRadiusVar);
+                        mainContainer.setBoundVariable('bottomLeftRadius', radioRadiusVar);
+                        mainContainer.setBoundVariable('bottomRightRadius', radioRadiusVar);
+                    } catch (e) {
+                        console.warn('Could not bind card spacing variables:', e);
+                    }
+
+                    // Bind card background color
+                    try {
+                        mainContainer.fills = [{
+                            type: 'SOLID',
+                            color: { r: 0, g: 0, b: 0 },
+                            boundVariables: { color: { type: 'VARIABLE_ALIAS', id: radioColorVariables.cardBg.id } }
+                        }];
+                    } catch (e) {
+                        console.warn('Could not bind card background variable:', e);
+                    }
+
+                    // Bind card border color
+                    try {
+                        const cardBorderVar = isDisabled ? radioColorVariables.cardBorder.disabled : 
+                                             (isChecked ? radioColorVariables.cardBorder.checked : radioColorVariables.cardBorder.unchecked);
+                        mainContainer.strokes = [{
+                            type: 'SOLID',
+                            color: { r: 0, g: 0, b: 0 },
+                            boundVariables: { color: { type: 'VARIABLE_ALIAS', id: cardBorderVar.id } }
+                        }];
+                    } catch (e) {
+                        console.warn('Could not bind card border variable:', e);
+                    }
                 } else {
                     // Radio Button - Simple horizontal layout
                     mainContainer = figma.createFrame();
@@ -2597,6 +2842,13 @@ async function createRadioComponentSet(primaryColor, textColor, radius) {
                     mainContainer.counterAxisAlignItems = 'CENTER';
                     mainContainer.itemSpacing = size.gap;
                     mainContainer.fills = [];
+
+                    // Bind button gap variable
+                    try {
+                        mainContainer.setBoundVariable('itemSpacing', radioSpacingVariables[sizeKey].gap);
+                    } catch (e) {
+                        console.warn('Could not bind button gap variable:', e);
+                    }
                 }
 
                 // Create radio circle (always 24px)
@@ -2613,12 +2865,46 @@ async function createRadioComponentSet(primaryColor, textColor, radius) {
                 radioCircle.primaryAxisSizingMode = 'FIXED';
                 radioCircle.counterAxisSizingMode = 'FIXED';
 
+                // Bind radio circle colors
+                try {
+                    const fillVar = isDisabled ? radioColorVariables.radioFill.disabled :
+                                   (isChecked ? radioColorVariables.radioFill.checked : radioColorVariables.radioFill.unchecked);
+                    radioCircle.fills = [{
+                        type: 'SOLID',
+                        color: { r: 0, g: 0, b: 0 },
+                        boundVariables: { color: { type: 'VARIABLE_ALIAS', id: fillVar.id } }
+                    }];
+
+                    const borderVar = isDisabled ? radioColorVariables.radioBorder.disabled :
+                                     (isChecked ? radioColorVariables.radioBorder.checked : radioColorVariables.radioBorder.unchecked);
+                    radioCircle.strokes = [{
+                        type: 'SOLID',
+                        color: { r: 0, g: 0, b: 0 },
+                        boundVariables: { color: { type: 'VARIABLE_ALIAS', id: borderVar.id } }
+                    }];
+                } catch (e) {
+                    console.warn('Could not bind radio circle color variables:', e);
+                }
+
                 // Inner dot (only visible when checked)
                 if (isChecked) {
                     const innerDot = figma.createEllipse();
                     innerDot.name = "InnerDot";
                     innerDot.resize(12, 12);
                     innerDot.fills = [{ type: 'SOLID', color: radioInnerFill }];
+
+                    // Bind inner dot color
+                    try {
+                        const innerVar = isDisabled ? radioColorVariables.radioInner.disabled : radioColorVariables.radioInner.checked;
+                        innerDot.fills = [{
+                            type: 'SOLID',
+                            color: { r: 0, g: 0, b: 0 },
+                            boundVariables: { color: { type: 'VARIABLE_ALIAS', id: innerVar.id } }
+                        }];
+                    } catch (e) {
+                        console.warn('Could not bind inner dot color variable:', e);
+                    }
+
                     radioCircle.appendChild(innerDot);
                 }
 
@@ -2640,6 +2926,24 @@ async function createRadioComponentSet(primaryColor, textColor, radius) {
                 labelText.fontSize = size.fontSize;
                 labelText.characters = type.isCard ? "Card Heading" : "Radio Label";
                 labelText.fills = [{ type: 'SOLID', color: labelColor }];
+
+                // Apply label text style
+                if (radioTextStyles[size.name] && radioTextStyles[size.name].label) {
+                    await labelText.setTextStyleIdAsync(radioTextStyles[size.name].label.id);
+                }
+
+                // Bind label color variable
+                try {
+                    const labelColorVar = isDisabled ? radioColorVariables.label.disabled : radioColorVariables.label.normal;
+                    labelText.fills = [{
+                        type: 'SOLID',
+                        color: { r: 0, g: 0, b: 0 },
+                        boundVariables: { color: { type: 'VARIABLE_ALIAS', id: labelColorVar.id } }
+                    }];
+                } catch (e) {
+                    console.warn('Could not bind label color variable:', e);
+                }
+
                 labelSection.appendChild(labelText);
 
                 // For Radio Card: Add description
@@ -2650,6 +2954,24 @@ async function createRadioComponentSet(primaryColor, textColor, radius) {
                     descText.fontSize = size.hintFontSize;
                     descText.characters = "Card description text";
                     descText.fills = [{ type: 'SOLID', color: hintColor }];
+
+                    // Apply hint text style
+                    if (radioTextStyles[size.name] && radioTextStyles[size.name].hint) {
+                        await descText.setTextStyleIdAsync(radioTextStyles[size.name].hint.id);
+                    }
+
+                    // Bind description color variable
+                    try {
+                        const hintColorVar = isDisabled ? radioColorVariables.hint.disabled : radioColorVariables.hint.normal;
+                        descText.fills = [{
+                            type: 'SOLID',
+                            color: { r: 0, g: 0, b: 0 },
+                            boundVariables: { color: { type: 'VARIABLE_ALIAS', id: hintColorVar.id } }
+                        }];
+                    } catch (e) {
+                        console.warn('Could not bind description color variable:', e);
+                    }
+
                     labelSection.appendChild(descText);
                 }
 
@@ -2670,6 +2992,24 @@ async function createRadioComponentSet(primaryColor, textColor, radius) {
                     hintText.fontSize = size.hintFontSize;
                     hintText.characters = "Optional hint text";
                     hintText.fills = [{ type: 'SOLID', color: hintColor }];
+
+                    // Apply hint text style
+                    if (radioTextStyles[size.name] && radioTextStyles[size.name].hint) {
+                        await hintText.setTextStyleIdAsync(radioTextStyles[size.name].hint.id);
+                    }
+
+                    // Bind hint color variable
+                    try {
+                        const hintColorVar = isDisabled ? radioColorVariables.hint.disabled : radioColorVariables.hint.normal;
+                        hintText.fills = [{
+                            type: 'SOLID',
+                            color: { r: 0, g: 0, b: 0 },
+                            boundVariables: { color: { type: 'VARIABLE_ALIAS', id: hintColorVar.id } }
+                        }];
+                    } catch (e) {
+                        console.warn('Could not bind hint color variable:', e);
+                    }
+
                     hintLinkRow.appendChild(hintText);
 
                     const linkText = figma.createText();
@@ -2679,6 +3019,18 @@ async function createRadioComponentSet(primaryColor, textColor, radius) {
                     linkText.characters = "Learn more";
                     linkText.fills = [{ type: 'SOLID', color: primaryRgb }];
                     linkText.textDecoration = 'UNDERLINE';
+
+                    // Bind link color variable
+                    try {
+                        linkText.fills = [{
+                            type: 'SOLID',
+                            color: { r: 0, g: 0, b: 0 },
+                            boundVariables: { color: { type: 'VARIABLE_ALIAS', id: radioColorVariables.link.id } }
+                        }];
+                    } catch (e) {
+                        console.warn('Could not bind link color variable:', e);
+                    }
+
                     hintLinkRow.appendChild(linkText);
 
                     labelSection.appendChild(hintLinkRow);
@@ -2872,7 +3224,7 @@ async function createRadioComponentSet(primaryColor, textColor, radius) {
 
     figma.currentPage.appendChild(containerFrame);
     figma.viewport.scrollAndZoomIntoView([containerFrame]);
-    figma.notify(`✅ Radio Component System with ${components.length} variants created!`);
+    figma.notify(`✅ Radio System created with ${components.length} variants, spacing variables, color variables, and text styles!`);
 }
 
 // ============================================
@@ -2896,6 +3248,206 @@ async function createCheckboxComponentSet(primaryColor, textColor, radius) {
     const mutedRgb = hexToRgb('#6B7280');
     const disabledRgb = hexToRgb('#D1D5DB');
     const borderRgb = hexToRgb('#E5E7EB');
+
+    // ============================================
+    // CREATE CHECKBOX SPACING VARIABLES - START
+    // ============================================
+
+    const collections = await figma.variables.getLocalVariableCollectionsAsync();
+    let checkboxSpacingCollection = collections.find(c => c.name === 'Checkbox/Spacing');
+
+    if (!checkboxSpacingCollection) {
+        checkboxSpacingCollection = figma.variables.createVariableCollection('Checkbox/Spacing');
+    }
+
+    const spacingModeId = checkboxSpacingCollection.modes[0].modeId;
+    const existingFloatVars = await figma.variables.getLocalVariablesAsync('FLOAT');
+
+    function createOrUpdateFloatVar(name, value) {
+        let floatVar = existingFloatVars.find(v => v.name === name && v.variableCollectionId === checkboxSpacingCollection.id);
+        if (!floatVar) {
+            floatVar = figma.variables.createVariable(name, checkboxSpacingCollection, 'FLOAT');
+            existingFloatVars.push(floatVar);
+        }
+        floatVar.setValueForMode(spacingModeId, value);
+        return floatVar;
+    }
+
+    // Checkbox size configurations
+    const checkboxSizeConfigs = [
+        { size: 'SM', fontSize: 13, padding: 12, gap: 16, cardPadding: 12, hintFontSize: 12 },
+        { size: 'MD', fontSize: 14, padding: 16, gap: 18, cardPadding: 16, hintFontSize: 12 },
+        { size: 'LG', fontSize: 16, padding: 20, gap: 20, cardPadding: 20, hintFontSize: 12 }
+    ];
+
+    const checkboxSpacingVariables = {};
+
+    for (const config of checkboxSizeConfigs) {
+        const sizeKey = config.size.toLowerCase();
+        checkboxSpacingVariables[sizeKey] = {
+            fontSize: createOrUpdateFloatVar(`checkbox/${sizeKey}/font-size`, config.fontSize),
+            padding: createOrUpdateFloatVar(`checkbox/${sizeKey}/padding`, config.padding),
+            gap: createOrUpdateFloatVar(`checkbox/${sizeKey}/gap`, config.gap),
+            cardPadding: createOrUpdateFloatVar(`checkbox/${sizeKey}/card-padding`, config.cardPadding),
+            hintFontSize: createOrUpdateFloatVar(`checkbox/${sizeKey}/hint-font-size`, config.hintFontSize)
+        };
+    }
+
+    const checkboxRadiusVar = createOrUpdateFloatVar('checkbox/radius', radius);
+    const checkboxSizeVar = createOrUpdateFloatVar('checkbox/size', 24);
+
+    // ============================================
+    // CREATE CHECKBOX SPACING VARIABLES - END
+    // ============================================
+
+    // ============================================
+    // CREATE CHECKBOX COLOR VARIABLES - START
+    // ============================================
+
+    let checkboxColorCollection = collections.find(c => c.name === 'Checkbox/Colors');
+
+    if (!checkboxColorCollection) {
+        checkboxColorCollection = figma.variables.createVariableCollection('Checkbox/Colors');
+    }
+
+    const colorModeId = checkboxColorCollection.modes[0].modeId;
+    const existingColorVars = await figma.variables.getLocalVariablesAsync('COLOR');
+
+    function createOrUpdateColorVar(name, color) {
+        let colorVar = existingColorVars.find(v => v.name === name && v.variableCollectionId === checkboxColorCollection.id);
+        if (!colorVar) {
+            colorVar = figma.variables.createVariable(name, checkboxColorCollection, 'COLOR');
+            existingColorVars.push(colorVar);
+        }
+        colorVar.setValueForMode(colorModeId, color);
+        return colorVar;
+    }
+
+    // Checkbox colors
+    const checkboxColorVariables = {
+        primary: createOrUpdateColorVar('checkbox/primary', primaryRgb),
+        text: createOrUpdateColorVar('checkbox/text', textRgb),
+        muted: createOrUpdateColorVar('checkbox/muted', mutedRgb),
+        disabled: createOrUpdateColorVar('checkbox/disabled', disabledRgb),
+        border: createOrUpdateColorVar('checkbox/border', borderRgb),
+        white: createOrUpdateColorVar('checkbox/white', { r: 1, g: 1, b: 1 }),
+        cardBg: createOrUpdateColorVar('checkbox/card-bg', { r: 1, g: 1, b: 1 }),
+        checkboxFill: {
+            unchecked: createOrUpdateColorVar('checkbox/fill/unchecked', { r: 1, g: 1, b: 1 }),
+            checked: createOrUpdateColorVar('checkbox/fill/checked', primaryRgb),
+            disabled: createOrUpdateColorVar('checkbox/fill/disabled', { r: 0.98, g: 0.98, b: 0.98 })
+        },
+        checkboxBorder: {
+            unchecked: createOrUpdateColorVar('checkbox/border/unchecked', borderRgb),
+            checked: createOrUpdateColorVar('checkbox/border/checked', primaryRgb),
+            disabled: createOrUpdateColorVar('checkbox/border/disabled', disabledRgb)
+        },
+        checkmark: createOrUpdateColorVar('checkbox/checkmark', { r: 1, g: 1, b: 1 }),
+        label: {
+            normal: createOrUpdateColorVar('checkbox/label/normal', textRgb),
+            disabled: createOrUpdateColorVar('checkbox/label/disabled', disabledRgb)
+        },
+        hint: {
+            normal: createOrUpdateColorVar('checkbox/hint/normal', mutedRgb),
+            disabled: createOrUpdateColorVar('checkbox/hint/disabled', disabledRgb)
+        },
+        link: createOrUpdateColorVar('checkbox/link', primaryRgb),
+        cardBorder: {
+            unchecked: createOrUpdateColorVar('checkbox/card-border/unchecked', borderRgb),
+            checked: createOrUpdateColorVar('checkbox/card-border/checked', primaryRgb),
+            disabled: createOrUpdateColorVar('checkbox/card-border/disabled', borderRgb)
+        }
+    };
+
+    // ============================================
+    // CREATE CHECKBOX COLOR VARIABLES - END
+    // ============================================
+
+    // ============================================
+    // CREATE CHECKBOX TEXT STYLES - START
+    // ============================================
+
+    const existingTextStyles = await figma.getLocalTextStylesAsync();
+    const checkboxTextStyles = {};
+
+    for (const config of checkboxSizeConfigs) {
+        const sizeKey = config.size;
+
+        // Label text style
+        let labelStyle = existingTextStyles.find(s => s.name === `Checkbox/Label/${sizeKey}`);
+        if (!labelStyle) {
+            labelStyle = figma.createTextStyle();
+            labelStyle.name = `Checkbox/Label/${sizeKey}`;
+        }
+        labelStyle.fontName = { family: "Poppins", style: "Medium" };
+        labelStyle.fontSize = config.fontSize;
+        labelStyle.lineHeight = { value: 150, unit: 'PERCENT' };
+        try {
+            labelStyle.setBoundVariable('fontSize', checkboxSpacingVariables[sizeKey.toLowerCase()].fontSize);
+        } catch (e) {
+            console.warn(`Could not bind fontSize variable for Checkbox/Label/${sizeKey}:`, e);
+        }
+
+        // Hint text style
+        let hintStyle = existingTextStyles.find(s => s.name === `Checkbox/Hint/${sizeKey}`);
+        if (!hintStyle) {
+            hintStyle = figma.createTextStyle();
+            hintStyle.name = `Checkbox/Hint/${sizeKey}`;
+        }
+        hintStyle.fontName = { family: "Poppins", style: "Regular" };
+        hintStyle.fontSize = config.hintFontSize;
+        hintStyle.lineHeight = { value: 150, unit: 'PERCENT' };
+        try {
+            hintStyle.setBoundVariable('fontSize', checkboxSpacingVariables[sizeKey.toLowerCase()].hintFontSize);
+        } catch (e) {
+            console.warn(`Could not bind fontSize variable for Checkbox/Hint/${sizeKey}:`, e);
+        }
+
+        checkboxTextStyles[sizeKey] = {
+            label: labelStyle,
+            hint: hintStyle
+        };
+    }
+
+    // ============================================
+    // CREATE CHECKBOX TEXT STYLES - END
+    // ============================================
+
+    // Helper function to bind color variable to vector nodes only
+    function bindColorVariableToNode(node, colorVar) {
+        try {
+            const vectorTypes = ['VECTOR', 'LINE', 'ELLIPSE', 'RECTANGLE', 'POLYGON', 'STAR', 'BOOLEAN_OPERATION'];
+            const containerTypes = ['FRAME', 'GROUP', 'COMPONENT', 'INSTANCE'];
+            
+            const bindFills = (n) => {
+                if (vectorTypes.includes(n.type)) {
+                    if (n.fills && Array.isArray(n.fills) && n.fills.length > 0) {
+                        n.fills = [{
+                            type: 'SOLID',
+                            color: { r: 0, g: 0, b: 0 },
+                            boundVariables: { color: { type: 'VARIABLE_ALIAS', id: colorVar.id } }
+                        }];
+                    }
+                    if (n.strokes && Array.isArray(n.strokes) && n.strokes.length > 0) {
+                        n.strokes = [{
+                            type: 'SOLID',
+                            color: { r: 0, g: 0, b: 0 },
+                            boundVariables: { color: { type: 'VARIABLE_ALIAS', id: colorVar.id } }
+                        }];
+                    }
+                }
+                if (containerTypes.includes(n.type) && n.fills && n.fills.length > 0) {
+                    n.fills = [];
+                }
+                if ('children' in n) {
+                    n.children.forEach(child => bindFills(child));
+                }
+            };
+            bindFills(node);
+        } catch (e) {
+            console.warn('Could not bind color variable to node:', e);
+        }
+    }
 
     // Checkmark SVG
     const checkmarkSVG = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -2950,6 +3502,8 @@ async function createCheckboxComponentSet(primaryColor, textColor, radius) {
                 let checkboxFill, checkboxBorder, labelColor, hintColor;
                 const isChecked = state === 'Checked';
                 const isDisabled = state === 'Disabled';
+                const stateKey = state.toLowerCase();
+                const sizeKey = size.name.toLowerCase();
 
                 if (isDisabled) {
                     checkboxFill = { r: 0.98, g: 0.98, b: 0.98 };
@@ -2988,6 +3542,45 @@ async function createCheckboxComponentSet(primaryColor, textColor, radius) {
                     mainContainer.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
                     mainContainer.strokes = [{ type: 'SOLID', color: isChecked && !isDisabled ? primaryRgb : borderRgb }];
                     mainContainer.strokeWeight = 1;
+
+                    // Bind card spacing variables
+                    try {
+                        mainContainer.setBoundVariable('paddingLeft', checkboxSpacingVariables[sizeKey].cardPadding);
+                        mainContainer.setBoundVariable('paddingRight', checkboxSpacingVariables[sizeKey].cardPadding);
+                        mainContainer.setBoundVariable('paddingTop', checkboxSpacingVariables[sizeKey].cardPadding);
+                        mainContainer.setBoundVariable('paddingBottom', checkboxSpacingVariables[sizeKey].cardPadding);
+                        mainContainer.setBoundVariable('itemSpacing', checkboxSpacingVariables[sizeKey].gap);
+                        mainContainer.setBoundVariable('topLeftRadius', checkboxRadiusVar);
+                        mainContainer.setBoundVariable('topRightRadius', checkboxRadiusVar);
+                        mainContainer.setBoundVariable('bottomLeftRadius', checkboxRadiusVar);
+                        mainContainer.setBoundVariable('bottomRightRadius', checkboxRadiusVar);
+                    } catch (e) {
+                        console.warn('Could not bind card spacing variables:', e);
+                    }
+
+                    // Bind card background color
+                    try {
+                        mainContainer.fills = [{
+                            type: 'SOLID',
+                            color: { r: 0, g: 0, b: 0 },
+                            boundVariables: { color: { type: 'VARIABLE_ALIAS', id: checkboxColorVariables.cardBg.id } }
+                        }];
+                    } catch (e) {
+                        console.warn('Could not bind card background variable:', e);
+                    }
+
+                    // Bind card border color
+                    try {
+                        const cardBorderVar = isDisabled ? checkboxColorVariables.cardBorder.disabled : 
+                                             (isChecked ? checkboxColorVariables.cardBorder.checked : checkboxColorVariables.cardBorder.unchecked);
+                        mainContainer.strokes = [{
+                            type: 'SOLID',
+                            color: { r: 0, g: 0, b: 0 },
+                            boundVariables: { color: { type: 'VARIABLE_ALIAS', id: cardBorderVar.id } }
+                        }];
+                    } catch (e) {
+                        console.warn('Could not bind card border variable:', e);
+                    }
                 } else {
                     // Checkbox Button - Simple horizontal layout
                     mainContainer = figma.createFrame();
@@ -2998,6 +3591,13 @@ async function createCheckboxComponentSet(primaryColor, textColor, radius) {
                     mainContainer.counterAxisAlignItems = 'CENTER';
                     mainContainer.itemSpacing = size.gap;
                     mainContainer.fills = [];
+
+                    // Bind button gap variable
+                    try {
+                        mainContainer.setBoundVariable('itemSpacing', checkboxSpacingVariables[sizeKey].gap);
+                    } catch (e) {
+                        console.warn('Could not bind button gap variable:', e);
+                    }
                 }
 
                 // Create checkbox square (always 24px)
@@ -3014,6 +3614,37 @@ async function createCheckboxComponentSet(primaryColor, textColor, radius) {
                 checkboxSquare.primaryAxisSizingMode = 'FIXED';
                 checkboxSquare.counterAxisSizingMode = 'FIXED';
 
+                // Bind checkbox square radius
+                try {
+                    checkboxSquare.setBoundVariable('topLeftRadius', checkboxRadiusVar);
+                    checkboxSquare.setBoundVariable('topRightRadius', checkboxRadiusVar);
+                    checkboxSquare.setBoundVariable('bottomLeftRadius', checkboxRadiusVar);
+                    checkboxSquare.setBoundVariable('bottomRightRadius', checkboxRadiusVar);
+                } catch (e) {
+                    console.warn('Could not bind checkbox square radius:', e);
+                }
+
+                // Bind checkbox square colors
+                try {
+                    const fillVar = isDisabled ? checkboxColorVariables.checkboxFill.disabled :
+                                   (isChecked ? checkboxColorVariables.checkboxFill.checked : checkboxColorVariables.checkboxFill.unchecked);
+                    checkboxSquare.fills = [{
+                        type: 'SOLID',
+                        color: { r: 0, g: 0, b: 0 },
+                        boundVariables: { color: { type: 'VARIABLE_ALIAS', id: fillVar.id } }
+                    }];
+
+                    const borderVar = isDisabled ? checkboxColorVariables.checkboxBorder.disabled :
+                                     (isChecked ? checkboxColorVariables.checkboxBorder.checked : checkboxColorVariables.checkboxBorder.unchecked);
+                    checkboxSquare.strokes = [{
+                        type: 'SOLID',
+                        color: { r: 0, g: 0, b: 0 },
+                        boundVariables: { color: { type: 'VARIABLE_ALIAS', id: borderVar.id } }
+                    }];
+                } catch (e) {
+                    console.warn('Could not bind checkbox square color variables:', e);
+                }
+
                 // Checkmark icon (only visible when checked)
                 if (isChecked) {
                     const checkmarkNode = figma.createNodeFromSvg(checkmarkSVG);
@@ -3027,10 +3658,22 @@ async function createCheckboxComponentSet(primaryColor, textColor, radius) {
                         [...checkmarkNode.children].forEach(child => {
                             child.x += checkmarkNode.x;
                             child.y += checkmarkNode.y;
+                            // Bind checkmark color variable
+                            try {
+                                bindColorVariableToNode(child, checkboxColorVariables.checkmark);
+                            } catch (e) {
+                                console.warn('Could not bind checkmark color variable:', e);
+                            }
                             checkboxSquare.appendChild(child);
                         });
                         checkmarkNode.remove();
                     } else {
+                        // Bind checkmark color variable
+                        try {
+                            bindColorVariableToNode(checkmarkNode, checkboxColorVariables.checkmark);
+                        } catch (e) {
+                            console.warn('Could not bind checkmark color variable:', e);
+                        }
                         checkboxSquare.appendChild(checkmarkNode);
                     }
                 }
@@ -3053,6 +3696,24 @@ async function createCheckboxComponentSet(primaryColor, textColor, radius) {
                 labelText.fontSize = size.fontSize;
                 labelText.characters = type.isCard ? "Card Heading" : "Checkbox Label";
                 labelText.fills = [{ type: 'SOLID', color: labelColor }];
+
+                // Apply label text style
+                if (checkboxTextStyles[size.name] && checkboxTextStyles[size.name].label) {
+                    await labelText.setTextStyleIdAsync(checkboxTextStyles[size.name].label.id);
+                }
+
+                // Bind label color variable
+                try {
+                    const labelColorVar = isDisabled ? checkboxColorVariables.label.disabled : checkboxColorVariables.label.normal;
+                    labelText.fills = [{
+                        type: 'SOLID',
+                        color: { r: 0, g: 0, b: 0 },
+                        boundVariables: { color: { type: 'VARIABLE_ALIAS', id: labelColorVar.id } }
+                    }];
+                } catch (e) {
+                    console.warn('Could not bind label color variable:', e);
+                }
+
                 labelSection.appendChild(labelText);
 
                 // For Checkbox Card: Add description
@@ -3063,6 +3724,24 @@ async function createCheckboxComponentSet(primaryColor, textColor, radius) {
                     descText.fontSize = size.hintFontSize;
                     descText.characters = "Card description text";
                     descText.fills = [{ type: 'SOLID', color: hintColor }];
+
+                    // Apply hint text style
+                    if (checkboxTextStyles[size.name] && checkboxTextStyles[size.name].hint) {
+                        await descText.setTextStyleIdAsync(checkboxTextStyles[size.name].hint.id);
+                    }
+
+                    // Bind description color variable
+                    try {
+                        const hintColorVar = isDisabled ? checkboxColorVariables.hint.disabled : checkboxColorVariables.hint.normal;
+                        descText.fills = [{
+                            type: 'SOLID',
+                            color: { r: 0, g: 0, b: 0 },
+                            boundVariables: { color: { type: 'VARIABLE_ALIAS', id: hintColorVar.id } }
+                        }];
+                    } catch (e) {
+                        console.warn('Could not bind description color variable:', e);
+                    }
+
                     labelSection.appendChild(descText);
                 }
 
@@ -3083,6 +3762,24 @@ async function createCheckboxComponentSet(primaryColor, textColor, radius) {
                     hintText.fontSize = size.hintFontSize;
                     hintText.characters = "Optional hint text";
                     hintText.fills = [{ type: 'SOLID', color: hintColor }];
+
+                    // Apply hint text style
+                    if (checkboxTextStyles[size.name] && checkboxTextStyles[size.name].hint) {
+                        await hintText.setTextStyleIdAsync(checkboxTextStyles[size.name].hint.id);
+                    }
+
+                    // Bind hint color variable
+                    try {
+                        const hintColorVar = isDisabled ? checkboxColorVariables.hint.disabled : checkboxColorVariables.hint.normal;
+                        hintText.fills = [{
+                            type: 'SOLID',
+                            color: { r: 0, g: 0, b: 0 },
+                            boundVariables: { color: { type: 'VARIABLE_ALIAS', id: hintColorVar.id } }
+                        }];
+                    } catch (e) {
+                        console.warn('Could not bind hint color variable:', e);
+                    }
+
                     hintLinkRow.appendChild(hintText);
 
                     const linkText = figma.createText();
@@ -3092,6 +3789,18 @@ async function createCheckboxComponentSet(primaryColor, textColor, radius) {
                     linkText.characters = "Learn more";
                     linkText.fills = [{ type: 'SOLID', color: primaryRgb }];
                     linkText.textDecoration = 'UNDERLINE';
+
+                    // Bind link color variable
+                    try {
+                        linkText.fills = [{
+                            type: 'SOLID',
+                            color: { r: 0, g: 0, b: 0 },
+                            boundVariables: { color: { type: 'VARIABLE_ALIAS', id: checkboxColorVariables.link.id } }
+                        }];
+                    } catch (e) {
+                        console.warn('Could not bind link color variable:', e);
+                    }
+
                     hintLinkRow.appendChild(linkText);
 
                     labelSection.appendChild(hintLinkRow);
@@ -3285,7 +3994,7 @@ async function createCheckboxComponentSet(primaryColor, textColor, radius) {
 
     figma.currentPage.appendChild(containerFrame);
     figma.viewport.scrollAndZoomIntoView([containerFrame]);
-    figma.notify(`✅ Checkbox Component System with ${components.length} variants created!`);
+    figma.notify(`✅ Checkbox System created with ${components.length} variants, spacing variables, color variables, and text styles!`);
 }
 
 // ============================================
