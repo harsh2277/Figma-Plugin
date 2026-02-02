@@ -16,8 +16,19 @@
 // ============================================
 // PLUGIN INITIALIZATION
 // ============================================
-
 figma.showUI(__html__, { width: 424, height: 700, themeColors: true });
+
+// Center the plugin window immediately after showing
+setTimeout(() => {
+    try {
+        const bounds = figma.viewport.bounds;
+        const centerX = bounds.x + (bounds.width - 424) / 2.4;
+        const centerY = bounds.y + (bounds.height - 700) / 9;
+        figma.ui.reposition(centerX, centerY);
+    } catch (error) {
+        console.log('Could not center UI:', error);
+    }
+}, 100);
 
 figma.on('close', () => {
     figma.notify('👋 Bye Bye Thanks for using Slate.Design', { timeout: 3000 });
@@ -126,17 +137,10 @@ async function createButtonComponentSet(buttonText, bgColor, textColor, radius) 
         return iconComponent;
     }
 
-    const iconStore = figma.createFrame();
-    iconStore.name = "Button Icons";
-    iconStore.resize(100, 100);
-    iconStore.fills = [];
-    iconStore.visible = false;
-    figma.currentPage.appendChild(iconStore);
-
-    const leftIconComp = createIconComponent(arrowLeftSVG, "Icon/arrow-left", textRgb, 16);
-    const rightIconComp = createIconComponent(arrowRightSVG, "Icon/arrow-right-1", textRgb, 16);
-    iconStore.appendChild(leftIconComp);
-    iconStore.appendChild(rightIconComp);
+    // Create black icon components (no wrapper frame)
+    const blackColor = { r: 0, g: 0, b: 0 };
+    const leftIconComp = createIconComponent(arrowLeftSVG, "Icon/arrow-left", blackColor, 20);
+    const rightIconComp = createIconComponent(arrowRightSVG, "Icon/arrow-right-1", blackColor, 20);
 
     // Button configurations
     const sizes = [
@@ -445,8 +449,21 @@ async function createButtonComponentSet(buttonText, bgColor, textColor, radius) 
     contentWrapper.paddingRight = 48;
     contentWrapper.paddingTop = 48;
     contentWrapper.paddingBottom = 48;
+    contentWrapper.itemSpacing = 32;
     contentWrapper.fills = [];
 
+    // Add icon components directly (no frame wrapper)
+    const iconsRow = figma.createFrame();
+    iconsRow.name = "🎯 Button Icons";
+    iconsRow.layoutMode = 'HORIZONTAL';
+    iconsRow.primaryAxisSizingMode = 'AUTO';
+    iconsRow.counterAxisSizingMode = 'AUTO';
+    iconsRow.itemSpacing = 24;
+    iconsRow.fills = [];
+    iconsRow.appendChild(leftIconComp);
+    iconsRow.appendChild(rightIconComp);
+
+    contentWrapper.appendChild(iconsRow);
     contentWrapper.appendChild(componentSet);
     containerFrame.appendChild(contentWrapper);
 
@@ -1507,6 +1524,823 @@ async function generateAllLibraryIcons(libraryId, categories) {
 
 
 // ============================================
+// RADIO COMPONENT - START
+// ============================================
+
+async function createRadioComponentSet(primaryColor, textColor, radius) {
+    await Promise.all([
+        figma.loadFontAsync({ family: "Poppins", style: "Regular" }),
+        figma.loadFontAsync({ family: "Poppins", style: "Medium" }),
+        figma.loadFontAsync({ family: "Poppins", style: "Bold" })
+    ]);
+
+    const primaryRgb = hexToRgb(primaryColor);
+    const textRgb = hexToRgb(textColor);
+    const mutedRgb = hexToRgb('#6B7280');
+    const disabledRgb = hexToRgb('#D1D5DB');
+    const borderRgb = hexToRgb('#E5E7EB');
+
+    const types = [
+        { name: 'Radio Button', isButton: true },
+        { name: 'Radio Card', isCard: true }
+    ];
+
+    const states = ['Unchecked', 'Checked', 'Disabled'];
+    const sizes = [
+        { name: 'SM', radioSize: 24, fontSize: 13, padding: 12, gap: 16, cardPadding: 12, hintFontSize: 12 },
+        { name: 'MD', radioSize: 24, fontSize: 14, padding: 16, gap: 18, cardPadding: 16, hintFontSize: 12 },
+        { name: 'LG', radioSize: 24, fontSize: 16, padding: 20, gap: 20, cardPadding: 20, hintFontSize: 12 }
+    ];
+
+    const components = [];
+
+    // Layout: 3 columns (sizes) x 3 rows (states) for each type
+    // Radio Card on top, Radio Button on bottom
+    const columnWidth = 280;
+    const rowHeight = 100;
+    const columnGap = 10;
+    const rowGap = 10;
+    const typeGap = 10; // Gap between Radio Card section and Radio Button section
+
+    for (let tIndex = 0; tIndex < types.length; tIndex++) {
+        const type = types[tIndex];
+        const baseY = tIndex * (rowHeight * states.length + rowGap * (states.length - 1) + typeGap);
+
+        for (let sIndex = 0; sIndex < sizes.length; sIndex++) {
+            const size = sizes[sIndex];
+            const xPos = sIndex * (columnWidth + columnGap);
+
+            for (let stIndex = 0; stIndex < states.length; stIndex++) {
+                const state = states[stIndex];
+                const yPos = baseY + (stIndex * (rowHeight + rowGap));
+
+                const wrapper = figma.createComponent();
+                wrapper.name = `Type=${type.name}, Size=${size.name}, State=${state}`;
+                wrapper.layoutMode = 'VERTICAL';
+                wrapper.primaryAxisSizingMode = 'AUTO';
+                wrapper.counterAxisSizingMode = 'AUTO';
+                wrapper.itemSpacing = 8;
+                wrapper.fills = [];
+                wrapper.x = xPos;
+                wrapper.y = yPos;
+
+                // Determine colors based on state
+                let radioFill, radioBorder, radioInnerFill, labelColor, hintColor;
+                const isChecked = state === 'Checked';
+                const isDisabled = state === 'Disabled';
+
+                if (isDisabled) {
+                    radioFill = { r: 0.98, g: 0.98, b: 0.98 };
+                    radioBorder = disabledRgb;
+                    radioInnerFill = disabledRgb;
+                    labelColor = disabledRgb;
+                    hintColor = disabledRgb;
+                } else if (isChecked) {
+                    radioFill = { r: 1, g: 1, b: 1 };
+                    radioBorder = primaryRgb;
+                    radioInnerFill = primaryRgb;
+                    labelColor = textRgb;
+                    hintColor = mutedRgb;
+                } else {
+                    radioFill = { r: 1, g: 1, b: 1 };
+                    radioBorder = borderRgb;
+                    radioInnerFill = { r: 1, g: 1, b: 1 };
+                    labelColor = textRgb;
+                    hintColor = mutedRgb;
+                }
+
+                // Create main container based on type
+                let mainContainer;
+
+                if (type.isCard) {
+                    // Radio Card - Full card with border
+                    mainContainer = figma.createFrame();
+                    mainContainer.name = "RadioCard";
+                    mainContainer.layoutMode = 'HORIZONTAL';
+                    mainContainer.primaryAxisSizingMode = 'AUTO';
+                    mainContainer.counterAxisSizingMode = 'AUTO';
+                    mainContainer.counterAxisAlignItems = 'CENTER';
+                    mainContainer.itemSpacing = size.gap;
+                    mainContainer.paddingLeft = size.cardPadding;
+                    mainContainer.paddingRight = size.cardPadding;
+                    mainContainer.paddingTop = size.cardPadding;
+                    mainContainer.paddingBottom = size.cardPadding;
+                    mainContainer.cornerRadius = radius;
+                    mainContainer.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
+                    mainContainer.strokes = [{ type: 'SOLID', color: isChecked && !isDisabled ? primaryRgb : borderRgb }];
+                    mainContainer.strokeWeight = 1.5;
+                } else {
+                    // Radio Button - Simple horizontal layout
+                    mainContainer = figma.createFrame();
+                    mainContainer.name = "RadioButton";
+                    mainContainer.layoutMode = 'HORIZONTAL';
+                    mainContainer.primaryAxisSizingMode = 'AUTO';
+                    mainContainer.counterAxisSizingMode = 'AUTO';
+                    mainContainer.counterAxisAlignItems = 'CENTER';
+                    mainContainer.itemSpacing = size.gap;
+                    mainContainer.fills = [];
+                }
+
+                // Create radio circle (always 24px)
+                const radioCircle = figma.createFrame();
+                radioCircle.name = "RadioCircle";
+                radioCircle.resize(24, 24);
+                radioCircle.cornerRadius = 12;
+                radioCircle.fills = [{ type: 'SOLID', color: radioFill }];
+                radioCircle.strokes = [{ type: 'SOLID', color: radioBorder }];
+                radioCircle.strokeWeight = 2;
+                radioCircle.layoutMode = 'HORIZONTAL';
+                radioCircle.primaryAxisAlignItems = 'CENTER';
+                radioCircle.counterAxisAlignItems = 'CENTER';
+                radioCircle.primaryAxisSizingMode = 'FIXED';
+                radioCircle.counterAxisSizingMode = 'FIXED';
+
+                // Inner dot (only visible when checked)
+                if (isChecked) {
+                    const innerDot = figma.createEllipse();
+                    innerDot.name = "InnerDot";
+                    innerDot.resize(12, 12);
+                    innerDot.fills = [{ type: 'SOLID', color: radioInnerFill }];
+                    radioCircle.appendChild(innerDot);
+                }
+
+                mainContainer.appendChild(radioCircle);
+
+                // Create label section
+                const labelSection = figma.createFrame();
+                labelSection.name = "LabelSection";
+                labelSection.layoutMode = 'VERTICAL';
+                labelSection.primaryAxisSizingMode = 'AUTO';
+                labelSection.counterAxisSizingMode = 'AUTO';
+                labelSection.itemSpacing = 4;
+                labelSection.fills = [];
+
+                // Main label text (Heading for Radio Card)
+                const labelText = figma.createText();
+                labelText.name = type.isCard ? "HeadingText" : "LabelText";
+                labelText.fontName = { family: "Poppins", style: "Medium" };
+                labelText.fontSize = size.fontSize;
+                labelText.characters = type.isCard ? "Card Heading" : "Radio Label";
+                labelText.fills = [{ type: 'SOLID', color: labelColor }];
+                labelSection.appendChild(labelText);
+
+                // For Radio Card: Add description
+                if (type.isCard) {
+                    const descText = figma.createText();
+                    descText.name = "DescriptionText";
+                    descText.fontName = { family: "Poppins", style: "Regular" };
+                    descText.fontSize = size.hintFontSize;
+                    descText.characters = "Card description text";
+                    descText.fills = [{ type: 'SOLID', color: hintColor }];
+                    labelSection.appendChild(descText);
+                }
+
+                // For Radio Button: Hint and Link in one line
+                if (type.isButton) {
+                    const hintLinkRow = figma.createFrame();
+                    hintLinkRow.name = "HintLinkRow";
+                    hintLinkRow.layoutMode = 'HORIZONTAL';
+                    hintLinkRow.primaryAxisSizingMode = 'AUTO';
+                    hintLinkRow.counterAxisSizingMode = 'AUTO';
+                    hintLinkRow.itemSpacing = 6;
+                    hintLinkRow.fills = [];
+                    hintLinkRow.visible = false; // Hidden by default
+
+                    const hintText = figma.createText();
+                    hintText.name = "HintText";
+                    hintText.fontName = { family: "Poppins", style: "Regular" };
+                    hintText.fontSize = size.hintFontSize;
+                    hintText.characters = "Optional hint text";
+                    hintText.fills = [{ type: 'SOLID', color: hintColor }];
+                    hintLinkRow.appendChild(hintText);
+
+                    const linkText = figma.createText();
+                    linkText.name = "LinkText";
+                    linkText.fontName = { family: "Poppins", style: "Medium" };
+                    linkText.fontSize = size.hintFontSize;
+                    linkText.characters = "Learn more";
+                    linkText.fills = [{ type: 'SOLID', color: primaryRgb }];
+                    linkText.textDecoration = 'UNDERLINE';
+                    hintLinkRow.appendChild(linkText);
+
+                    labelSection.appendChild(hintLinkRow);
+                }
+
+                mainContainer.appendChild(labelSection);
+                wrapper.appendChild(mainContainer);
+
+                components.push(wrapper);
+            }
+        }
+    }
+
+    // Create component set
+    const componentSet = figma.combineAsVariants(components, figma.currentPage);
+    componentSet.name = "Radio";
+
+    // Add component properties
+    const labelProp = componentSet.addComponentProperty("Label", "TEXT", "Radio Label");
+    const headingProp = componentSet.addComponentProperty("Heading", "TEXT", "Card Heading");
+    const descriptionProp = componentSet.addComponentProperty("Description", "TEXT", "Card description text");
+
+    // Properties for Radio Button type - Show HintLinkRow
+    const showHintLinkProp = componentSet.addComponentProperty("Show Hint & Link", "BOOLEAN", false);
+    const hintTextProp = componentSet.addComponentProperty("Hint Text", "TEXT", "Optional hint text");
+    const linkTextProp = componentSet.addComponentProperty("Link Text", "TEXT", "Learn more");
+
+    // Apply properties to variants
+    componentSet.children.forEach(variant => {
+        const labelTextNode = variant.findOne(n => n.name === "LabelText");
+        const headingTextNode = variant.findOne(n => n.name === "HeadingText");
+        const descriptionTextNode = variant.findOne(n => n.name === "DescriptionText");
+        const hintLinkRowNode = variant.findOne(n => n.name === "HintLinkRow");
+        const hintTextNode = variant.findOne(n => n.name === "HintText");
+        const linkTextNode = variant.findOne(n => n.name === "LinkText");
+
+        if (labelTextNode) {
+            labelTextNode.componentPropertyReferences = { characters: labelProp };
+        }
+
+        if (headingTextNode) {
+            headingTextNode.componentPropertyReferences = { characters: headingProp };
+        }
+
+        if (descriptionTextNode) {
+            descriptionTextNode.componentPropertyReferences = { characters: descriptionProp };
+        }
+
+        if (hintLinkRowNode) {
+            hintLinkRowNode.componentPropertyReferences = {
+                visible: showHintLinkProp
+            };
+        }
+
+        if (hintTextNode) {
+            hintTextNode.componentPropertyReferences = {
+                characters: hintTextProp
+            };
+        }
+
+        if (linkTextNode) {
+            linkTextNode.componentPropertyReferences = {
+                characters: linkTextProp
+            };
+        }
+    });
+
+    // Create documentation container
+    const containerFrame = figma.createFrame();
+    containerFrame.name = "Radio Component System";
+    containerFrame.fills = [{ type: 'SOLID', color: { r: 0.98, g: 0.98, b: 0.99 } }];
+    containerFrame.layoutMode = 'VERTICAL';
+    containerFrame.primaryAxisSizingMode = 'AUTO';
+    containerFrame.counterAxisSizingMode = 'AUTO';
+    containerFrame.paddingBottom = 48;
+
+    // Header
+    const headerFrame = figma.createFrame();
+    headerFrame.name = "Header";
+    headerFrame.layoutMode = 'VERTICAL';
+    headerFrame.layoutAlign = 'STRETCH';
+    headerFrame.primaryAxisSizingMode = 'AUTO';
+    headerFrame.paddingLeft = 80;
+    headerFrame.paddingRight = 80;
+    headerFrame.paddingTop = 80;
+    headerFrame.paddingBottom = 100;
+    headerFrame.itemSpacing = 40;
+    headerFrame.counterAxisAlignItems = 'CENTER';
+    headerFrame.fills = [{
+        type: 'GRADIENT_LINEAR',
+        gradientStops: [
+            { position: 0, color: { r: 0.04, g: 0.06, b: 0.15, a: 1 } },
+            { position: 1, color: { r: 0.08, g: 0.02, b: 0.18, a: 1 } }
+        ],
+        gradientTransform: [[1, 0, 0], [0, 1, 0]]
+    }];
+
+    const headerMain = figma.createFrame();
+    headerMain.layoutMode = 'VERTICAL';
+    headerMain.primaryAxisSizingMode = 'AUTO';
+    headerMain.counterAxisSizingMode = 'AUTO';
+    headerMain.counterAxisAlignItems = 'CENTER';
+    headerMain.itemSpacing = 24;
+    headerMain.fills = [];
+    headerFrame.appendChild(headerMain);
+
+    const title = figma.createText();
+    title.fontName = { family: "Poppins", style: "Bold" };
+    title.characters = "Radio Component System";
+    title.fontSize = 56;
+    title.letterSpacing = { value: -1.5, unit: 'PIXELS' };
+    title.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
+    headerMain.appendChild(title);
+
+    const desc = figma.createText();
+    desc.fontName = { family: "Poppins", style: "Regular" };
+    desc.characters = `A comprehensive radio system with ${components.length} variants, including Radio Button and Radio Card styles with heading and description.`;
+    desc.fontSize = 18;
+    desc.opacity = 0.6;
+    desc.textAlignHorizontal = 'CENTER';
+    desc.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
+    desc.resize(800, desc.height);
+    headerMain.appendChild(desc);
+
+    // Stats row
+    const statsRow = figma.createFrame();
+    statsRow.layoutMode = 'HORIZONTAL';
+    statsRow.primaryAxisSizingMode = 'AUTO';
+    statsRow.counterAxisSizingMode = 'AUTO';
+    statsRow.itemSpacing = 16;
+    statsRow.fills = [];
+
+    function createStatBadge(label, value) {
+        const badge = figma.createFrame();
+        badge.layoutMode = 'HORIZONTAL';
+        badge.primaryAxisSizingMode = 'AUTO';
+        badge.counterAxisSizingMode = 'AUTO';
+        badge.paddingLeft = 20;
+        badge.paddingRight = 20;
+        badge.paddingTop = 10;
+        badge.paddingBottom = 10;
+        badge.cornerRadius = 100;
+        badge.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 }, opacity: 0.08 }];
+        badge.strokes = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 }, opacity: 0.15 }];
+        badge.strokeWeight = 1;
+        badge.itemSpacing = 10;
+        badge.counterAxisAlignItems = 'CENTER';
+        badge.effects = [{ type: 'BACKGROUND_BLUR', radius: 20, visible: true }];
+
+        const tLabel = figma.createText();
+        tLabel.fontName = { family: "Poppins", style: "Medium" };
+        tLabel.fontSize = 13;
+        tLabel.characters = label;
+        tLabel.fills = [{ type: 'SOLID', color: { r: 0.7, g: 0.7, b: 0.8 } }];
+        badge.appendChild(tLabel);
+
+        const tValue = figma.createText();
+        tValue.fontName = { family: "Poppins", style: "Bold" };
+        tValue.fontSize = 13;
+        tValue.characters = value;
+        tValue.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
+        badge.appendChild(tValue);
+
+        return badge;
+    }
+
+    statsRow.appendChild(createStatBadge("Variants", String(components.length)));
+    statsRow.appendChild(createStatBadge("Types", String(types.length)));
+    statsRow.appendChild(createStatBadge("Sizes", String(sizes.length)));
+    const dateText = new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+    statsRow.appendChild(createStatBadge("Last Updated", dateText));
+
+    headerFrame.appendChild(statsRow);
+    containerFrame.appendChild(headerFrame);
+
+    // Content wrapper
+    const contentWrapper = figma.createFrame();
+    contentWrapper.name = "Content";
+    contentWrapper.layoutMode = 'VERTICAL';
+    contentWrapper.primaryAxisSizingMode = 'AUTO';
+    contentWrapper.counterAxisSizingMode = 'AUTO';
+    contentWrapper.layoutAlign = 'STRETCH';
+    contentWrapper.paddingLeft = 48;
+    contentWrapper.paddingRight = 48;
+    contentWrapper.paddingTop = 48;
+    contentWrapper.paddingBottom = 48;
+    contentWrapper.fills = [];
+
+    contentWrapper.appendChild(componentSet);
+    containerFrame.appendChild(contentWrapper);
+
+    figma.currentPage.appendChild(containerFrame);
+    figma.viewport.scrollAndZoomIntoView([containerFrame]);
+    figma.notify(`✅ Radio Component System with ${components.length} variants created!`);
+}
+
+// ============================================
+// RADIO COMPONENT - END
+// ============================================
+
+
+// ============================================
+// CHECKBOX COMPONENT - START
+// ============================================
+
+async function createCheckboxComponentSet(primaryColor, textColor, radius) {
+    await Promise.all([
+        figma.loadFontAsync({ family: "Poppins", style: "Regular" }),
+        figma.loadFontAsync({ family: "Poppins", style: "Medium" }),
+        figma.loadFontAsync({ family: "Poppins", style: "Bold" })
+    ]);
+
+    const primaryRgb = hexToRgb(primaryColor);
+    const textRgb = hexToRgb(textColor);
+    const mutedRgb = hexToRgb('#6B7280');
+    const disabledRgb = hexToRgb('#D1D5DB');
+    const borderRgb = hexToRgb('#E5E7EB');
+
+    // Checkmark SVG
+    const checkmarkSVG = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M13.3334 4L6.00002 11.3333L2.66669 8" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+
+    const types = [
+        { name: 'Checkbox Button', isButton: true },
+        { name: 'Checkbox Card', isCard: true }
+    ];
+
+    const states = ['Unchecked', 'Checked', 'Disabled'];
+    const sizes = [
+        { name: 'SM', checkboxSize: 24, fontSize: 13, padding: 12, gap: 16, cardPadding: 12, hintFontSize: 12 },
+        { name: 'MD', checkboxSize: 24, fontSize: 14, padding: 16, gap: 18, cardPadding: 16, hintFontSize: 12 },
+        { name: 'LG', checkboxSize: 24, fontSize: 16, padding: 20, gap: 20, cardPadding: 20, hintFontSize: 12 }
+    ];
+
+    const components = [];
+
+    // Layout: 3 columns (sizes) x 3 rows (states) for each type
+    // Checkbox Card on top, Checkbox Button on bottom
+    const columnWidth = 280;
+    const rowHeight = 100;
+    const columnGap = 10;
+    const rowGap = 10;
+    const typeGap = 10;
+
+    for (let tIndex = 0; tIndex < types.length; tIndex++) {
+        const type = types[tIndex];
+        const baseY = tIndex * (rowHeight * states.length + rowGap * (states.length - 1) + typeGap);
+
+        for (let sIndex = 0; sIndex < sizes.length; sIndex++) {
+            const size = sizes[sIndex];
+            const xPos = sIndex * (columnWidth + columnGap);
+
+            for (let stIndex = 0; stIndex < states.length; stIndex++) {
+                const state = states[stIndex];
+                const yPos = baseY + (stIndex * (rowHeight + rowGap));
+
+                const wrapper = figma.createComponent();
+                wrapper.name = `Type=${type.name}, Size=${size.name}, State=${state}`;
+                wrapper.layoutMode = 'VERTICAL';
+                wrapper.primaryAxisSizingMode = 'AUTO';
+                wrapper.counterAxisSizingMode = 'AUTO';
+                wrapper.itemSpacing = 8;
+                wrapper.fills = [];
+                wrapper.x = xPos;
+                wrapper.y = yPos;
+
+                // Determine colors based on state
+                let checkboxFill, checkboxBorder, labelColor, hintColor;
+                const isChecked = state === 'Checked';
+                const isDisabled = state === 'Disabled';
+
+                if (isDisabled) {
+                    checkboxFill = { r: 0.98, g: 0.98, b: 0.98 };
+                    checkboxBorder = disabledRgb;
+                    labelColor = disabledRgb;
+                    hintColor = disabledRgb;
+                } else if (isChecked) {
+                    checkboxFill = primaryRgb;
+                    checkboxBorder = primaryRgb;
+                    labelColor = textRgb;
+                    hintColor = mutedRgb;
+                } else {
+                    checkboxFill = { r: 1, g: 1, b: 1 };
+                    checkboxBorder = borderRgb;
+                    labelColor = textRgb;
+                    hintColor = mutedRgb;
+                }
+
+                // Create main container based on type
+                let mainContainer;
+
+                if (type.isCard) {
+                    // Checkbox Card - Full card with border
+                    mainContainer = figma.createFrame();
+                    mainContainer.name = "CheckboxCard";
+                    mainContainer.layoutMode = 'HORIZONTAL';
+                    mainContainer.primaryAxisSizingMode = 'AUTO';
+                    mainContainer.counterAxisSizingMode = 'AUTO';
+                    mainContainer.counterAxisAlignItems = 'CENTER';
+                    mainContainer.itemSpacing = size.gap;
+                    mainContainer.paddingLeft = size.cardPadding;
+                    mainContainer.paddingRight = size.cardPadding;
+                    mainContainer.paddingTop = size.cardPadding;
+                    mainContainer.paddingBottom = size.cardPadding;
+                    mainContainer.cornerRadius = radius;
+                    mainContainer.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
+                    mainContainer.strokes = [{ type: 'SOLID', color: isChecked && !isDisabled ? primaryRgb : borderRgb }];
+                    mainContainer.strokeWeight = 1;
+                } else {
+                    // Checkbox Button - Simple horizontal layout
+                    mainContainer = figma.createFrame();
+                    mainContainer.name = "CheckboxButton";
+                    mainContainer.layoutMode = 'HORIZONTAL';
+                    mainContainer.primaryAxisSizingMode = 'AUTO';
+                    mainContainer.counterAxisSizingMode = 'AUTO';
+                    mainContainer.counterAxisAlignItems = 'CENTER';
+                    mainContainer.itemSpacing = size.gap;
+                    mainContainer.fills = [];
+                }
+
+                // Create checkbox square (always 24px)
+                const checkboxSquare = figma.createFrame();
+                checkboxSquare.name = "CheckboxSquare";
+                checkboxSquare.resize(24, 24);
+                checkboxSquare.cornerRadius = radius;
+                checkboxSquare.fills = [{ type: 'SOLID', color: checkboxFill }];
+                checkboxSquare.strokes = [{ type: 'SOLID', color: checkboxBorder }];
+                checkboxSquare.strokeWeight = 1;
+                checkboxSquare.layoutMode = 'HORIZONTAL';
+                checkboxSquare.primaryAxisAlignItems = 'CENTER';
+                checkboxSquare.counterAxisAlignItems = 'CENTER';
+                checkboxSquare.primaryAxisSizingMode = 'FIXED';
+                checkboxSquare.counterAxisSizingMode = 'FIXED';
+
+                // Checkmark icon (only visible when checked)
+                if (isChecked) {
+                    const checkmarkNode = figma.createNodeFromSvg(checkmarkSVG);
+                    checkmarkNode.name = "Checkmark";
+                    const scale = 16 / checkmarkNode.width;
+                    checkmarkNode.resize(checkmarkNode.width * scale, checkmarkNode.height * scale);
+                    checkmarkNode.x = (24 - checkmarkNode.width) / 2;
+                    checkmarkNode.y = (24 - checkmarkNode.height) / 2;
+
+                    if (checkmarkNode.type === 'FRAME' || checkmarkNode.type === 'GROUP') {
+                        [...checkmarkNode.children].forEach(child => {
+                            child.x += checkmarkNode.x;
+                            child.y += checkmarkNode.y;
+                            checkboxSquare.appendChild(child);
+                        });
+                        checkmarkNode.remove();
+                    } else {
+                        checkboxSquare.appendChild(checkmarkNode);
+                    }
+                }
+
+                mainContainer.appendChild(checkboxSquare);
+
+                // Create label section
+                const labelSection = figma.createFrame();
+                labelSection.name = "LabelSection";
+                labelSection.layoutMode = 'VERTICAL';
+                labelSection.primaryAxisSizingMode = 'AUTO';
+                labelSection.counterAxisSizingMode = 'AUTO';
+                labelSection.itemSpacing = 4;
+                labelSection.fills = [];
+
+                // Main label text (Heading for Checkbox Card)
+                const labelText = figma.createText();
+                labelText.name = type.isCard ? "HeadingText" : "LabelText";
+                labelText.fontName = { family: "Poppins", style: "Medium" };
+                labelText.fontSize = size.fontSize;
+                labelText.characters = type.isCard ? "Card Heading" : "Checkbox Label";
+                labelText.fills = [{ type: 'SOLID', color: labelColor }];
+                labelSection.appendChild(labelText);
+
+                // For Checkbox Card: Add description
+                if (type.isCard) {
+                    const descText = figma.createText();
+                    descText.name = "DescriptionText";
+                    descText.fontName = { family: "Poppins", style: "Regular" };
+                    descText.fontSize = size.hintFontSize;
+                    descText.characters = "Card description text";
+                    descText.fills = [{ type: 'SOLID', color: hintColor }];
+                    labelSection.appendChild(descText);
+                }
+
+                // For Checkbox Button: Hint and Link in one line
+                if (type.isButton) {
+                    const hintLinkRow = figma.createFrame();
+                    hintLinkRow.name = "HintLinkRow";
+                    hintLinkRow.layoutMode = 'HORIZONTAL';
+                    hintLinkRow.primaryAxisSizingMode = 'AUTO';
+                    hintLinkRow.counterAxisSizingMode = 'AUTO';
+                    hintLinkRow.itemSpacing = 6;
+                    hintLinkRow.fills = [];
+                    hintLinkRow.visible = false; // Hidden by default
+
+                    const hintText = figma.createText();
+                    hintText.name = "HintText";
+                    hintText.fontName = { family: "Poppins", style: "Regular" };
+                    hintText.fontSize = size.hintFontSize;
+                    hintText.characters = "Optional hint text";
+                    hintText.fills = [{ type: 'SOLID', color: hintColor }];
+                    hintLinkRow.appendChild(hintText);
+
+                    const linkText = figma.createText();
+                    linkText.name = "LinkText";
+                    linkText.fontName = { family: "Poppins", style: "Medium" };
+                    linkText.fontSize = size.hintFontSize;
+                    linkText.characters = "Learn more";
+                    linkText.fills = [{ type: 'SOLID', color: primaryRgb }];
+                    linkText.textDecoration = 'UNDERLINE';
+                    hintLinkRow.appendChild(linkText);
+
+                    labelSection.appendChild(hintLinkRow);
+                }
+
+                mainContainer.appendChild(labelSection);
+                wrapper.appendChild(mainContainer);
+
+                components.push(wrapper);
+            }
+        }
+    }
+
+    // Create component set
+    const componentSet = figma.combineAsVariants(components, figma.currentPage);
+    componentSet.name = "Checkbox";
+
+    // Add component properties
+    const labelProp = componentSet.addComponentProperty("Label", "TEXT", "Checkbox Label");
+    const headingProp = componentSet.addComponentProperty("Heading", "TEXT", "Card Heading");
+    const descriptionProp = componentSet.addComponentProperty("Description", "TEXT", "Card description text");
+
+    // Properties for Checkbox Button type - Show HintLinkRow
+    const showHintLinkProp = componentSet.addComponentProperty("Show Hint & Link", "BOOLEAN", false);
+    const hintTextProp = componentSet.addComponentProperty("Hint Text", "TEXT", "Optional hint text");
+    const linkTextProp = componentSet.addComponentProperty("Link Text", "TEXT", "Learn more");
+
+    // Apply properties to variants
+    componentSet.children.forEach(variant => {
+        const labelTextNode = variant.findOne(n => n.name === "LabelText");
+        const headingTextNode = variant.findOne(n => n.name === "HeadingText");
+        const descriptionTextNode = variant.findOne(n => n.name === "DescriptionText");
+        const hintLinkRowNode = variant.findOne(n => n.name === "HintLinkRow");
+        const hintTextNode = variant.findOne(n => n.name === "HintText");
+        const linkTextNode = variant.findOne(n => n.name === "LinkText");
+
+        if (labelTextNode) {
+            labelTextNode.componentPropertyReferences = { characters: labelProp };
+        }
+
+        if (headingTextNode) {
+            headingTextNode.componentPropertyReferences = { characters: headingProp };
+        }
+
+        if (descriptionTextNode) {
+            descriptionTextNode.componentPropertyReferences = { characters: descriptionProp };
+        }
+
+        if (hintLinkRowNode) {
+            hintLinkRowNode.componentPropertyReferences = {
+                visible: showHintLinkProp
+            };
+        }
+
+        if (hintTextNode) {
+            hintTextNode.componentPropertyReferences = {
+                characters: hintTextProp
+            };
+        }
+
+        if (linkTextNode) {
+            linkTextNode.componentPropertyReferences = {
+                characters: linkTextProp
+            };
+        }
+    });
+
+    // Create documentation container
+    const containerFrame = figma.createFrame();
+    containerFrame.name = "Checkbox Component System";
+    containerFrame.fills = [{ type: 'SOLID', color: { r: 0.98, g: 0.98, b: 0.99 } }];
+    containerFrame.layoutMode = 'VERTICAL';
+    containerFrame.primaryAxisSizingMode = 'AUTO';
+    containerFrame.counterAxisSizingMode = 'AUTO';
+    containerFrame.paddingBottom = 48;
+
+    // Header
+    const headerFrame = figma.createFrame();
+    headerFrame.name = "Header";
+    headerFrame.layoutMode = 'VERTICAL';
+    headerFrame.layoutAlign = 'STRETCH';
+    headerFrame.primaryAxisSizingMode = 'AUTO';
+    headerFrame.paddingLeft = 80;
+    headerFrame.paddingRight = 80;
+    headerFrame.paddingTop = 80;
+    headerFrame.paddingBottom = 100;
+    headerFrame.itemSpacing = 40;
+    headerFrame.counterAxisAlignItems = 'CENTER';
+    headerFrame.fills = [{
+        type: 'GRADIENT_LINEAR',
+        gradientStops: [
+            { position: 0, color: { r: 0.04, g: 0.06, b: 0.15, a: 1 } },
+            { position: 1, color: { r: 0.08, g: 0.02, b: 0.18, a: 1 } }
+        ],
+        gradientTransform: [[1, 0, 0], [0, 1, 0]]
+    }];
+
+    const headerMain = figma.createFrame();
+    headerMain.layoutMode = 'VERTICAL';
+    headerMain.primaryAxisSizingMode = 'AUTO';
+    headerMain.counterAxisSizingMode = 'AUTO';
+    headerMain.counterAxisAlignItems = 'CENTER';
+    headerMain.itemSpacing = 24;
+    headerMain.fills = [];
+    headerFrame.appendChild(headerMain);
+
+    const title = figma.createText();
+    title.fontName = { family: "Poppins", style: "Bold" };
+    title.characters = "Checkbox Component System";
+    title.fontSize = 56;
+    title.letterSpacing = { value: -1.5, unit: 'PIXELS' };
+    title.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
+    headerMain.appendChild(title);
+
+    const desc = figma.createText();
+    desc.fontName = { family: "Poppins", style: "Regular" };
+    desc.characters = `A comprehensive checkbox system with ${components.length} variants, including Checkbox Button and Checkbox Card styles with heading and description.`;
+    desc.fontSize = 18;
+    desc.opacity = 0.6;
+    desc.textAlignHorizontal = 'CENTER';
+    desc.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
+    desc.resize(800, desc.height);
+    headerMain.appendChild(desc);
+
+    // Stats row
+    const statsRow = figma.createFrame();
+    statsRow.layoutMode = 'HORIZONTAL';
+    statsRow.primaryAxisSizingMode = 'AUTO';
+    statsRow.counterAxisSizingMode = 'AUTO';
+    statsRow.itemSpacing = 16;
+    statsRow.fills = [];
+
+    function createStatBadge(label, value) {
+        const badge = figma.createFrame();
+        badge.layoutMode = 'HORIZONTAL';
+        badge.primaryAxisSizingMode = 'AUTO';
+        badge.counterAxisSizingMode = 'AUTO';
+        badge.paddingLeft = 20;
+        badge.paddingRight = 20;
+        badge.paddingTop = 10;
+        badge.paddingBottom = 10;
+        badge.cornerRadius = 100;
+        badge.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 }, opacity: 0.08 }];
+        badge.strokes = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 }, opacity: 0.15 }];
+        badge.strokeWeight = 1;
+        badge.itemSpacing = 10;
+        badge.counterAxisAlignItems = 'CENTER';
+        badge.effects = [{ type: 'BACKGROUND_BLUR', radius: 20, visible: true }];
+
+        const tLabel = figma.createText();
+        tLabel.fontName = { family: "Poppins", style: "Medium" };
+        tLabel.fontSize = 13;
+        tLabel.characters = label;
+        tLabel.fills = [{ type: 'SOLID', color: { r: 0.7, g: 0.7, b: 0.8 } }];
+        badge.appendChild(tLabel);
+
+        const tValue = figma.createText();
+        tValue.fontName = { family: "Poppins", style: "Bold" };
+        tValue.fontSize = 13;
+        tValue.characters = value;
+        tValue.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
+        badge.appendChild(tValue);
+
+        return badge;
+    }
+
+    statsRow.appendChild(createStatBadge("Variants", String(components.length)));
+    statsRow.appendChild(createStatBadge("Types", String(types.length)));
+    statsRow.appendChild(createStatBadge("Sizes", String(sizes.length)));
+    const dateText = new Date().toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
+    statsRow.appendChild(createStatBadge("Last Updated", dateText));
+
+    headerFrame.appendChild(statsRow);
+    containerFrame.appendChild(headerFrame);
+
+    // Content wrapper
+    const contentWrapper = figma.createFrame();
+    contentWrapper.name = "Content";
+    contentWrapper.layoutMode = 'VERTICAL';
+    contentWrapper.primaryAxisSizingMode = 'AUTO';
+    contentWrapper.counterAxisSizingMode = 'AUTO';
+    contentWrapper.layoutAlign = 'STRETCH';
+    contentWrapper.paddingLeft = 48;
+    contentWrapper.paddingRight = 48;
+    contentWrapper.paddingTop = 48;
+    contentWrapper.paddingBottom = 48;
+    contentWrapper.fills = [];
+
+    contentWrapper.appendChild(componentSet);
+    containerFrame.appendChild(contentWrapper);
+
+    figma.currentPage.appendChild(containerFrame);
+    figma.viewport.scrollAndZoomIntoView([containerFrame]);
+    figma.notify(`✅ Checkbox Component System with ${components.length} variants created!`);
+}
+
+// ============================================
+// CHECKBOX COMPONENT - END
+// ============================================
+
+
+// ============================================
+// RADIO COMPONENT - END
+// ============================================
+
+
+// ============================================
 // MESSAGE HANDLER - START
 // ============================================
 
@@ -1515,6 +2349,18 @@ figma.ui.onmessage = async (msg) => {
     // ----------------------------------------
     // WINDOW & UI MESSAGES
     // ----------------------------------------
+
+    if (msg.type === 'center-ui') {
+        try {
+            const bounds = figma.viewport.bounds;
+            const x = bounds.x + (bounds.width - 424) / 2;
+            const y = bounds.y + (bounds.height - 700) / 2;
+            figma.ui.reposition(x, y);
+        } catch (error) {
+            // Fallback if reposition fails
+            console.log('Could not center UI:', error);
+        }
+    }
 
     if (msg.type === 'resize-window') {
         figma.ui.resize(msg.width, msg.height);
@@ -1559,6 +2405,28 @@ figma.ui.onmessage = async (msg) => {
             figma.ui.postMessage({ type: 'show-success', title: 'Input Created!', message: 'Your input component system has been created successfully.' });
         } catch (error) {
             figma.notify(`❌ Error creating input component: ${error.message}`);
+            figma.ui.postMessage({ type: 'loading-complete' });
+        }
+    }
+
+    if (msg.type === 'create-radio-component') {
+        try {
+            await createRadioComponentSet(msg.primaryColor, msg.textColor, msg.radius);
+            figma.ui.postMessage({ type: 'loading-complete' });
+            figma.ui.postMessage({ type: 'show-success', title: 'Radio Created!', message: 'Your radio component system has been created successfully.' });
+        } catch (error) {
+            figma.notify(`❌ Error creating radio component: ${error.message}`);
+            figma.ui.postMessage({ type: 'loading-complete' });
+        }
+    }
+
+    if (msg.type === 'create-checkbox-component') {
+        try {
+            await createCheckboxComponentSet(msg.primaryColor, msg.textColor, msg.radius);
+            figma.ui.postMessage({ type: 'loading-complete' });
+            figma.ui.postMessage({ type: 'show-success', title: 'Checkbox Created!', message: 'Your checkbox component system has been created successfully.' });
+        } catch (error) {
+            figma.notify(`❌ Error creating checkbox component: ${error.message}`);
             figma.ui.postMessage({ type: 'loading-complete' });
         }
     }
