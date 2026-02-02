@@ -858,6 +858,288 @@ async function createInputComponentSet(placeholder, borderColor, primaryColor, t
     const warningRgb = hexToRgb('#EF4444'); // Back to red for Asterisk as requested
     const successRgb = hexToRgb('#10B981');
 
+    // ============================================
+    // CREATE INPUT SPACING VARIABLES - START
+    // ============================================
+
+    const collections = await figma.variables.getLocalVariableCollectionsAsync();
+    let inputSpacingCollection = collections.find(c => c.name === 'Input/Spacing');
+
+    if (!inputSpacingCollection) {
+        inputSpacingCollection = figma.variables.createVariableCollection('Input/Spacing');
+    }
+
+    const spacingModeId = inputSpacingCollection.modes[0].modeId;
+    const existingFloatVars = await figma.variables.getLocalVariablesAsync('FLOAT');
+
+    // Helper function to create or update float variable
+    function createOrUpdateFloatVar(name, value) {
+        let floatVar = existingFloatVars.find(v => v.name === name && v.variableCollectionId === inputSpacingCollection.id);
+        if (!floatVar) {
+            floatVar = figma.variables.createVariable(name, inputSpacingCollection, 'FLOAT');
+            existingFloatVars.push(floatVar);
+        }
+        floatVar.setValueForMode(spacingModeId, value);
+        return floatVar;
+    }
+
+    // Input spacing variables
+    const inputPaddingXVar = createOrUpdateFloatVar('input/padding-x', 14);
+    const inputPaddingYVar = createOrUpdateFloatVar('input/padding-y', 10);
+    const inputPaddingYRichVar = createOrUpdateFloatVar('input/padding-y-rich', 12);
+    const inputItemSpacingVar = createOrUpdateFloatVar('input/item-spacing', 10);
+    const inputLabelGapVar = createOrUpdateFloatVar('input/label-gap', 8);
+    const inputHintGapVar = createOrUpdateFloatVar('input/hint-gap', 8);
+    const inputRadiusVar = createOrUpdateFloatVar('input/radius', radius);
+    const inputOtpGapVar = createOrUpdateFloatVar('input/otp-gap', 12);
+    const inputOtpBoxSizeVar = createOrUpdateFloatVar('input/otp-box-size', 48);
+
+    // Input font size variables
+    const inputLabelFontSizeVar = createOrUpdateFloatVar('input/font-size/label', 13);
+    const inputPlaceholderFontSizeVar = createOrUpdateFloatVar('input/font-size/placeholder', 14);
+    const inputHintFontSizeVar = createOrUpdateFloatVar('input/font-size/hint', 12);
+    const inputOtpFontSizeVar = createOrUpdateFloatVar('input/font-size/otp', 18);
+
+    const inputSpacingVariables = {
+        paddingX: inputPaddingXVar,
+        paddingY: inputPaddingYVar,
+        paddingYRich: inputPaddingYRichVar,
+        itemSpacing: inputItemSpacingVar,
+        labelGap: inputLabelGapVar,
+        hintGap: inputHintGapVar,
+        radius: inputRadiusVar,
+        otpGap: inputOtpGapVar,
+        otpBoxSize: inputOtpBoxSizeVar,
+        labelFontSize: inputLabelFontSizeVar,
+        placeholderFontSize: inputPlaceholderFontSizeVar,
+        hintFontSize: inputHintFontSizeVar,
+        otpFontSize: inputOtpFontSizeVar
+    };
+
+    // ============================================
+    // CREATE INPUT SPACING VARIABLES - END
+    // ============================================
+
+    // ============================================
+    // CREATE INPUT COLOR VARIABLES - START
+    // ============================================
+
+    let inputColorCollection = collections.find(c => c.name === 'Input/Colors');
+
+    if (!inputColorCollection) {
+        inputColorCollection = figma.variables.createVariableCollection('Input/Colors');
+    }
+
+    const colorModeId = inputColorCollection.modes[0].modeId;
+    const existingColorVars = await figma.variables.getLocalVariablesAsync('COLOR');
+
+    // Helper function to create or update color variable
+    function createOrUpdateColorVar(name, color) {
+        let colorVar = existingColorVars.find(v => v.name === name && v.variableCollectionId === inputColorCollection.id);
+        if (!colorVar) {
+            colorVar = figma.variables.createVariable(name, inputColorCollection, 'COLOR');
+            existingColorVars.push(colorVar);
+        }
+        colorVar.setValueForMode(colorModeId, color);
+        return colorVar;
+    }
+
+    // Background colors
+    const inputBgNormalVar = createOrUpdateColorVar('input/bg/normal', { r: 1, g: 1, b: 1 });
+    const inputBgDisabledVar = createOrUpdateColorVar('input/bg/disabled', { r: 0.95, g: 0.95, b: 0.95 });
+
+    // Border colors by state
+    const inputBorderNormalVar = createOrUpdateColorVar('input/border/normal', borderRgb);
+    const inputBorderHoverVar = createOrUpdateColorVar('input/border/hover', { r: 0.4, g: 0.4, b: 0.4 });
+    const inputBorderClickVar = createOrUpdateColorVar('input/border/click', primaryRgb);
+    const inputBorderErrorVar = createOrUpdateColorVar('input/border/error', errorRgb);
+    const inputBorderDisabledVar = createOrUpdateColorVar('input/border/disabled', borderRgb);
+
+    // Text colors
+    const inputTextVar = createOrUpdateColorVar('input/text/primary', textRgb);
+    const inputPlaceholderVar = createOrUpdateColorVar('input/text/placeholder', mutedRgb);
+    const inputLabelVar = createOrUpdateColorVar('input/text/label', { r: 0.22, g: 0.25, b: 0.32 });
+    const inputHintNormalVar = createOrUpdateColorVar('input/text/hint/normal', mutedRgb);
+    const inputHintErrorVar = createOrUpdateColorVar('input/text/hint/error', errorRgb);
+
+    // Icon colors by state
+    const inputIconNormalVar = createOrUpdateColorVar('input/icon/normal', mutedRgb);
+    const inputIconHoverVar = createOrUpdateColorVar('input/icon/hover', textRgb);
+    const inputIconClickVar = createOrUpdateColorVar('input/icon/click', textRgb);
+    const inputIconErrorVar = createOrUpdateColorVar('input/icon/error', errorRgb);
+    const inputIconDisabledVar = createOrUpdateColorVar('input/icon/disabled', mutedRgb);
+
+    // Special colors
+    const inputRequiredVar = createOrUpdateColorVar('input/required', warningRgb);
+    const inputPrimaryVar = createOrUpdateColorVar('input/primary', primaryRgb);
+    const inputErrorVar = createOrUpdateColorVar('input/error', errorRgb);
+    const inputSuccessVar = createOrUpdateColorVar('input/success', successRgb);
+
+    const inputColorVariables = {
+        bg: {
+            normal: inputBgNormalVar,
+            disabled: inputBgDisabledVar
+        },
+        border: {
+            normal: inputBorderNormalVar,
+            hover: inputBorderHoverVar,
+            click: inputBorderClickVar,
+            error: inputBorderErrorVar,
+            disabled: inputBorderDisabledVar
+        },
+        text: {
+            primary: inputTextVar,
+            placeholder: inputPlaceholderVar,
+            label: inputLabelVar,
+            hintNormal: inputHintNormalVar,
+            hintError: inputHintErrorVar
+        },
+        icon: {
+            normal: inputIconNormalVar,
+            hover: inputIconHoverVar,
+            click: inputIconClickVar,
+            error: inputIconErrorVar,
+            disabled: inputIconDisabledVar
+        },
+        required: inputRequiredVar,
+        primary: inputPrimaryVar,
+        error: inputErrorVar,
+        success: inputSuccessVar
+    };
+
+    // Helper function to bind color variable to icon (vector nodes only)
+    function bindColorVariableToIcon(iconNode, colorVar) {
+        try {
+            const vectorTypes = ['VECTOR', 'LINE', 'ELLIPSE', 'RECTANGLE', 'POLYGON', 'STAR', 'BOOLEAN_OPERATION'];
+            const containerTypes = ['FRAME', 'GROUP', 'COMPONENT', 'INSTANCE'];
+            
+            const bindFills = (node) => {
+                // Only apply fills/strokes to vector-type nodes, not frames
+                if (vectorTypes.includes(node.type)) {
+                    if (node.fills && Array.isArray(node.fills) && node.fills.length > 0) {
+                        const newFills = [{
+                            type: 'SOLID',
+                            color: { r: 0, g: 0, b: 0 },
+                            boundVariables: {
+                                color: { type: 'VARIABLE_ALIAS', id: colorVar.id }
+                            }
+                        }];
+                        node.fills = newFills;
+                    }
+                    if (node.strokes && Array.isArray(node.strokes) && node.strokes.length > 0) {
+                        const newStrokes = [{
+                            type: 'SOLID',
+                            color: { r: 0, g: 0, b: 0 },
+                            boundVariables: {
+                                color: { type: 'VARIABLE_ALIAS', id: colorVar.id }
+                            }
+                        }];
+                        node.strokes = newStrokes;
+                    }
+                }
+                
+                // For container types, ensure they have no fills and recurse into children
+                if (containerTypes.includes(node.type)) {
+                    // Remove any fills from container frames
+                    if (node.fills && Array.isArray(node.fills) && node.fills.length > 0) {
+                        node.fills = [];
+                    }
+                }
+                
+                // Recurse into children
+                if ('children' in node) {
+                    node.children.forEach(child => bindFills(child));
+                }
+            };
+            bindFills(iconNode);
+        } catch (e) {
+            console.warn('Could not bind color variable to icon:', e);
+        }
+    }
+
+    // ============================================
+    // CREATE INPUT COLOR VARIABLES - END
+    // ============================================
+
+    // ============================================
+    // CREATE INPUT TEXT STYLES - START
+    // ============================================
+
+    const existingTextStyles = await figma.getLocalTextStylesAsync();
+    const inputTextStyles = {};
+
+    // Label text style
+    let labelTextStyle = existingTextStyles.find(s => s.name === 'Input/Label');
+    if (!labelTextStyle) {
+        labelTextStyle = figma.createTextStyle();
+        labelTextStyle.name = 'Input/Label';
+    }
+    labelTextStyle.fontName = { family: "Poppins", style: "Medium" };
+    labelTextStyle.fontSize = 13;
+    labelTextStyle.lineHeight = { value: 150, unit: 'PERCENT' };
+    labelTextStyle.letterSpacing = { value: 0, unit: 'PIXELS' };
+    try {
+        labelTextStyle.setBoundVariable('fontSize', inputSpacingVariables.labelFontSize);
+    } catch (e) {
+        console.warn('Could not bind fontSize variable for Input/Label:', e);
+    }
+    inputTextStyles.label = labelTextStyle;
+
+    // Placeholder text style
+    let placeholderTextStyle = existingTextStyles.find(s => s.name === 'Input/Placeholder');
+    if (!placeholderTextStyle) {
+        placeholderTextStyle = figma.createTextStyle();
+        placeholderTextStyle.name = 'Input/Placeholder';
+    }
+    placeholderTextStyle.fontName = { family: "Poppins", style: "Regular" };
+    placeholderTextStyle.fontSize = 14;
+    placeholderTextStyle.lineHeight = { value: 150, unit: 'PERCENT' };
+    placeholderTextStyle.letterSpacing = { value: 0, unit: 'PIXELS' };
+    try {
+        placeholderTextStyle.setBoundVariable('fontSize', inputSpacingVariables.placeholderFontSize);
+    } catch (e) {
+        console.warn('Could not bind fontSize variable for Input/Placeholder:', e);
+    }
+    inputTextStyles.placeholder = placeholderTextStyle;
+
+    // Hint text style
+    let hintTextStyle = existingTextStyles.find(s => s.name === 'Input/Hint');
+    if (!hintTextStyle) {
+        hintTextStyle = figma.createTextStyle();
+        hintTextStyle.name = 'Input/Hint';
+    }
+    hintTextStyle.fontName = { family: "Poppins", style: "Regular" };
+    hintTextStyle.fontSize = 12;
+    hintTextStyle.lineHeight = { value: 150, unit: 'PERCENT' };
+    hintTextStyle.letterSpacing = { value: 0, unit: 'PIXELS' };
+    try {
+        hintTextStyle.setBoundVariable('fontSize', inputSpacingVariables.hintFontSize);
+    } catch (e) {
+        console.warn('Could not bind fontSize variable for Input/Hint:', e);
+    }
+    inputTextStyles.hint = hintTextStyle;
+
+    // OTP text style
+    let otpTextStyle = existingTextStyles.find(s => s.name === 'Input/OTP');
+    if (!otpTextStyle) {
+        otpTextStyle = figma.createTextStyle();
+        otpTextStyle.name = 'Input/OTP';
+    }
+    otpTextStyle.fontName = { family: "Poppins", style: "Medium" };
+    otpTextStyle.fontSize = 18;
+    otpTextStyle.lineHeight = { value: 150, unit: 'PERCENT' };
+    otpTextStyle.letterSpacing = { value: 0, unit: 'PIXELS' };
+    try {
+        otpTextStyle.setBoundVariable('fontSize', inputSpacingVariables.otpFontSize);
+    } catch (e) {
+        console.warn('Could not bind fontSize variable for Input/OTP:', e);
+    }
+    inputTextStyles.otp = otpTextStyle;
+
+    // ============================================
+    // CREATE INPUT TEXT STYLES - END
+    // ============================================
+
     // Icon SVGs
     const iconSVGs = {
         search: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M11.5 21C16.7467 21 21 16.7467 21 11.5C21 6.25329 16.7467 2 11.5 2C6.25329 2 2 6.25329 2 11.5C2 16.7467 6.25329 21 11.5 21Z" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 22L20 20" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
@@ -934,6 +1216,13 @@ async function createInputComponentSet(placeholder, borderColor, primaryColor, t
             wrapper.itemSpacing = 8;
             wrapper.fills = [];
 
+            // Bind wrapper item spacing variable
+            try {
+                wrapper.setBoundVariable('itemSpacing', inputSpacingVariables.labelGap);
+            } catch (e) {
+                console.warn('Could not bind wrapper item spacing variable:', e);
+            }
+
             // Label Row (Hidden for Search field)
             if (!type.isSearch) {
                 const labelRow = figma.createFrame();
@@ -951,6 +1240,26 @@ async function createInputComponentSet(placeholder, borderColor, primaryColor, t
                 labelText.fontName = { family: "Poppins", style: "Medium" };
                 labelText.fontSize = 13;
                 labelText.fills = [{ type: 'SOLID', color: { r: 0.22, g: 0.25, b: 0.32 } }]; // #374151
+
+                // Apply label text style
+                if (inputTextStyles.label) {
+                    await labelText.setTextStyleIdAsync(inputTextStyles.label.id);
+                }
+
+                // Bind label color variable
+                try {
+                    const labelFills = [{
+                        type: 'SOLID',
+                        color: { r: 0, g: 0, b: 0 },
+                        boundVariables: {
+                            color: { type: 'VARIABLE_ALIAS', id: inputColorVariables.text.label.id }
+                        }
+                    }];
+                    labelText.fills = labelFills;
+                } catch (e) {
+                    console.warn('Could not bind label color variable:', e);
+                }
+
                 labelRow.appendChild(labelText);
 
                 const requiredDot = figma.createText();
@@ -958,11 +1267,34 @@ async function createInputComponentSet(placeholder, borderColor, primaryColor, t
                 requiredDot.fontName = { family: "Poppins", style: "Regular" };
                 requiredDot.characters = "*";
                 requiredDot.fills = [{ type: 'SOLID', color: warningRgb }];
+
+                // Bind required dot color variable
+                try {
+                    const requiredFills = [{
+                        type: 'SOLID',
+                        color: { r: 0, g: 0, b: 0 },
+                        boundVariables: {
+                            color: { type: 'VARIABLE_ALIAS', id: inputColorVariables.required.id }
+                        }
+                    }];
+                    requiredDot.fills = requiredFills;
+                } catch (e) {
+                    console.warn('Could not bind required color variable:', e);
+                }
+
                 labelRow.appendChild(requiredDot);
 
                 const labelInfoIcon = infoIconComp.createInstance();
                 labelInfoIcon.name = "LabelInfoIcon";
                 labelInfoIcon.resize(16, 16);
+
+                // Bind label info icon color variable
+                try {
+                    bindColorVariableToIcon(labelInfoIcon, inputColorVariables.icon.normal);
+                } catch (e) {
+                    console.warn('Could not bind label info icon color variable:', e);
+                }
+
                 labelRow.appendChild(labelInfoIcon);
 
                 wrapper.appendChild(labelRow);
@@ -989,6 +1321,17 @@ async function createInputComponentSet(placeholder, borderColor, primaryColor, t
                 body.counterAxisSizingMode = 'AUTO';
                 body.itemSpacing = 12;
                 body.fills = [];
+
+                // Bind OTP container gap variable
+                try {
+                    body.setBoundVariable('itemSpacing', inputSpacingVariables.otpGap);
+                } catch (e) {
+                    console.warn('Could not bind OTP gap variable:', e);
+                }
+
+                // Determine state key for color variable binding
+                const stateKey = state.toLowerCase();
+
                 for (let i = 0; i < 6; i++) {
                     const box = figma.createFrame();
                     box.name = `Digit${i + 1}`;
@@ -1002,11 +1345,73 @@ async function createInputComponentSet(placeholder, borderColor, primaryColor, t
                     box.layoutMode = 'HORIZONTAL';
                     box.primaryAxisAlignItems = 'CENTER';
                     box.counterAxisAlignItems = 'CENTER';
+
+                    // Bind OTP box radius variable
+                    try {
+                        box.setBoundVariable('topLeftRadius', inputSpacingVariables.radius);
+                        box.setBoundVariable('topRightRadius', inputSpacingVariables.radius);
+                        box.setBoundVariable('bottomLeftRadius', inputSpacingVariables.radius);
+                        box.setBoundVariable('bottomRightRadius', inputSpacingVariables.radius);
+                    } catch (e) {
+                        console.warn('Could not bind OTP box radius variable:', e);
+                    }
+
+                    // Bind OTP box background color variable
+                    try {
+                        const bgColorVar = state === 'Disabled' ? inputColorVariables.bg.disabled : inputColorVariables.bg.normal;
+                        const bgFills = [{
+                            type: 'SOLID',
+                            color: { r: 0, g: 0, b: 0 },
+                            boundVariables: {
+                                color: { type: 'VARIABLE_ALIAS', id: bgColorVar.id }
+                            }
+                        }];
+                        box.fills = bgFills;
+                    } catch (e) {
+                        console.warn('Could not bind OTP box background variable:', e);
+                    }
+
+                    // Bind OTP box border color variable
+                    try {
+                        const borderColorVar = inputColorVariables.border[stateKey] || inputColorVariables.border.normal;
+                        const borderStrokes = [{
+                            type: 'SOLID',
+                            color: { r: 0, g: 0, b: 0 },
+                            boundVariables: {
+                                color: { type: 'VARIABLE_ALIAS', id: borderColorVar.id }
+                            }
+                        }];
+                        box.strokes = borderStrokes;
+                    } catch (e) {
+                        console.warn('Could not bind OTP box border variable:', e);
+                    }
+
                     const dText = figma.createText();
                     dText.fontName = { family: "Poppins", style: "Medium" };
                     dText.characters = "0";
                     dText.fontSize = 18;
                     dText.fills = [{ type: 'SOLID', color: contentColor }];
+
+                    // Apply OTP text style
+                    if (inputTextStyles.otp) {
+                        await dText.setTextStyleIdAsync(inputTextStyles.otp.id);
+                    }
+
+                    // Bind OTP text color variable
+                    try {
+                        const textColorVar = (state === 'Hover' || state === 'Click') ? inputColorVariables.text.primary : inputColorVariables.text.placeholder;
+                        const textFills = [{
+                            type: 'SOLID',
+                            color: { r: 0, g: 0, b: 0 },
+                            boundVariables: {
+                                color: { type: 'VARIABLE_ALIAS', id: textColorVar.id }
+                            }
+                        }];
+                        dText.fills = textFills;
+                    } catch (e) {
+                        console.warn('Could not bind OTP text color variable:', e);
+                    }
+
                     box.appendChild(dText);
                     body.appendChild(box);
                 }
@@ -1024,6 +1429,61 @@ async function createInputComponentSet(placeholder, borderColor, primaryColor, t
                 body.fills = [{ type: 'SOLID', color: bodyColor }];
                 body.strokes = [{ type: 'SOLID', color: strokeColor }];
                 body.strokeWeight = strokeWidth;
+
+                // Determine state key for color variable binding
+                const stateKey = state.toLowerCase();
+
+                // Bind spacing variables to input body
+                try {
+                    body.setBoundVariable('paddingLeft', inputSpacingVariables.paddingX);
+                    body.setBoundVariable('paddingRight', inputSpacingVariables.paddingX);
+                    const paddingYVar = type.isRichText ? inputSpacingVariables.paddingYRich : inputSpacingVariables.paddingY;
+                    body.setBoundVariable('paddingTop', paddingYVar);
+                    body.setBoundVariable('paddingBottom', paddingYVar);
+                    body.setBoundVariable('itemSpacing', inputSpacingVariables.itemSpacing);
+                } catch (e) {
+                    console.warn('Could not bind input body spacing variables:', e);
+                }
+
+                // Bind radius variable to input body
+                try {
+                    body.setBoundVariable('topLeftRadius', inputSpacingVariables.radius);
+                    body.setBoundVariable('topRightRadius', inputSpacingVariables.radius);
+                    body.setBoundVariable('bottomLeftRadius', inputSpacingVariables.radius);
+                    body.setBoundVariable('bottomRightRadius', inputSpacingVariables.radius);
+                } catch (e) {
+                    console.warn('Could not bind input body radius variable:', e);
+                }
+
+                // Bind background color variable to input body
+                try {
+                    const bgColorVar = state === 'Disabled' ? inputColorVariables.bg.disabled : inputColorVariables.bg.normal;
+                    const bgFills = [{
+                        type: 'SOLID',
+                        color: { r: 0, g: 0, b: 0 },
+                        boundVariables: {
+                            color: { type: 'VARIABLE_ALIAS', id: bgColorVar.id }
+                        }
+                    }];
+                    body.fills = bgFills;
+                } catch (e) {
+                    console.warn('Could not bind input body background variable:', e);
+                }
+
+                // Bind border color variable to input body
+                try {
+                    const borderColorVar = inputColorVariables.border[stateKey] || inputColorVariables.border.normal;
+                    const borderStrokes = [{
+                        type: 'SOLID',
+                        color: { r: 0, g: 0, b: 0 },
+                        boundVariables: {
+                            color: { type: 'VARIABLE_ALIAS', id: borderColorVar.id }
+                        }
+                    }];
+                    body.strokes = borderStrokes;
+                } catch (e) {
+                    console.warn('Could not bind input body border variable:', e);
+                }
 
                 // Set Width to 324px (FIXED) and Height logic
                 if (type.isRichText) {
@@ -1051,21 +1511,84 @@ async function createInputComponentSet(placeholder, borderColor, primaryColor, t
                     cText.characters = "+91";
                     cText.fontSize = 14;
                     cText.fills = [{ type: 'SOLID', color: (state === 'Hover' || state === 'Click') ? textRgb : { r: 0.2, g: 0.2, b: 0.2 } }];
+
+                    // Apply placeholder text style to country code
+                    if (inputTextStyles.placeholder) {
+                        await cText.setTextStyleIdAsync(inputTextStyles.placeholder.id);
+                    }
+
+                    // Bind country code text color variable
+                    try {
+                        const cTextColorVar = (state === 'Hover' || state === 'Click') ? inputColorVariables.text.primary : inputColorVariables.text.primary;
+                        const cTextFills = [{
+                            type: 'SOLID',
+                            color: { r: 0, g: 0, b: 0 },
+                            boundVariables: {
+                                color: { type: 'VARIABLE_ALIAS', id: cTextColorVar.id }
+                            }
+                        }];
+                        cText.fills = cTextFills;
+                    } catch (e) {
+                        console.warn('Could not bind country code text color variable:', e);
+                    }
+
                     country.appendChild(cText);
                     const chev = chevronIconComp.createInstance();
                     chev.resize(14, 14);
                     applyColorToNode(chev, contentColor);
+
+                    // Bind chevron icon color variable
+                    try {
+                        const chevIconColorVar = inputColorVariables.icon[stateKey] || inputColorVariables.icon.normal;
+                        bindColorVariableToIcon(chev, chevIconColorVar);
+                    } catch (e) {
+                        console.warn('Could not bind chevron icon color variable:', e);
+                    }
+
                     country.appendChild(chev);
                     body.appendChild(country);
                     const divider = figma.createFrame();
                     divider.resize(1, 20);
                     divider.fills = [{ type: 'SOLID', color: borderRgb }];
+
+                    // Bind divider color variable
+                    try {
+                        const dividerFills = [{
+                            type: 'SOLID',
+                            color: { r: 0, g: 0, b: 0 },
+                            boundVariables: {
+                                color: { type: 'VARIABLE_ALIAS', id: inputColorVariables.border.normal.id }
+                            }
+                        }];
+                        divider.fills = dividerFills;
+                    } catch (e) {
+                        console.warn('Could not bind divider color variable:', e);
+                    }
+
                     body.appendChild(divider);
                 }
 
                 const leftInstance = (type.isSearch ? searchIconComp : leftIconComp).createInstance();
                 leftInstance.name = "LeftIcon";
                 applyColorToNode(leftInstance, contentColor);
+
+                // Bind left icon color variable
+                try {
+                    let leftIconColorVar;
+                    if (state === 'Error') {
+                        leftIconColorVar = inputColorVariables.icon.error;
+                    } else if (state === 'Disabled') {
+                        leftIconColorVar = inputColorVariables.icon.disabled;
+                    } else if (state === 'Hover' || state === 'Click') {
+                        leftIconColorVar = inputColorVariables.icon[stateKey] || inputColorVariables.icon.hover;
+                    } else {
+                        leftIconColorVar = inputColorVariables.icon.normal;
+                    }
+                    bindColorVariableToIcon(leftInstance, leftIconColorVar);
+                } catch (e) {
+                    console.warn('Could not bind left icon color variable:', e);
+                }
+
                 body.appendChild(leftInstance);
 
                 const mainText = figma.createText();
@@ -1076,11 +1599,57 @@ async function createInputComponentSet(placeholder, borderColor, primaryColor, t
                 mainText.fontSize = 14;
                 mainText.fills = [{ type: 'SOLID', color: (state === 'Error') ? errorRgb : contentColor }];
                 if (type.isRichText) mainText.textAlignVertical = 'TOP';
+
+                // Apply placeholder text style
+                if (inputTextStyles.placeholder) {
+                    await mainText.setTextStyleIdAsync(inputTextStyles.placeholder.id);
+                }
+
+                // Bind placeholder text color variable
+                try {
+                    let textColorVar;
+                    if (state === 'Error') {
+                        textColorVar = inputColorVariables.error;
+                    } else if (state === 'Hover' || state === 'Click') {
+                        textColorVar = inputColorVariables.text.primary;
+                    } else {
+                        textColorVar = inputColorVariables.text.placeholder;
+                    }
+                    const textFills = [{
+                        type: 'SOLID',
+                        color: { r: 0, g: 0, b: 0 },
+                        boundVariables: {
+                            color: { type: 'VARIABLE_ALIAS', id: textColorVar.id }
+                        }
+                    }];
+                    mainText.fills = textFills;
+                } catch (e) {
+                    console.warn('Could not bind placeholder text color variable:', e);
+                }
+
                 body.appendChild(mainText);
 
                 const rightInstance = (type.isSearch ? closeIconComp : rightIconComp).createInstance();
                 rightInstance.name = "RightIcon";
                 applyColorToNode(rightInstance, contentColor);
+
+                // Bind right icon color variable
+                try {
+                    let rightIconColorVar;
+                    if (state === 'Error') {
+                        rightIconColorVar = inputColorVariables.icon.error;
+                    } else if (state === 'Disabled') {
+                        rightIconColorVar = inputColorVariables.icon.disabled;
+                    } else if (state === 'Hover' || state === 'Click') {
+                        rightIconColorVar = inputColorVariables.icon[stateKey] || inputColorVariables.icon.hover;
+                    } else {
+                        rightIconColorVar = inputColorVariables.icon.normal;
+                    }
+                    bindColorVariableToIcon(rightInstance, rightIconColorVar);
+                } catch (e) {
+                    console.warn('Could not bind right icon color variable:', e);
+                }
+
                 body.appendChild(rightInstance);
             }
             wrapper.appendChild(body);
@@ -1098,6 +1667,15 @@ async function createInputComponentSet(placeholder, borderColor, primaryColor, t
             const hintIcon = infoIconComp.createInstance();
             hintIcon.name = "HintIcon";
             hintIcon.resize(16, 16);
+
+            // Bind hint icon color variable
+            try {
+                const hintIconColorVar = (state === 'Error') ? inputColorVariables.text.hintError : inputColorVariables.text.hintNormal;
+                bindColorVariableToIcon(hintIcon, hintIconColorVar);
+            } catch (e) {
+                console.warn('Could not bind hint icon color variable:', e);
+            }
+
             hintRow.appendChild(hintIcon);
 
             const hintText = figma.createText();
@@ -1106,6 +1684,27 @@ async function createInputComponentSet(placeholder, borderColor, primaryColor, t
             hintText.characters = "Hint text to help users";
             hintText.fontSize = 12;
             hintText.fills = [{ type: 'SOLID', color: (state === 'Error') ? errorRgb : mutedRgb }];
+
+            // Apply hint text style
+            if (inputTextStyles.hint) {
+                await hintText.setTextStyleIdAsync(inputTextStyles.hint.id);
+            }
+
+            // Bind hint text color variable
+            try {
+                const hintColorVar = (state === 'Error') ? inputColorVariables.text.hintError : inputColorVariables.text.hintNormal;
+                const hintFills = [{
+                    type: 'SOLID',
+                    color: { r: 0, g: 0, b: 0 },
+                    boundVariables: {
+                        color: { type: 'VARIABLE_ALIAS', id: hintColorVar.id }
+                    }
+                }];
+                hintText.fills = hintFills;
+            } catch (e) {
+                console.warn('Could not bind hint text color variable:', e);
+            }
+
             hintRow.appendChild(hintText);
             wrapper.appendChild(hintRow);
 
@@ -1349,7 +1948,7 @@ async function createInputComponentSet(placeholder, borderColor, primaryColor, t
 
     figma.currentPage.appendChild(containerFrame);
     figma.viewport.scrollAndZoomIntoView([containerFrame]);
-    figma.notify("✅ Complete Input System Created!");
+    figma.notify("✅ Input System created with spacing variables, color variables, and text styles!");
 }
 
 // ============================================
