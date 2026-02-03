@@ -242,6 +242,344 @@
             color: var(--text-tertiary);
         }
 
+        /* Onboarding Screen Styles */
+        .onboarding-screen {
+            display: none;
+            height: 100vh;
+            width: 100%;
+            background: var(--bg-app);
+            overflow-y: auto;
+            padding: 40px 24px;
+        }
+
+        .onboarding-screen.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .onboarding-container {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .onboarding-heading {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            text-align: center;
+            letter-spacing: -0.5px;
+        }
+
+        .onboarding-subheading {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .setup-options {
+            display: grid;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .setup-option-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .setup-option-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .setup-option-card.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .setup-option-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .setup-option-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+
+        .setup-option-cta {
+            width: 100%;
+            padding: 10px 20px;
+            background: var(--primary);
+            color: var(--text-inverse);
+            border: none;
+            border-radius: var(--radius-md);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .setup-option-cta:hover {
+            background: var(--primary-hover);
+        }
+
+        /* Wizard Styles */
+        .wizard-screen {
+            display: none;
+            height: 100vh;
+            width: 100%;
+            background: var(--bg-app);
+            flex-direction: column;
+        }
+
+        .wizard-screen.active {
+            display: flex;
+        }
+
+        .wizard-header {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 20px 24px;
+        }
+
+        .wizard-stepper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .wizard-step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .wizard-step-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-hover);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            transition: all 0.2s ease;
+        }
+
+        .wizard-step.active .wizard-step-circle {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .wizard-step.completed .wizard-step-circle {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .wizard-step-divider {
+            width: 24px;
+            height: 2px;
+            background: var(--border);
+        }
+
+        .wizard-step.completed+.wizard-step-divider {
+            background: var(--primary);
+        }
+
+        .wizard-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            text-align: center;
+        }
+
+        .wizard-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 32px 24px;
+        }
+
+        .wizard-content-inner {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .wizard-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .wizard-options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .wizard-option {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .wizard-option:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .wizard-option.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .wizard-option-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .wizard-option-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .wizard-footer {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .wizard-progress-text {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .wizard-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .checkbox-option {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 12px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+            margin-bottom: 8px;
+        }
+
+        .checkbox-option:hover {
+            border-color: var(--primary);
+        }
+
+        .checkbox-option.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .checkbox-option input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .checkbox-option-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            flex: 1;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            color: var(--text-primary);
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .color-picker-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 12px;
+        }
+
+        .color-picker-item {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .color-picker-item label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .color-picker-item input[type="color"] {
+            width: 100%;
+            height: 48px;
+        }
+
         .app-container {
             display: flex;
             height: 100vh;
@@ -1241,7 +1579,7 @@
             </div>
 
             <div class="welcome-cta-buttons">
-                <button class="btn btn-primary" onclick="startApp()">
+                <button class="btn btn-primary" onclick="showOnboarding()">
                     Get Started
                 </button>
             </div>
@@ -1255,6 +1593,66 @@
                         Developed by @CODETHEOREM
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Onboarding Screen -->
+    <div class="onboarding-screen" id="onboardingScreen">
+        <div class="onboarding-container">
+            <h1 class="onboarding-heading">🚀 Build Your Design System</h1>
+            <p class="onboarding-subheading">Choose how you want to set up your design system.</p>
+
+            <div class="setup-options">
+                <div class="setup-option-card" onclick="startAutoSetup()">
+                    <div class="setup-option-title">
+                        <span>✨</span>
+                        Auto Setup
+                    </div>
+                    <p class="setup-option-desc">
+                        Automatically generate a complete professional design system in guided steps.
+                    </p>
+                    <button class="setup-option-cta">Start Auto Setup</button>
+                </div>
+
+                <div class="setup-option-card" onclick="startManualSetup()">
+                    <div class="setup-option-title">
+                        <span>🎨</span>
+                        Manual Setup
+                    </div>
+                    <p class="setup-option-desc">
+                        Manually configure tokens, styles, and components step by step.
+                    </p>
+                    <button class="setup-option-cta">Start Manual Setup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wizard Screen -->
+    <div class="wizard-screen" id="wizardScreen">
+        <div class="wizard-header">
+            <div class="wizard-stepper" id="wizardStepper">
+                <!-- Steps will be dynamically generated -->
+            </div>
+            <h2 class="wizard-title" id="wizardTitle">Select Icon Library</h2>
+        </div>
+
+        <div class="wizard-content">
+            <div class="wizard-content-inner" id="wizardContentInner">
+                <!-- Content will be dynamically generated -->
+            </div>
+        </div>
+
+        <div class="wizard-footer">
+            <div class="wizard-progress-text" id="wizardProgress">Step 1 of 5</div>
+            <div class="wizard-buttons">
+                <button class="btn btn-secondary" id="wizardBackBtn" onclick="wizardBack()" style="display: none;">
+                    Back
+                </button>
+                <button class="btn btn-primary" id="wizardNextBtn" onclick="wizardNext()" disabled>
+                    Next
+                </button>
             </div>
         </div>
     </div>
@@ -2545,6 +2943,584 @@
 
                 // Initialize the app
                 initializeApp();
+            }
+
+            // Onboarding Functions
+            function showOnboarding() {
+                document.getElementById('welcomeScreen').classList.add('hidden');
+                document.getElementById('onboardingScreen').classList.add('active');
+                parent.postMessage({ pluginMessage: { type: 'resize-window', width: 600, height: 700 } }, '*');
+            }
+
+            function startAutoSetup() {
+                document.getElementById('onboardingScreen').classList.remove('active');
+                document.getElementById('wizardScreen').classList.add('active');
+                parent.postMessage({ pluginMessage: { type: 'resize-window', width: 750, height: 700 } }, '*');
+                initializeWizard();
+            }
+
+            function startManualSetup() {
+                document.getElementById('onboardingScreen').classList.remove('active');
+                document.getElementById('appContainer').classList.remove('hidden');
+                parent.postMessage({ pluginMessage: { type: 'resize-window', width: 800, height: 700 } }, '*');
+                initializeApp();
+            }
+
+            // Wizard State - Enhanced with new features
+            const wizardState = {
+                currentStep: 0,
+                totalSteps: 5,
+                data: {
+                    iconLibrary: null,
+                    typography: {
+                        primaryFont: 'Poppins',
+                        secondaryFont: 'Inter',
+                        baseSize: 16
+                        // Removed: scale field
+                    },
+                    colors: {
+                        primary: '#4F46E5',
+                        enableSecondary: false, // Toggle for secondary colors
+                        secondary: '#8B5CF6',
+                        // Status colors with levels
+                        success: { base: '#10B981', levels: [100, 200, 300] },
+                        warning: { base: '#F59E0B', levels: [100, 200, 300] },
+                        error: { base: '#EF4444', levels: [100, 200, 300] },
+                        info: { base: '#3B82F6', levels: [100, 200, 300] },
+                        // Neutral colors
+                        neutral: { base: '#6B7280', generate: true }
+                    },
+                    tokens: {
+                        spacingBase: '8pt', // 2pt, 4pt, or 8pt
+                        paddingBase: '8pt', // 2pt, 4pt, or 8pt
+                        radius: 8,
+                        // Grid systems
+                        grids: {
+                            desktop: { columns: 12, maxWidth: 1440, gutter: 24 },
+                            tablet: { columns: 8, maxWidth: 768, gutter: 16 },
+                            mobile: { columns: 4, maxWidth: 375, gutter: 16 }
+                        },
+                        // Shadow tokens
+                        shadows: {
+                            xs: '0 1px 2px rgba(0,0,0,0.05)',
+                            sm: '0 1px 3px rgba(0,0,0,0.1)',
+                            md: '0 4px 6px rgba(0,0,0,0.1)',
+                            lg: '0 10px 15px rgba(0,0,0,0.1)',
+                            xl: '0 20px 25px rgba(0,0,0,0.1)',
+                            '2xl': '0 25px 50px rgba(0,0,0,0.25)'
+                        }
+                    },
+                    components: []
+                }
+            };
+
+            const wizardSteps = [
+                { id: 'icons', title: 'Select Icon Library', icon: '🎨' },
+                { id: 'typography', title: 'Configure Typography', icon: '📝' },
+                { id: 'colors', title: 'Choose Colors', icon: '🎨' },
+                { id: 'tokens', title: 'Design Tokens', icon: '⚙️' },
+                { id: 'components', title: 'Select Components', icon: '🧩' }
+            ];
+
+            function initializeWizard() {
+                wizardState.currentStep = 0;
+                renderWizardStep();
+            }
+
+            function renderWizardStep() {
+                const step = wizardSteps[wizardState.currentStep];
+
+                // Update stepper
+                renderStepper();
+
+                // Update title
+                document.getElementById('wizardTitle').textContent = step.title;
+
+                // Update progress
+                document.getElementById('wizardProgress').textContent =
+                    `Step ${wizardState.currentStep + 1} of ${wizardState.totalSteps}`;
+
+                // Update buttons
+                const backBtn = document.getElementById('wizardBackBtn');
+                const nextBtn = document.getElementById('wizardNextBtn');
+
+                backBtn.style.display = wizardState.currentStep > 0 ? 'block' : 'none';
+                nextBtn.textContent = wizardState.currentStep === wizardState.totalSteps - 1 ?
+                    'Create Design System' : 'Next';
+
+                // Render content
+                renderWizardContent(step.id);
+            }
+
+            function renderStepper() {
+                const stepper = document.getElementById('wizardStepper');
+                stepper.innerHTML = '';
+
+                wizardSteps.forEach((step, index) => {
+                    const stepDiv = document.createElement('div');
+                    stepDiv.className = 'wizard-step';
+                    if (index === wizardState.currentStep) stepDiv.classList.add('active');
+                    if (index < wizardState.currentStep) stepDiv.classList.add('completed');
+
+                    const circle = document.createElement('div');
+                    circle.className = 'wizard-step-circle';
+                    circle.textContent = index + 1;
+                    stepDiv.appendChild(circle);
+
+                    stepper.appendChild(stepDiv);
+
+                    if (index < wizardSteps.length - 1) {
+                        const divider = document.createElement('div');
+                        divider.className = 'wizard-step-divider';
+                        stepper.appendChild(divider);
+                    }
+                });
+            }
+
+            function renderWizardContent(stepId) {
+                const content = document.getElementById('wizardContentInner');
+                const nextBtn = document.getElementById('wizardNextBtn');
+
+                switch (stepId) {
+                    case 'icons':
+                        const iconLibs = typeof ICON_LIBRARIES !== 'undefined' ? ICON_LIBRARIES : {
+                            'box-icons': { name: 'Box Icons' },
+                            'vuesax-icons': { name: 'Vuesax Icons' },
+                            'unicons': { name: 'Unicons' }
+                        };
+
+                        content.innerHTML = `
+                            <div class="wizard-section-title">Choose an icon library for your design system</div>
+                            <div class="wizard-options-grid">
+                                ${Object.entries(iconLibs).map(([id, lib]) => `
+                                    <div class="wizard-option ${wizardState.data.iconLibrary === id ? 'selected' : ''}" 
+                                         onclick="selectIconLibrary('${id}')">
+                                        <div class="wizard-option-icon">📦</div>
+                                        <div class="wizard-option-label">${lib.name}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                        nextBtn.disabled = !wizardState.data.iconLibrary;
+                        break;
+
+                    case 'typography':
+                        content.innerHTML = `
+                            <div class="wizard-section-title">Configure your typography system</div>
+                            <div class="form-group">
+                                <label class="form-label">Primary Font</label>
+                                <input type="text" class="form-input" id="wizardPrimaryFont" 
+                                       value="${wizardState.data.typography.primaryFont}" 
+                                       placeholder="Enter font name (e.g., Poppins, Inter)"
+                                       onchange="updateTypography()"
+                                       list="fontSuggestions">
+                                <datalist id="fontSuggestions">
+                                    <option value="Poppins">
+                                    <option value="Inter">
+                                    <option value="Roboto">
+                                    <option value="Open Sans">
+                                    <option value="Montserrat">
+                                    <option value="Lato">
+                                    <option value="SF Pro Display">
+                                    <option value="Helvetica Neue">
+                                </datalist>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Secondary Font</label>
+                                <input type="text" class="form-input" id="wizardSecondaryFont" 
+                                       value="${wizardState.data.typography.secondaryFont}" 
+                                       placeholder="Enter font name (e.g., Inter, Roboto)"
+                                       onchange="updateTypography()"
+                                       list="fontSuggestions">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Base Font Size (px)</label>
+                                <input type="number" class="form-input" id="wizardBaseSize" 
+                                       value="${wizardState.data.typography.baseSize}" 
+                                       min="12" max="24" 
+                                       onchange="updateTypography()">
+                            </div>
+                        `;
+                        nextBtn.disabled = false;
+                        break;
+
+                    case 'colors':
+                        content.innerHTML = `
+                            <div class="wizard-section-title">Define your color palette</div>
+                            
+                            <!-- Primary Color -->
+                            <div class="form-group">
+                                <label class="form-label">Primary Color</label>
+                                <div style="display: flex; gap: 12px; align-items: center;">
+                                    <input type="color" id="wizardPrimary" value="${wizardState.data.colors.primary}" 
+                                           onchange="updateColors()" style="width: 80px; height: 48px;">
+                                    <input type="text" class="form-input" value="${wizardState.data.colors.primary}" 
+                                           onchange="document.getElementById('wizardPrimary').value = this.value; updateColors();"
+                                           style="flex: 1; font-family: monospace;">
+                                </div>
+                            </div>
+
+                            <!-- Secondary Color Toggle -->
+                            <div class="form-group">
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                                    <label class="form-label" style="margin: 0;">Secondary Color (Optional)</label>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="enableSecondary" 
+                                               ${wizardState.data.colors.enableSecondary ? 'checked' : ''}
+                                               onchange="toggleSecondaryColor()">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                <div id="secondaryColorPicker" style="display: ${wizardState.data.colors.enableSecondary ? 'flex' : 'none'}; gap: 12px; align-items: center;">
+                                    <input type="color" id="wizardSecondary" value="${wizardState.data.colors.secondary}" 
+                                           onchange="updateColors()" style="width: 80px; height: 48px;">
+                                    <input type="text" class="form-input" value="${wizardState.data.colors.secondary}" 
+                                           onchange="document.getElementById('wizardSecondary').value = this.value; updateColors();"
+                                           style="flex: 1; font-family: monospace;">
+                                </div>
+                            </div>
+
+                            <!-- Status Colors -->
+                            <div class="wizard-section-title" style="margin-top: 32px;">Status Colors</div>
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+                                <div class="form-group">
+                                    <label class="form-label">Success</label>
+                                    <div style="display: flex; gap: 12px; align-items: center;">
+                                        <input type="color" id="wizardSuccess" value="${wizardState.data.colors.success.base}" 
+                                               onchange="updateColors()" style="width: 60px; height: 40px;">
+                                        <input type="text" class="form-input" value="${wizardState.data.colors.success.base}" 
+                                               onchange="document.getElementById('wizardSuccess').value = this.value; updateColors();"
+                                               style="flex: 1; font-family: monospace; font-size: 12px;">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Warning</label>
+                                    <div style="display: flex; gap: 12px; align-items: center;">
+                                        <input type="color" id="wizardWarning" value="${wizardState.data.colors.warning.base}" 
+                                               onchange="updateColors()" style="width: 60px; height: 40px;">
+                                        <input type="text" class="form-input" value="${wizardState.data.colors.warning.base}" 
+                                               onchange="document.getElementById('wizardWarning').value = this.value; updateColors();"
+                                               style="flex: 1; font-family: monospace; font-size: 12px;">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Error</label>
+                                    <div style="display: flex; gap: 12px; align-items: center;">
+                                        <input type="color" id="wizardError" value="${wizardState.data.colors.error.base}" 
+                                               onchange="updateColors()" style="width: 60px; height: 40px;">
+                                        <input type="text" class="form-input" value="${wizardState.data.colors.error.base}" 
+                                               onchange="document.getElementById('wizardError').value = this.value; updateColors();"
+                                               style="flex: 1; font-family: monospace; font-size: 12px;">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Info</label>
+                                    <div style="display: flex; gap: 12px; align-items: center;">
+                                        <input type="color" id="wizardInfo" value="${wizardState.data.colors.info.base}" 
+                                               onchange="updateColors()" style="width: 60px; height: 40px;">
+                                        <input type="text" class="form-input" value="${wizardState.data.colors.info.base}" 
+                                               onchange="document.getElementById('wizardInfo').value = this.value; updateColors();"
+                                               style="flex: 1; font-family: monospace; font-size: 12px;">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Neutral Colors -->
+                            <div class="form-group" style="margin-top: 24px;">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <input type="checkbox" id="generateNeutral" 
+                                           ${wizardState.data.colors.neutral.generate ? 'checked' : ''}
+                                           onchange="updateColors()">
+                                    <label class="form-label" style="margin: 0;">Generate Neutral Color Palette (50-900)</label>
+                                </div>
+                            </div>
+                        `;
+                        nextBtn.disabled = false;
+                        break;
+
+                    case 'tokens':
+                        content.innerHTML = `
+                            <div class="wizard-section-title">Configure design tokens</div>
+                            
+                            <!-- Spacing & Padding -->
+                            <div class="form-group">
+                                <label class="form-label">Spacing Scale Base</label>
+                                <select class="form-input" id="wizardSpacing" onchange="updateTokens()">
+                                    <option value="2pt" ${wizardState.data.tokens.spacingBase === '2pt' ? 'selected' : ''}>2pt (0, 2, 4, 6, 8, 10, 12...)</option>
+                                    <option value="4pt" ${wizardState.data.tokens.spacingBase === '4pt' ? 'selected' : ''}>4pt (0, 4, 8, 12, 16, 20, 24...)</option>
+                                    <option value="8pt" ${wizardState.data.tokens.spacingBase === '8pt' ? 'selected' : ''}>8pt (0, 8, 16, 24, 32, 40, 48...)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Padding Scale Base</label>
+                                <select class="form-input" id="wizardPadding" onchange="updateTokens()">
+                                    <option value="2pt" ${wizardState.data.tokens.paddingBase === '2pt' ? 'selected' : ''}>2pt</option>
+                                    <option value="4pt" ${wizardState.data.tokens.paddingBase === '4pt' ? 'selected' : ''}>4pt</option>
+                                    <option value="8pt" ${wizardState.data.tokens.paddingBase === '8pt' ? 'selected' : ''}>8pt</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Border Radius (px)</label>
+                                <input type="number" class="form-input" id="wizardRadius" 
+                                       value="${wizardState.data.tokens.radius}" 
+                                       min="0" max="32" 
+                                       onchange="updateTokens()">
+                            </div>
+
+                            <!-- Grid Systems -->
+                            <div class="wizard-section-title" style="margin-top: 32px;">Grid Systems</div>
+                            <div style="display: grid; gap: 16px;">
+                                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px;">
+                                    <div style="font-weight: 600; margin-bottom: 12px; color: var(--text-primary);">Desktop Grid</div>
+                                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; font-size: 12px;">
+                                        <div>
+                                            <label style="color: var(--text-secondary); display: block; margin-bottom: 4px;">Columns</label>
+                                            <input type="number" class="form-input" id="gridDesktopCols" 
+                                                   value="${wizardState.data.tokens.grids.desktop.columns}" 
+                                                   min="1" max="24" 
+                                                   onchange="updateTokens()" style="padding: 6px 10px;">
+                                        </div>
+                                        <div>
+                                            <label style="color: var(--text-secondary); display: block; margin-bottom: 4px;">Max Width</label>
+                                            <input type="number" class="form-input" id="gridDesktopWidth" 
+                                                   value="${wizardState.data.tokens.grids.desktop.maxWidth}" 
+                                                   min="1" 
+                                                   onchange="updateTokens()" style="padding: 6px 10px;">
+                                        </div>
+                                        <div>
+                                            <label style="color: var(--text-secondary); display: block; margin-bottom: 4px;">Gutter</label>
+                                            <input type="number" class="form-input" id="gridDesktopGutter" 
+                                                   value="${wizardState.data.tokens.grids.desktop.gutter}" 
+                                                   min="0" 
+                                                   onchange="updateTokens()" style="padding: 6px 10px;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px;">
+                                    <div style="font-weight: 600; margin-bottom: 12px; color: var(--text-primary);">Tablet Grid</div>
+                                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; font-size: 12px;">
+                                        <div>
+                                            <label style="color: var(--text-secondary); display: block; margin-bottom: 4px;">Columns</label>
+                                            <input type="number" class="form-input" id="gridTabletCols" 
+                                                   value="${wizardState.data.tokens.grids.tablet.columns}" 
+                                                   min="1" max="24" 
+                                                   onchange="updateTokens()" style="padding: 6px 10px;">
+                                        </div>
+                                        <div>
+                                            <label style="color: var(--text-secondary); display: block; margin-bottom: 4px;">Max Width</label>
+                                            <input type="number" class="form-input" id="gridTabletWidth" 
+                                                   value="${wizardState.data.tokens.grids.tablet.maxWidth}" 
+                                                   min="1" 
+                                                   onchange="updateTokens()" style="padding: 6px 10px;">
+                                        </div>
+                                        <div>
+                                            <label style="color: var(--text-secondary); display: block; margin-bottom: 4px;">Gutter</label>
+                                            <input type="number" class="form-input" id="gridTabletGutter" 
+                                                   value="${wizardState.data.tokens.grids.tablet.gutter}" 
+                                                   min="0" 
+                                                   onchange="updateTokens()" style="padding: 6px 10px;">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px;">
+                                    <div style="font-weight: 600; margin-bottom: 12px; color: var(--text-primary);">Mobile Grid</div>
+                                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; font-size: 12px;">
+                                        <div>
+                                            <label style="color: var(--text-secondary); display: block; margin-bottom: 4px;">Columns</label>
+                                            <input type="number" class="form-input" id="gridMobileCols" 
+                                                   value="${wizardState.data.tokens.grids.mobile.columns}" 
+                                                   min="1" max="24" 
+                                                   onchange="updateTokens()" style="padding: 6px 10px;">
+                                        </div>
+                                        <div>
+                                            <label style="color: var(--text-secondary); display: block; margin-bottom: 4px;">Max Width</label>
+                                            <input type="number" class="form-input" id="gridMobileWidth" 
+                                                   value="${wizardState.data.tokens.grids.mobile.maxWidth}" 
+                                                   min="1" 
+                                                   onchange="updateTokens()" style="padding: 6px 10px;">
+                                        </div>
+                                        <div>
+                                            <label style="color: var(--text-secondary); display: block; margin-bottom: 4px;">Gutter</label>
+                                            <input type="number" class="form-input" id="gridMobileGutter" 
+                                                   value="${wizardState.data.tokens.grids.mobile.gutter}" 
+                                                   min="0" 
+                                                   onchange="updateTokens()" style="padding: 6px 10px;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Shadow Tokens Info -->
+                            <div class="form-group" style="margin-top: 24px;">
+                                <div style="display: flex; align-items: center; gap: 12px;">
+                                    <input type="checkbox" checked disabled>
+                                    <label class="form-label" style="margin: 0;">Generate Shadow Tokens (xs, sm, md, lg, xl, 2xl)</label>
+                                </div>
+                            </div>
+                        `;
+                        nextBtn.disabled = false;
+                        break;
+
+                    case 'components':
+                        const components = ['Button', 'Input', 'Checkbox', 'Radio'];
+                        content.innerHTML = `
+                            <div class="wizard-section-title">Select components to generate</div>
+                            <div style="margin-bottom: 24px;">
+                                ${components.map(comp => `
+                                    <div class="checkbox-option ${wizardState.data.components.includes(comp) ? 'selected' : ''}" 
+                                         onclick="toggleComponent('${comp}')">
+                                        <input type="checkbox" id="comp${comp}" 
+                                               ${wizardState.data.components.includes(comp) ? 'checked' : ''}
+                                               onchange="event.stopPropagation(); updateComponents()">
+                                        <span class="checkbox-option-label">${comp}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                        nextBtn.disabled = wizardState.data.components.length === 0;
+                        break;
+                }
+            }
+
+            function selectIconLibrary(library) {
+                wizardState.data.iconLibrary = library;
+                renderWizardContent('icons');
+            }
+
+            function updateTypography() {
+                wizardState.data.typography = {
+                    primaryFont: document.getElementById('wizardPrimaryFont')?.value || 'Poppins',
+                    secondaryFont: document.getElementById('wizardSecondaryFont')?.value || 'Inter',
+                    baseSize: parseInt(document.getElementById('wizardBaseSize')?.value || 16)
+                    // Removed: scale field
+                };
+            }
+
+            function toggleSecondaryColor() {
+                const enabled = document.getElementById('enableSecondary')?.checked || false;
+                wizardState.data.colors.enableSecondary = enabled;
+                const picker = document.getElementById('secondaryColorPicker');
+                if (picker) {
+                    picker.style.display = enabled ? 'flex' : 'none';
+                }
+            }
+
+            function updateColors() {
+                wizardState.data.colors = {
+                    primary: document.getElementById('wizardPrimary')?.value || '#4F46E5',
+                    enableSecondary: document.getElementById('enableSecondary')?.checked || false,
+                    secondary: document.getElementById('wizardSecondary')?.value || '#8B5CF6',
+                    success: {
+                        base: document.getElementById('wizardSuccess')?.value || '#10B981',
+                        levels: [100, 200, 300]
+                    },
+                    warning: {
+                        base: document.getElementById('wizardWarning')?.value || '#F59E0B',
+                        levels: [100, 200, 300]
+                    },
+                    error: {
+                        base: document.getElementById('wizardError')?.value || '#EF4444',
+                        levels: [100, 200, 300]
+                    },
+                    info: {
+                        base: document.getElementById('wizardInfo')?.value || '#3B82F6',
+                        levels: [100, 200, 300]
+                    },
+                    neutral: {
+                        base: '#6B7280',
+                        generate: document.getElementById('generateNeutral')?.checked || true
+                    }
+                };
+            }
+
+            function updateTokens() {
+                wizardState.data.tokens = {
+                    spacingBase: document.getElementById('wizardSpacing')?.value || '8pt',
+                    paddingBase: document.getElementById('wizardPadding')?.value || '8pt',
+                    radius: parseInt(document.getElementById('wizardRadius')?.value || 8),
+                    grids: {
+                        desktop: {
+                            columns: parseInt(document.getElementById('gridDesktopCols')?.value || 12),
+                            maxWidth: parseInt(document.getElementById('gridDesktopWidth')?.value || 1440),
+                            gutter: parseInt(document.getElementById('gridDesktopGutter')?.value || 24)
+                        },
+                        tablet: {
+                            columns: parseInt(document.getElementById('gridTabletCols')?.value || 8),
+                            maxWidth: parseInt(document.getElementById('gridTabletWidth')?.value || 768),
+                            gutter: parseInt(document.getElementById('gridTabletGutter')?.value || 16)
+                        },
+                        mobile: {
+                            columns: parseInt(document.getElementById('gridMobileCols')?.value || 4),
+                            maxWidth: parseInt(document.getElementById('gridMobileWidth')?.value || 375),
+                            gutter: parseInt(document.getElementById('gridMobileGutter')?.value || 16)
+                        }
+                    },
+                    shadows: {
+                        xs: '0 1px 2px rgba(0,0,0,0.05)',
+                        sm: '0 1px 3px rgba(0,0,0,0.1)',
+                        md: '0 4px 6px rgba(0,0,0,0.1)',
+                        lg: '0 10px 15px rgba(0,0,0,0.1)',
+                        xl: '0 20px 25px rgba(0,0,0,0.1)',
+                        '2xl': '0 25px 50px rgba(0,0,0,0.25)'
+                    }
+                };
+            }
+
+            function toggleComponent(component) {
+                const checkbox = document.getElementById(`comp${component}`);
+                checkbox.checked = !checkbox.checked;
+                updateComponents();
+            }
+
+            function updateComponents() {
+                const components = ['Button', 'Input', 'Checkbox', 'Radio'];
+                wizardState.data.components = components.filter(comp => {
+                    const checkbox = document.getElementById(`comp${comp}`);
+                    return checkbox?.checked;
+                });
+                document.getElementById('wizardNextBtn').disabled = wizardState.data.components.length === 0;
+
+                // Update visual selection
+                components.forEach(comp => {
+                    const checkbox = document.getElementById(`comp${comp}`);
+                    const option = checkbox?.closest('.checkbox-option');
+                    if (option) {
+                        if (checkbox.checked) {
+                            option.classList.add('selected');
+                        } else {
+                            option.classList.remove('selected');
+                        }
+                    }
+                });
+            }
+
+            function wizardNext() {
+                if (wizardState.currentStep === wizardState.totalSteps - 1) {
+                    // Final step - generate design system
+                    generateFullDesignSystem();
+                } else {
+                    wizardState.currentStep++;
+                    renderWizardStep();
+                }
+            }
+
+            function wizardBack() {
+                if (wizardState.currentStep > 0) {
+                    wizardState.currentStep--;
+                    renderWizardStep();
+                }
+            }
+
+            function generateFullDesignSystem() {
+                showLoadingOverlay('Generating Design System', 'Creating your complete design system...');
+
+                // Send data to Figma plugin
+                parent.postMessage({
+                    pluginMessage: {
+                        type: 'generate-full-design-system',
+                        data: wizardState.data
+                    }
+                }, '*');
             }
 
             function learnMore() {
@@ -5501,6 +6477,14 @@
                 // Handle success popup
                 if (msg.type === 'show-success') {
                     showSuccessPopup(msg.title, msg.message);
+                }
+
+                // Handle switch to manual mode after wizard
+                if (msg.type === 'switch-to-manual-mode') {
+                    document.getElementById('wizardScreen').classList.remove('active');
+                    document.getElementById('appContainer').classList.remove('hidden');
+                    parent.postMessage({ pluginMessage: { type: 'resize-window', width: 800, height: 700 } }, '*');
+                    initializeApp();
                 }
             });
 

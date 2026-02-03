@@ -48,6 +48,14 @@ function hexToRgb(hex) {
     } : { r: 0, g: 0, b: 0 };
 }
 
+function rgbToHex(r, g, b) {
+    const toHex = (n) => {
+        const hex = Math.round(n).toString(16);
+        return hex.length === 1 ? '0' + hex : hex;
+    };
+    return '#' + toHex(r) + toHex(g) + toHex(b);
+}
+
 function darkenColor(rgb, amount) {
     return {
         r: Math.max(0, rgb.r - amount),
@@ -203,6 +211,18 @@ async function createButtonComponentSet(buttonText, bgColor, textColor, radius) 
     // CREATE BUTTON COLOR & RADIUS VARIABLES - START
     // ============================================
 
+    // Get the Colors collection to reference primary shades
+    const allCollections = await figma.variables.getLocalVariableCollectionsAsync();
+    const colorsCollection = allCollections.find(c => c.name === '1. Colors' || c.name === 'Colors');
+
+    // Get all color variables to find primary shades
+    const allColorVars = await figma.variables.getLocalVariablesAsync('COLOR');
+
+    // Find primary shade variables
+    const primary500Var = allColorVars.find(v => v.name === 'primary/500');
+    const primary600Var = allColorVars.find(v => v.name === 'primary/600');
+    const primary700Var = allColorVars.find(v => v.name === 'primary/700');
+
     // Get or create variable collection for Button colors
     let buttonColorCollection = collections.find(c => c.name === 'Button/Colors');
 
@@ -213,45 +233,35 @@ async function createButtonComponentSet(buttonText, bgColor, textColor, radius) 
     const colorModeId = buttonColorCollection.modes[0].modeId;
     const existingColorVars = await figma.variables.getLocalVariablesAsync('COLOR');
 
-    // Primary color variable
-    const primaryColorVarName = 'button/color/primary';
-    let primaryColorVar = existingColorVars.find(v => v.name === primaryColorVarName && v.variableCollectionId === buttonColorCollection.id);
-    if (!primaryColorVar) {
-        primaryColorVar = figma.variables.createVariable(primaryColorVarName, buttonColorCollection, 'COLOR');
-    }
-    primaryColorVar.setValueForMode(colorModeId, baseRgb);
-
-    // Destructive color variable
-    const destructiveColorVarName = 'button/color/destructive';
-    let destructiveColorVar = existingColorVars.find(v => v.name === destructiveColorVarName && v.variableCollectionId === buttonColorCollection.id);
-    if (!destructiveColorVar) {
-        destructiveColorVar = figma.variables.createVariable(destructiveColorVarName, buttonColorCollection, 'COLOR');
-    }
-    destructiveColorVar.setValueForMode(colorModeId, destructiveRgb);
-
-    // Text color variable
-    const textColorVarName = 'button/color/text';
-    let textColorVar = existingColorVars.find(v => v.name === textColorVarName && v.variableCollectionId === buttonColorCollection.id);
-    if (!textColorVar) {
-        textColorVar = figma.variables.createVariable(textColorVarName, buttonColorCollection, 'COLOR');
-    }
-    textColorVar.setValueForMode(colorModeId, textRgb);
-
-    // Helper function to create or update color variable
-    function createOrUpdateColorVar(name, color) {
+    // Helper function to create or update color variable with alias support
+    function createOrUpdateColorVar(name, color, aliasVar = null) {
         let colorVar = existingColorVars.find(v => v.name === name && v.variableCollectionId === buttonColorCollection.id);
         if (!colorVar) {
             colorVar = figma.variables.createVariable(name, buttonColorCollection, 'COLOR');
             existingColorVars.push(colorVar);
         }
-        colorVar.setValueForMode(colorModeId, color);
+
+        // If we have an alias variable, use it; otherwise use the color directly
+        if (aliasVar) {
+            try {
+                colorVar.setValueForMode(colorModeId, {
+                    type: 'VARIABLE_ALIAS',
+                    id: aliasVar.id
+                });
+            } catch (e) {
+                // Fallback to direct color if alias fails
+                colorVar.setValueForMode(colorModeId, color);
+            }
+        } else {
+            colorVar.setValueForMode(colorModeId, color);
+        }
         return colorVar;
     }
 
     // Base colors
     const baseColors = {
         primary: baseRgb,
-        destructive: destructiveRgb,
+        destructive: { r: 0.937, g: 0.267, b: 0.267 },
         text: textRgb,
         white: { r: 1, g: 1, b: 1 },
         border: { r: 0.8, g: 0.8, b: 0.85 },
@@ -259,10 +269,10 @@ async function createButtonComponentSet(buttonText, bgColor, textColor, radius) 
         disabledText: { r: 0.6, g: 0.6, b: 0.6 }
     };
 
-    // PRIMARY BUTTON - Background Colors
-    const primaryNormalVar = createOrUpdateColorVar('button/primary/bg/normal', baseColors.primary);
-    const primaryHoverVar = createOrUpdateColorVar('button/primary/bg/hover', darkenColor(baseColors.primary, 0.1));
-    const primaryClickVar = createOrUpdateColorVar('button/primary/bg/click', darkenColor(baseColors.primary, 0.2));
+    // PRIMARY BUTTON - Background Colors (using primary shade aliases)
+    const primaryNormalVar = createOrUpdateColorVar('button/primary/bg/normal', baseColors.primary, primary500Var);
+    const primaryHoverVar = createOrUpdateColorVar('button/primary/bg/hover', darkenColor(baseColors.primary, 0.1), primary600Var);
+    const primaryClickVar = createOrUpdateColorVar('button/primary/bg/click', darkenColor(baseColors.primary, 0.2), primary700Var);
     const primaryDisabledVar = createOrUpdateColorVar('button/primary/bg/disabled', baseColors.disabled);
 
     // PRIMARY BUTTON - Text Colors
@@ -555,6 +565,56 @@ async function createButtonComponentSet(buttonText, bgColor, textColor, radius) 
                 applyColorToNode(rightIcon, currentTextColor);
                 button.appendChild(rightIcon);
 
+                // Helper function to bind color variable to icon (vector nodes only)
+                function bindColorVariableToIcon(iconNode, colorVar) {
+                    try {
+                        const vectorTypes = ['VECTOR', 'LINE', 'ELLIPSE', 'RECTANGLE', 'POLYGON', 'STAR', 'BOOLEAN_OPERATION'];
+                        const containerTypes = ['FRAME', 'GROUP', 'COMPONENT', 'INSTANCE'];
+
+                        const bindFills = (node) => {
+                            // Only apply fills/strokes to vector-type nodes, not frames
+                            if (vectorTypes.includes(node.type)) {
+                                if (node.fills && Array.isArray(node.fills) && node.fills.length > 0) {
+                                    const newFills = [{
+                                        type: 'SOLID',
+                                        color: { r: 0, g: 0, b: 0 },
+                                        boundVariables: {
+                                            color: { type: 'VARIABLE_ALIAS', id: colorVar.id }
+                                        }
+                                    }];
+                                    node.fills = newFills;
+                                }
+                                if (node.strokes && Array.isArray(node.strokes) && node.strokes.length > 0) {
+                                    const newStrokes = [{
+                                        type: 'SOLID',
+                                        color: { r: 0, g: 0, b: 0 },
+                                        boundVariables: {
+                                            color: { type: 'VARIABLE_ALIAS', id: colorVar.id }
+                                        }
+                                    }];
+                                    node.strokes = newStrokes;
+                                }
+                            }
+
+                            // For container types, ensure they have no fills and recurse into children
+                            if (containerTypes.includes(node.type)) {
+                                // Remove any fills from container frames
+                                if (node.fills && Array.isArray(node.fills) && node.fills.length > 0) {
+                                    node.fills = [];
+                                }
+                            }
+
+                            // Recurse into children
+                            if ('children' in node) {
+                                node.children.forEach(child => bindFills(child));
+                            }
+                        };
+                        bindFills(iconNode);
+                    } catch (e) {
+                        console.warn('Could not bind color variable to icon:', e);
+                    }
+                }
+
                 // Bind spacing variables to button
                 const sizeKey = size.name.toLowerCase();
                 if (buttonVariables[sizeKey]) {
@@ -637,6 +697,10 @@ async function createButtonComponentSet(buttonText, bgColor, textColor, radius) 
                                 }];
                                 text.fills = newTextFills;
                             }
+
+                            // Bind the same text color variable to icons
+                            bindColorVariableToIcon(leftIcon, textVar);
+                            bindColorVariableToIcon(rightIcon, textVar);
                         }
                     }
                 } catch (e) {
@@ -1012,7 +1076,7 @@ async function createInputComponentSet(placeholder, borderColor, primaryColor, t
         try {
             const vectorTypes = ['VECTOR', 'LINE', 'ELLIPSE', 'RECTANGLE', 'POLYGON', 'STAR', 'BOOLEAN_OPERATION'];
             const containerTypes = ['FRAME', 'GROUP', 'COMPONENT', 'INSTANCE'];
-            
+
             const bindFills = (node) => {
                 // Only apply fills/strokes to vector-type nodes, not frames
                 if (vectorTypes.includes(node.type)) {
@@ -1037,7 +1101,7 @@ async function createInputComponentSet(placeholder, borderColor, primaryColor, t
                         node.strokes = newStrokes;
                     }
                 }
-                
+
                 // For container types, ensure they have no fills and recurse into children
                 if (containerTypes.includes(node.type)) {
                     // Remove any fills from container frames
@@ -1045,7 +1109,7 @@ async function createInputComponentSet(placeholder, borderColor, primaryColor, t
                         node.fills = [];
                     }
                 }
-                
+
                 // Recurse into children
                 if ('children' in node) {
                     node.children.forEach(child => bindFills(child));
@@ -2671,7 +2735,7 @@ async function createRadioComponentSet(primaryColor, textColor, radius) {
         try {
             const vectorTypes = ['VECTOR', 'LINE', 'ELLIPSE', 'RECTANGLE', 'POLYGON', 'STAR', 'BOOLEAN_OPERATION'];
             const containerTypes = ['FRAME', 'GROUP', 'COMPONENT', 'INSTANCE'];
-            
+
             const bindFills = (n) => {
                 if (vectorTypes.includes(n.type)) {
                     if (n.fills && Array.isArray(n.fills) && n.fills.length > 0) {
@@ -2822,8 +2886,8 @@ async function createRadioComponentSet(primaryColor, textColor, radius) {
 
                     // Bind card border color
                     try {
-                        const cardBorderVar = isDisabled ? radioColorVariables.cardBorder.disabled : 
-                                             (isChecked ? radioColorVariables.cardBorder.checked : radioColorVariables.cardBorder.unchecked);
+                        const cardBorderVar = isDisabled ? radioColorVariables.cardBorder.disabled :
+                            (isChecked ? radioColorVariables.cardBorder.checked : radioColorVariables.cardBorder.unchecked);
                         mainContainer.strokes = [{
                             type: 'SOLID',
                             color: { r: 0, g: 0, b: 0 },
@@ -2868,7 +2932,7 @@ async function createRadioComponentSet(primaryColor, textColor, radius) {
                 // Bind radio circle colors
                 try {
                     const fillVar = isDisabled ? radioColorVariables.radioFill.disabled :
-                                   (isChecked ? radioColorVariables.radioFill.checked : radioColorVariables.radioFill.unchecked);
+                        (isChecked ? radioColorVariables.radioFill.checked : radioColorVariables.radioFill.unchecked);
                     radioCircle.fills = [{
                         type: 'SOLID',
                         color: { r: 0, g: 0, b: 0 },
@@ -2876,7 +2940,7 @@ async function createRadioComponentSet(primaryColor, textColor, radius) {
                     }];
 
                     const borderVar = isDisabled ? radioColorVariables.radioBorder.disabled :
-                                     (isChecked ? radioColorVariables.radioBorder.checked : radioColorVariables.radioBorder.unchecked);
+                        (isChecked ? radioColorVariables.radioBorder.checked : radioColorVariables.radioBorder.unchecked);
                     radioCircle.strokes = [{
                         type: 'SOLID',
                         color: { r: 0, g: 0, b: 0 },
@@ -3418,7 +3482,7 @@ async function createCheckboxComponentSet(primaryColor, textColor, radius) {
         try {
             const vectorTypes = ['VECTOR', 'LINE', 'ELLIPSE', 'RECTANGLE', 'POLYGON', 'STAR', 'BOOLEAN_OPERATION'];
             const containerTypes = ['FRAME', 'GROUP', 'COMPONENT', 'INSTANCE'];
-            
+
             const bindFills = (n) => {
                 if (vectorTypes.includes(n.type)) {
                     if (n.fills && Array.isArray(n.fills) && n.fills.length > 0) {
@@ -3571,8 +3635,8 @@ async function createCheckboxComponentSet(primaryColor, textColor, radius) {
 
                     // Bind card border color
                     try {
-                        const cardBorderVar = isDisabled ? checkboxColorVariables.cardBorder.disabled : 
-                                             (isChecked ? checkboxColorVariables.cardBorder.checked : checkboxColorVariables.cardBorder.unchecked);
+                        const cardBorderVar = isDisabled ? checkboxColorVariables.cardBorder.disabled :
+                            (isChecked ? checkboxColorVariables.cardBorder.checked : checkboxColorVariables.cardBorder.unchecked);
                         mainContainer.strokes = [{
                             type: 'SOLID',
                             color: { r: 0, g: 0, b: 0 },
@@ -3627,7 +3691,7 @@ async function createCheckboxComponentSet(primaryColor, textColor, radius) {
                 // Bind checkbox square colors
                 try {
                     const fillVar = isDisabled ? checkboxColorVariables.checkboxFill.disabled :
-                                   (isChecked ? checkboxColorVariables.checkboxFill.checked : checkboxColorVariables.checkboxFill.unchecked);
+                        (isChecked ? checkboxColorVariables.checkboxFill.checked : checkboxColorVariables.checkboxFill.unchecked);
                     checkboxSquare.fills = [{
                         type: 'SOLID',
                         color: { r: 0, g: 0, b: 0 },
@@ -3635,7 +3699,7 @@ async function createCheckboxComponentSet(primaryColor, textColor, radius) {
                     }];
 
                     const borderVar = isDisabled ? checkboxColorVariables.checkboxBorder.disabled :
-                                     (isChecked ? checkboxColorVariables.checkboxBorder.checked : checkboxColorVariables.checkboxBorder.unchecked);
+                        (isChecked ? checkboxColorVariables.checkboxBorder.checked : checkboxColorVariables.checkboxBorder.unchecked);
                     checkboxSquare.strokes = [{
                         type: 'SOLID',
                         color: { r: 0, g: 0, b: 0 },
@@ -4095,6 +4159,806 @@ figma.ui.onmessage = async (msg) => {
         } catch (error) {
             figma.notify(`❌ Error creating checkbox component: ${error.message}`);
             figma.ui.postMessage({ type: 'loading-complete' });
+        }
+    }
+
+    // ----------------------------------------
+    // FULL DESIGN SYSTEM GENERATION (WIZARD)
+    // ----------------------------------------
+
+    if (msg.type === 'generate-full-design-system') {
+        try {
+            const data = msg.data;
+            figma.notify('🚀 Starting design system generation...');
+
+            // ============================================
+            // STEP 1: CREATE COLOR VARIABLES
+            // ============================================
+            figma.notify('Creating color variables...');
+
+            // Get all collections first
+            const collections = await figma.variables.getLocalVariableCollectionsAsync();
+
+            // Create Colors collection FIRST (if it doesn't exist)
+            let colorCollection = collections.find(c => c.name === '1. Colors');
+
+            if (!colorCollection) {
+                colorCollection = figma.variables.createVariableCollection('1. Colors');
+                colorCollection.renameMode(colorCollection.modes[0].modeId, 'Light');
+            }
+
+            const modeId = colorCollection.modes[0].modeId;
+            const existingColorVars = await figma.variables.getLocalVariablesAsync('COLOR');
+
+            // Helper function to create or update color variable
+            async function createOrUpdateColorVar(name, hexColor) {
+                const rgb = hexToRgb(hexColor);
+                let colorVar = existingColorVars.find(v => v.name === name && v.variableCollectionId === colorCollection.id);
+
+                if (!colorVar) {
+                    colorVar = figma.variables.createVariable(name, colorCollection, 'COLOR');
+                    existingColorVars.push(colorVar);
+                }
+                colorVar.setValueForMode(modeId, rgb);
+                return colorVar;
+            }
+
+            // Create primary color and shades
+            await createOrUpdateColorVar('color/primary', data.colors.primary);
+
+            // Generate primary shades (50-900)
+            const primaryRgb = hexToRgb(data.colors.primary);
+            const shades = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900];
+            for (const shade of shades) {
+                const factor = (shade - 500) / 500;
+                const primaryShadeRgb = factor > 0 ?
+                    darkenColor(primaryRgb, Math.abs(factor) * 0.5) :
+                    lightenColor(primaryRgb, Math.abs(factor) * 0.5);
+                await createOrUpdateColorVar(`primary/${shade}`, rgbToHex(
+                    Math.round(primaryShadeRgb.r * 255),
+                    Math.round(primaryShadeRgb.g * 255),
+                    Math.round(primaryShadeRgb.b * 255)
+                ));
+            }
+
+            // Generate secondary colors only if enabled
+            if (data.colors.enableSecondary) {
+                await createOrUpdateColorVar('color/secondary', data.colors.secondary);
+                const secondaryRgb = hexToRgb(data.colors.secondary);
+                for (const shade of shades) {
+                    const factor = (shade - 500) / 500;
+                    const secondaryShadeRgb = factor > 0 ?
+                        darkenColor(secondaryRgb, Math.abs(factor) * 0.5) :
+                        lightenColor(secondaryRgb, Math.abs(factor) * 0.5);
+                    await createOrUpdateColorVar(`secondary/${shade}`, rgbToHex(
+                        Math.round(secondaryShadeRgb.r * 255),
+                        Math.round(secondaryShadeRgb.g * 255),
+                        Math.round(secondaryShadeRgb.b * 255)
+                    ));
+                }
+            }
+
+            // Generate status colors with levels (100, 200, 300)
+            const statusColors = ['success', 'warning', 'error', 'info'];
+            for (const status of statusColors) {
+                const statusData = data.colors[status];
+                const baseColor = statusData.base;
+                const baseRgb = hexToRgb(baseColor);
+
+                // Create base color
+                await createOrUpdateColorVar(`color/${status}`, baseColor);
+
+                // Generate levels: 100 (lightest), 200 (base), 300 (darkest)
+                for (const level of statusData.levels) {
+                    let colorRgb;
+                    if (level === 100) {
+                        // Lightest - 40% lighter
+                        colorRgb = lightenColor(baseRgb, 0.4);
+                    } else if (level === 200) {
+                        // Base color
+                        colorRgb = baseRgb;
+                    } else if (level === 300) {
+                        // Darkest - 30% darker
+                        colorRgb = darkenColor(baseRgb, 0.3);
+                    }
+                    await createOrUpdateColorVar(`${status}/${level}`, rgbToHex(
+                        Math.round(colorRgb.r * 255),
+                        Math.round(colorRgb.g * 255),
+                        Math.round(colorRgb.b * 255)
+                    ));
+                }
+            }
+
+            // Generate neutral colors if enabled
+            if (data.colors.neutral.generate) {
+                const neutralShades = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900];
+                const neutralBase = hexToRgb(data.colors.neutral.base); // Gray base
+
+                for (const shade of neutralShades) {
+                    const factor = (shade - 500) / 500;
+                    const neutralRgb = factor > 0 ?
+                        darkenColor(neutralBase, Math.abs(factor) * 0.5) :
+                        lightenColor(neutralBase, Math.abs(factor) * 0.5);
+                    await createOrUpdateColorVar(`neutral/${shade}`, rgbToHex(
+                        Math.round(neutralRgb.r * 255),
+                        Math.round(neutralRgb.g * 255),
+                        Math.round(neutralRgb.b * 255)
+                    ));
+                }
+            }
+
+            // ============================================
+            // STEP 2: CREATE TEXT STYLES
+            // ============================================
+            figma.notify('Creating text styles...');
+
+            // Load fonts
+            await figma.loadFontAsync({ family: data.typography.primaryFont, style: "Regular" });
+            await figma.loadFontAsync({ family: data.typography.primaryFont, style: "Medium" });
+            await figma.loadFontAsync({ family: data.typography.primaryFont, style: "Bold" });
+
+            const existingTextStyles = await figma.getLocalTextStylesAsync();
+
+            // Helper function to create or update text style
+            function createOrUpdateTextStyle(name, fontSize, fontWeight) {
+                let textStyle = existingTextStyles.find(s => s.name === name);
+                if (!textStyle) {
+                    textStyle = figma.createTextStyle();
+                    textStyle.name = name;
+                }
+                textStyle.fontName = { family: data.typography.primaryFont, style: fontWeight };
+                textStyle.fontSize = fontSize;
+                textStyle.lineHeight = { value: 150, unit: 'PERCENT' };
+                textStyle.letterSpacing = { value: 0, unit: 'PIXELS' };
+                return textStyle;
+            }
+
+            // Create text styles
+            const baseSize = data.typography.baseSize;
+            createOrUpdateTextStyle('Display', baseSize * 3, 'Bold');
+            createOrUpdateTextStyle('H1', baseSize * 2.5, 'Bold');
+            createOrUpdateTextStyle('H2', baseSize * 2, 'Bold');
+            createOrUpdateTextStyle('H3', baseSize * 1.75, 'Bold');
+            createOrUpdateTextStyle('H4', baseSize * 1.5, 'Bold');
+            createOrUpdateTextStyle('H5', baseSize * 1.25, 'Bold');
+            createOrUpdateTextStyle('H6', baseSize * 1.125, 'Bold');
+            createOrUpdateTextStyle('Body', baseSize, 'Regular');
+            createOrUpdateTextStyle('Body/Bold', baseSize, 'Bold');
+            createOrUpdateTextStyle('Caption', baseSize * 0.875, 'Regular');
+            createOrUpdateTextStyle('Button', baseSize * 0.875, 'Medium');
+
+            // ============================================
+            // STEP 3: CREATE SPACING TOKENS
+            // ============================================
+            figma.notify('Creating spacing tokens...');
+
+            // Refresh collections list to ensure proper order
+            const updatedCollections = await figma.variables.getLocalVariableCollectionsAsync();
+            let spacingCollection = updatedCollections.find(c => c.name === '2. Tokens');
+            if (!spacingCollection) {
+                spacingCollection = figma.variables.createVariableCollection('2. Tokens');
+            }
+
+            const spacingModeId = spacingCollection.modes[0].modeId;
+            const existingSpacingVars = await figma.variables.getLocalVariablesAsync('FLOAT');
+
+            // Helper function to create or update spacing variable
+            function createOrUpdateSpacingVar(name, value) {
+                let spacingVar = existingSpacingVars.find(v => v.name === name && v.variableCollectionId === spacingCollection.id);
+                if (!spacingVar) {
+                    spacingVar = figma.variables.createVariable(name, spacingCollection, 'FLOAT');
+                    existingSpacingVars.push(spacingVar);
+                }
+                spacingVar.setValueForMode(spacingModeId, value);
+                return spacingVar;
+            }
+
+            // Create spacing variables based on scale (2pt, 4pt, or 8pt)
+            const spacingBase = parseInt(data.tokens.spacingBase); // 2, 4, or 8
+
+            // Generate comprehensive spacing scale
+            const spacingValues = [];
+            for (let i = 0; i <= 20; i++) {
+                spacingValues.push(i * spacingBase);
+            }
+
+            // Create named spacing tokens
+            spacingValues.forEach((value, index) => {
+                createOrUpdateSpacingVar(`spacing/${value}`, value);
+            });
+
+            // Also create semantic spacing tokens
+            createOrUpdateSpacingVar('spacing/xs', spacingBase);
+            createOrUpdateSpacingVar('spacing/sm', spacingBase * 2);
+            createOrUpdateSpacingVar('spacing/md', spacingBase * 3);
+            createOrUpdateSpacingVar('spacing/lg', spacingBase * 4);
+            createOrUpdateSpacingVar('spacing/xl', spacingBase * 5);
+            createOrUpdateSpacingVar('spacing/2xl', spacingBase * 6);
+            createOrUpdateSpacingVar('spacing/3xl', spacingBase * 8);
+
+            // ============================================
+            // STEP 4: CREATE PADDING TOKENS
+            // ============================================
+            const paddingBase = parseInt(data.tokens.paddingBase); // 2, 4, or 8
+
+            // Generate comprehensive padding scale
+            const paddingValues = [];
+            for (let i = 0; i <= 20; i++) {
+                paddingValues.push(i * paddingBase);
+            }
+
+            // Create named padding tokens
+            paddingValues.forEach((value, index) => {
+                createOrUpdateSpacingVar(`padding/${value}`, value);
+            });
+
+            // Also create semantic padding tokens
+            createOrUpdateSpacingVar('padding/xs', paddingBase);
+            createOrUpdateSpacingVar('padding/sm', paddingBase * 2);
+            createOrUpdateSpacingVar('padding/md', paddingBase * 3);
+            createOrUpdateSpacingVar('padding/lg', paddingBase * 4);
+            createOrUpdateSpacingVar('padding/xl', paddingBase * 5);
+
+            // ============================================
+            // STEP 5: CREATE RADIUS TOKENS
+            // ============================================
+            createOrUpdateSpacingVar('radius/sm', data.tokens.radius / 2);
+            createOrUpdateSpacingVar('radius/md', data.tokens.radius);
+            createOrUpdateSpacingVar('radius/lg', data.tokens.radius * 2);
+            createOrUpdateSpacingVar('radius/xl', data.tokens.radius * 3);
+            createOrUpdateSpacingVar('radius/full', 9999);
+
+            // ============================================
+            // STEP 5.5: CREATE GRID SYSTEM TOKENS
+            // ============================================
+            figma.notify('Creating grid systems...');
+
+            // Desktop Grid
+            createOrUpdateSpacingVar('grid/desktop/columns', data.tokens.grids.desktop.columns);
+            createOrUpdateSpacingVar('grid/desktop/max-width', data.tokens.grids.desktop.maxWidth);
+            createOrUpdateSpacingVar('grid/desktop/gutter', data.tokens.grids.desktop.gutter);
+
+            // Tablet Grid
+            createOrUpdateSpacingVar('grid/tablet/columns', data.tokens.grids.tablet.columns);
+            createOrUpdateSpacingVar('grid/tablet/max-width', data.tokens.grids.tablet.maxWidth);
+            createOrUpdateSpacingVar('grid/tablet/gutter', data.tokens.grids.tablet.gutter);
+
+            // Mobile Grid
+            createOrUpdateSpacingVar('grid/mobile/columns', data.tokens.grids.mobile.columns);
+            createOrUpdateSpacingVar('grid/mobile/max-width', data.tokens.grids.mobile.maxWidth);
+            createOrUpdateSpacingVar('grid/mobile/gutter', data.tokens.grids.mobile.gutter);
+
+            // ============================================
+            // STEP 5.6: CREATE SHADOW TOKENS (as effect styles)
+            // ============================================
+            figma.notify('Creating shadow tokens...');
+
+            const existingEffectStyles = await figma.getLocalEffectStylesAsync();
+
+            function createOrUpdateShadowStyle(name, shadowConfig) {
+                let effectStyle = existingEffectStyles.find(s => s.name === name);
+                if (!effectStyle) {
+                    effectStyle = figma.createEffectStyle();
+                    effectStyle.name = name;
+                }
+
+                // Parse shadow string (e.g., "0 1px 2px rgba(0,0,0,0.05)")
+                // For simplicity, create a basic drop shadow
+                const shadows = {
+                    'xs': { x: 0, y: 1, blur: 2, color: { r: 0, g: 0, b: 0, a: 0.05 } },
+                    'sm': { x: 0, y: 1, blur: 3, color: { r: 0, g: 0, b: 0, a: 0.1 } },
+                    'md': { x: 0, y: 4, blur: 6, color: { r: 0, g: 0, b: 0, a: 0.1 } },
+                    'lg': { x: 0, y: 10, blur: 15, color: { r: 0, g: 0, b: 0, a: 0.1 } },
+                    'xl': { x: 0, y: 20, blur: 25, color: { r: 0, g: 0, b: 0, a: 0.1 } },
+                    '2xl': { x: 0, y: 25, blur: 50, color: { r: 0, g: 0, b: 0, a: 0.25 } }
+                };
+
+                const shadowKey = name.replace('shadow/', '');
+                const shadow = shadows[shadowKey];
+
+                if (shadow) {
+                    effectStyle.effects = [{
+                        type: 'DROP_SHADOW',
+                        color: shadow.color,
+                        offset: { x: shadow.x, y: shadow.y },
+                        radius: shadow.blur,
+                        visible: true,
+                        blendMode: 'NORMAL'
+                    }];
+                }
+
+                return effectStyle;
+            }
+
+            // Create shadow effect styles
+            createOrUpdateShadowStyle('shadow/xs', data.tokens.shadows.xs);
+            createOrUpdateShadowStyle('shadow/sm', data.tokens.shadows.sm);
+            createOrUpdateShadowStyle('shadow/md', data.tokens.shadows.md);
+            createOrUpdateShadowStyle('shadow/lg', data.tokens.shadows.lg);
+            createOrUpdateShadowStyle('shadow/xl', data.tokens.shadows.xl);
+            createOrUpdateShadowStyle('shadow/2xl', data.tokens.shadows['2xl']);
+
+            // ============================================
+            // STEP 6: CREATE COLOR STYLES
+            // ============================================
+            figma.notify('Creating color styles...');
+
+            const existingColorStyles = await figma.getLocalPaintStylesAsync();
+
+            // Helper function to create or update color style
+            function createOrUpdateColorStyle(name, hexColor) {
+                let colorStyle = existingColorStyles.find(s => s.name === name);
+                if (!colorStyle) {
+                    colorStyle = figma.createPaintStyle();
+                    colorStyle.name = name;
+                }
+                const rgb = hexToRgb(hexColor);
+                colorStyle.paints = [{ type: 'SOLID', color: rgb }];
+                return colorStyle;
+            }
+
+            // Create color styles
+            createOrUpdateColorStyle('Primary', data.colors.primary);
+            createOrUpdateColorStyle('Secondary', data.colors.secondary);
+            createOrUpdateColorStyle('Success', data.colors.success);
+            createOrUpdateColorStyle('Warning', data.colors.warning);
+            createOrUpdateColorStyle('Error', data.colors.error);
+
+            // ============================================
+            // STEP 6.5: ENSURE COMPONENT COLOR VARIABLES EXIST
+            // ============================================
+            figma.notify('Creating component color variables...');
+
+            // Helper function to ensure a color variable exists
+            async function ensureColorVariableExists(collectionName, varName, fallbackColor, aliasVar = null) {
+                const collections = await figma.variables.getLocalVariableCollectionsAsync();
+                let collection = collections.find(c => c.name === collectionName);
+
+                if (!collection) {
+                    collection = figma.variables.createVariableCollection(collectionName);
+                }
+
+                const modeId = collection.modes[0].modeId;
+                const existingVars = await figma.variables.getLocalVariablesAsync('COLOR');
+
+                let colorVar = existingVars.find(v => v.name === varName && v.variableCollectionId === collection.id);
+
+                if (!colorVar) {
+                    colorVar = figma.variables.createVariable(varName, collection, 'COLOR');
+                }
+
+                // Set value - use alias if provided, otherwise use color
+                if (aliasVar) {
+                    try {
+                        colorVar.setValueForMode(modeId, {
+                            type: 'VARIABLE_ALIAS',
+                            id: aliasVar.id
+                        });
+                    } catch (e) {
+                        colorVar.setValueForMode(modeId, fallbackColor);
+                    }
+                } else {
+                    colorVar.setValueForMode(modeId, fallbackColor);
+                }
+
+                return colorVar;
+            }
+
+            // Helper function to ensure a spacing variable exists
+            async function ensureSpacingVariableExists(collectionName, varName, value) {
+                const collections = await figma.variables.getLocalVariableCollectionsAsync();
+                let collection = collections.find(c => c.name === collectionName);
+
+                if (!collection) {
+                    collection = figma.variables.createVariableCollection(collectionName);
+                }
+
+                const modeId = collection.modes[0].modeId;
+                const existingVars = await figma.variables.getLocalVariablesAsync('FLOAT');
+
+                let spacingVar = existingVars.find(v => v.name === varName && v.variableCollectionId === collection.id);
+
+                if (!spacingVar) {
+                    spacingVar = figma.variables.createVariable(varName, collection, 'FLOAT');
+                }
+
+                spacingVar.setValueForMode(modeId, value);
+                return spacingVar;
+            }
+
+            // Get primary color variables for aliasing
+            const allColorVars = await figma.variables.getLocalVariablesAsync('COLOR');
+            const primary500Var = allColorVars.find(v => v.name === 'primary/500');
+            const primary600Var = allColorVars.find(v => v.name === 'primary/600');
+            const primary700Var = allColorVars.find(v => v.name === 'primary/700');
+
+            // Create Button color variables
+            const buttonPrimaryRgb = hexToRgb(data.colors.primary);
+            const whiteRgb = { r: 1, g: 1, b: 1 };
+            const disabledRgb = { r: 0.85, g: 0.85, b: 0.85 };
+            const disabledTextRgb = { r: 0.6, g: 0.6, b: 0.6 };
+
+            // Button/Primary colors
+            await ensureColorVariableExists('Button/Colors', 'button/primary/bg/normal', buttonPrimaryRgb, primary500Var);
+            await ensureColorVariableExists('Button/Colors', 'button/primary/bg/hover', darkenColor(buttonPrimaryRgb, 0.1), primary600Var);
+            await ensureColorVariableExists('Button/Colors', 'button/primary/bg/click', darkenColor(buttonPrimaryRgb, 0.2), primary700Var);
+            await ensureColorVariableExists('Button/Colors', 'button/primary/bg/disabled', disabledRgb);
+            await ensureColorVariableExists('Button/Colors', 'button/primary/text/normal', whiteRgb);
+            await ensureColorVariableExists('Button/Colors', 'button/primary/text/hover', whiteRgb);
+            await ensureColorVariableExists('Button/Colors', 'button/primary/text/click', whiteRgb);
+            await ensureColorVariableExists('Button/Colors', 'button/primary/text/disabled', disabledTextRgb);
+
+            // Button/Destructive colors
+            const destructiveRgb = { r: 0.937, g: 0.267, b: 0.267 };
+            await ensureColorVariableExists('Button/Colors', 'button/destructive/bg/normal', destructiveRgb);
+            await ensureColorVariableExists('Button/Colors', 'button/destructive/bg/hover', darkenColor(destructiveRgb, 0.1));
+            await ensureColorVariableExists('Button/Colors', 'button/destructive/bg/click', darkenColor(destructiveRgb, 0.2));
+            await ensureColorVariableExists('Button/Colors', 'button/destructive/bg/disabled', disabledRgb);
+            await ensureColorVariableExists('Button/Colors', 'button/destructive/text/normal', whiteRgb);
+            await ensureColorVariableExists('Button/Colors', 'button/destructive/text/hover', whiteRgb);
+            await ensureColorVariableExists('Button/Colors', 'button/destructive/text/click', whiteRgb);
+            await ensureColorVariableExists('Button/Colors', 'button/destructive/text/disabled', disabledTextRgb);
+
+            // Button/Line colors
+            const borderRgb = { r: 0.8, g: 0.8, b: 0.85 };
+            await ensureColorVariableExists('Button/Colors', 'button/line/bg/normal', { r: 1, g: 1, b: 1, a: 0 });
+            await ensureColorVariableExists('Button/Colors', 'button/line/bg/hover', lightenColor(buttonPrimaryRgb, 0.95));
+            await ensureColorVariableExists('Button/Colors', 'button/line/bg/click', lightenColor(buttonPrimaryRgb, 0.9));
+            await ensureColorVariableExists('Button/Colors', 'button/line/bg/disabled', { r: 0.98, g: 0.98, b: 0.98, a: 0.5 });
+            await ensureColorVariableExists('Button/Colors', 'button/line/border/normal', borderRgb);
+            await ensureColorVariableExists('Button/Colors', 'button/line/border/hover', buttonPrimaryRgb);
+            await ensureColorVariableExists('Button/Colors', 'button/line/border/click', buttonPrimaryRgb);
+            await ensureColorVariableExists('Button/Colors', 'button/line/border/disabled', { r: 0.9, g: 0.9, b: 0.9 });
+            await ensureColorVariableExists('Button/Colors', 'button/line/text/normal', buttonPrimaryRgb);
+            await ensureColorVariableExists('Button/Colors', 'button/line/text/hover', buttonPrimaryRgb);
+            await ensureColorVariableExists('Button/Colors', 'button/line/text/click', buttonPrimaryRgb);
+            await ensureColorVariableExists('Button/Colors', 'button/line/text/disabled', { r: 0.8, g: 0.8, b: 0.8 });
+
+            // Button/Ghost colors
+            await ensureColorVariableExists('Button/Colors', 'button/ghost/bg/normal', { r: 1, g: 1, b: 1, a: 0 });
+            await ensureColorVariableExists('Button/Colors', 'button/ghost/bg/hover', lightenColor(buttonPrimaryRgb, 0.95));
+            await ensureColorVariableExists('Button/Colors', 'button/ghost/bg/click', lightenColor(buttonPrimaryRgb, 0.9));
+            await ensureColorVariableExists('Button/Colors', 'button/ghost/bg/disabled', { r: 1, g: 1, b: 1, a: 0 });
+            await ensureColorVariableExists('Button/Colors', 'button/ghost/text/normal', buttonPrimaryRgb);
+            await ensureColorVariableExists('Button/Colors', 'button/ghost/text/hover', buttonPrimaryRgb);
+            await ensureColorVariableExists('Button/Colors', 'button/ghost/text/click', buttonPrimaryRgb);
+            await ensureColorVariableExists('Button/Colors', 'button/ghost/text/disabled', { r: 0.8, g: 0.8, b: 0.8 });
+
+            // Button/Link colors
+            await ensureColorVariableExists('Button/Colors', 'button/link/bg/normal', { r: 1, g: 1, b: 1, a: 0 });
+            await ensureColorVariableExists('Button/Colors', 'button/link/bg/hover', { r: 1, g: 1, b: 1, a: 0 });
+            await ensureColorVariableExists('Button/Colors', 'button/link/bg/click', { r: 1, g: 1, b: 1, a: 0 });
+            await ensureColorVariableExists('Button/Colors', 'button/link/bg/disabled', { r: 1, g: 1, b: 1, a: 0 });
+            await ensureColorVariableExists('Button/Colors', 'button/link/text/normal', buttonPrimaryRgb);
+            await ensureColorVariableExists('Button/Colors', 'button/link/text/hover', darkenColor(buttonPrimaryRgb, 0.2));
+            await ensureColorVariableExists('Button/Colors', 'button/link/text/click', darkenColor(buttonPrimaryRgb, 0.3));
+            await ensureColorVariableExists('Button/Colors', 'button/link/text/disabled', { r: 0.8, g: 0.8, b: 0.8 });
+
+            // Create Button spacing variables
+            await ensureSpacingVariableExists('Button/Spacing', 'button/sm/padding-x', 12);
+            await ensureSpacingVariableExists('Button/Spacing', 'button/sm/padding-y', 8);
+            await ensureSpacingVariableExists('Button/Spacing', 'button/sm/gap', 6);
+            await ensureSpacingVariableExists('Button/Spacing', 'button/sm/font-size', 12);
+
+            await ensureSpacingVariableExists('Button/Spacing', 'button/md/padding-x', 16);
+            await ensureSpacingVariableExists('Button/Spacing', 'button/md/padding-y', 10);
+            await ensureSpacingVariableExists('Button/Spacing', 'button/md/gap', 8);
+            await ensureSpacingVariableExists('Button/Spacing', 'button/md/font-size', 14);
+
+            await ensureSpacingVariableExists('Button/Spacing', 'button/lg/padding-x', 20);
+            await ensureSpacingVariableExists('Button/Spacing', 'button/lg/padding-y', 12);
+            await ensureSpacingVariableExists('Button/Spacing', 'button/lg/gap', 10);
+            await ensureSpacingVariableExists('Button/Spacing', 'button/lg/font-size', 16);
+
+            await ensureSpacingVariableExists('Button/Spacing', 'button/radius', data.tokens.radius);
+
+            // Create Input color variables
+            const inputBorderRgb = hexToRgb('#E5E7EB');
+            const inputTextRgb = hexToRgb('#1F2937');
+            const inputMutedRgb = hexToRgb('#9CA3AF');
+
+            await ensureColorVariableExists('Input/Colors', 'input/bg/normal', whiteRgb);
+            await ensureColorVariableExists('Input/Colors', 'input/bg/disabled', { r: 0.95, g: 0.95, b: 0.95 });
+            await ensureColorVariableExists('Input/Colors', 'input/border/normal', inputBorderRgb);
+            await ensureColorVariableExists('Input/Colors', 'input/border/hover', { r: 0.4, g: 0.4, b: 0.4 });
+            await ensureColorVariableExists('Input/Colors', 'input/border/click', buttonPrimaryRgb);
+            await ensureColorVariableExists('Input/Colors', 'input/border/error', { r: 0.937, g: 0.267, b: 0.267 });
+            await ensureColorVariableExists('Input/Colors', 'input/border/disabled', inputBorderRgb);
+            await ensureColorVariableExists('Input/Colors', 'input/text/primary', inputTextRgb);
+            await ensureColorVariableExists('Input/Colors', 'input/text/placeholder', inputMutedRgb);
+            await ensureColorVariableExists('Input/Colors', 'input/text/label', { r: 0.22, g: 0.25, b: 0.32 });
+
+            // Create Input spacing variables
+            await ensureSpacingVariableExists('Input/Spacing', 'input/padding-x', 14);
+            await ensureSpacingVariableExists('Input/Spacing', 'input/padding-y', 10);
+            await ensureSpacingVariableExists('Input/Spacing', 'input/item-spacing', 10);
+            await ensureSpacingVariableExists('Input/Spacing', 'input/label-gap', 8);
+            await ensureSpacingVariableExists('Input/Spacing', 'input/radius', data.tokens.radius);
+
+            // ============================================
+            // STEP 7: CREATE COMPONENTS
+            // ============================================
+            figma.notify('Creating components...');
+
+            if (data.components && data.components.length > 0) {
+                for (const component of data.components) {
+                    if (component === 'Button') {
+                        await createButtonComponentSet(
+                            'Button',
+                            data.colors.primary,
+                            '#FFFFFF',
+                            data.tokens.radius
+                        );
+                    } else if (component === 'Input') {
+                        await createInputComponentSet(
+                            'Enter text...',
+                            '#E5E7EB',
+                            data.colors.primary,
+                            '#1F2937',
+                            data.tokens.radius
+                        );
+                    } else if (component === 'Checkbox') {
+                        await createCheckboxComponentSet(
+                            data.colors.primary,
+                            '#1F2937',
+                            data.tokens.radius / 2
+                        );
+                    } else if (component === 'Radio') {
+                        await createRadioComponentSet(
+                            data.colors.primary,
+                            '#1F2937',
+                            data.tokens.radius
+                        );
+                    }
+                }
+            }
+
+            // ============================================
+            // STEP 8: CREATE DESIGN SYSTEM DOCUMENTATION PAGE
+            // ============================================
+            figma.notify('Creating documentation page...');
+
+            // Find or create Design System page
+            let designSystemPage = figma.root.children.find(page => page.name === '🎨 Design System');
+            if (!designSystemPage) {
+                designSystemPage = figma.createPage();
+                designSystemPage.name = '🎨 Design System';
+            }
+
+            // Switch to the design system page
+            figma.currentPage = designSystemPage;
+
+            // Load font for documentation
+            await figma.loadFontAsync({ family: "Inter", style: "Regular" });
+            await figma.loadFontAsync({ family: "Inter", style: "Medium" });
+            await figma.loadFontAsync({ family: "Inter", style: "Bold" });
+
+            let yOffset = 0;
+            const sectionGap = 100;
+            const itemGap = 16;
+
+            // Helper function to create section title
+            function createSectionTitle(title, y) {
+                const titleText = figma.createText();
+                titleText.fontName = { family: "Inter", style: "Bold" };
+                titleText.fontSize = 32;
+                titleText.characters = title;
+                titleText.x = 0;
+                titleText.y = y;
+                titleText.fills = [{ type: 'SOLID', color: { r: 0.1, g: 0.1, b: 0.1 } }];
+                return titleText;
+            }
+
+            // Helper function to create label
+            function createLabel(text, x, y, size = 14) {
+                const label = figma.createText();
+                label.fontName = { family: "Inter", style: "Medium" };
+                label.fontSize = size;
+                label.characters = text;
+                label.x = x;
+                label.y = y;
+                label.fills = [{ type: 'SOLID', color: { r: 0.4, g: 0.4, b: 0.4 } }];
+                return label;
+            }
+
+            // ============================================
+            // SECTION 1: COLORS
+            // ============================================
+            createSectionTitle('🎨 Colors', yOffset);
+            yOffset += 60;
+
+            // Main colors
+            const colorData = [
+                { name: 'Primary', hex: data.colors.primary },
+                { name: 'Secondary', hex: data.colors.secondary },
+                { name: 'Success', hex: data.colors.success },
+                { name: 'Warning', hex: data.colors.warning },
+                { name: 'Error', hex: data.colors.error }
+            ];
+
+            let xOffset = 0;
+            for (const color of colorData) {
+                // Color swatch
+                const swatch = figma.createRectangle();
+                swatch.resize(120, 80);
+                swatch.x = xOffset;
+                swatch.y = yOffset;
+                swatch.fills = [{ type: 'SOLID', color: hexToRgb(color.hex) }];
+                swatch.cornerRadius = 8;
+
+                // Color name
+                createLabel(color.name, xOffset, yOffset + 90, 14);
+
+                // Hex value
+                createLabel(color.hex, xOffset, yOffset + 110, 12);
+
+                xOffset += 140;
+            }
+
+            yOffset += 150;
+
+            // Color shades for Primary
+            createLabel('Primary Shades', 0, yOffset, 16);
+            yOffset += 30;
+
+            xOffset = 0;
+            const docPrimaryRgb = hexToRgb(data.colors.primary);
+            const shadeValues = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900];
+
+            for (const shade of shadeValues) {
+                const factor = (shade - 500) / 500;
+                const shadeRgb = factor > 0 ?
+                    darkenColor(docPrimaryRgb, Math.abs(factor) * 0.5) :
+                    lightenColor(docPrimaryRgb, Math.abs(factor) * 0.5);
+
+                const swatch = figma.createRectangle();
+                swatch.resize(80, 60);
+                swatch.x = xOffset;
+                swatch.y = yOffset;
+                swatch.fills = [{ type: 'SOLID', color: shadeRgb }];
+                swatch.cornerRadius = 6;
+
+                createLabel(shade.toString(), xOffset, yOffset + 70, 12);
+
+                xOffset += 90;
+            }
+
+            yOffset += 120 + sectionGap;
+
+            // ============================================
+            // SECTION 2: TYPOGRAPHY
+            // ============================================
+            createSectionTitle('📝 Typography', yOffset);
+            yOffset += 60;
+
+            const typographyStyles = [
+                { name: 'Display', size: data.typography.baseSize * 3 },
+                { name: 'H1', size: data.typography.baseSize * 2.5 },
+                { name: 'H2', size: data.typography.baseSize * 2 },
+                { name: 'H3', size: data.typography.baseSize * 1.75 },
+                { name: 'H4', size: data.typography.baseSize * 1.5 },
+                { name: 'H5', size: data.typography.baseSize * 1.25 },
+                { name: 'H6', size: data.typography.baseSize * 1.125 },
+                { name: 'Body', size: data.typography.baseSize },
+                { name: 'Caption', size: data.typography.baseSize * 0.875 }
+            ];
+
+            for (const style of typographyStyles) {
+                const text = figma.createText();
+                text.fontName = { family: data.typography.primaryFont, style: "Regular" };
+                text.fontSize = style.size;
+                text.characters = `${style.name} - ${Math.round(style.size)}px`;
+                text.x = 0;
+                text.y = yOffset;
+                text.fills = [{ type: 'SOLID', color: { r: 0.1, g: 0.1, b: 0.1 } }];
+
+                yOffset += style.size + 20;
+            }
+
+            yOffset += sectionGap;
+
+            // ============================================
+            // SECTION 3: SPACING TOKENS
+            // ============================================
+            createSectionTitle('📏 Spacing', yOffset);
+            yOffset += 60;
+
+            const docSpacingScale = data.tokens.spacing === '8pt' ? 8 : 4;
+            const spacingTokens = [
+                { name: 'XS', value: docSpacingScale },
+                { name: 'SM', value: docSpacingScale * 2 },
+                { name: 'MD', value: docSpacingScale * 3 },
+                { name: 'LG', value: docSpacingScale * 4 },
+                { name: 'XL', value: docSpacingScale * 5 },
+                { name: '2XL', value: docSpacingScale * 6 },
+                { name: '3XL', value: docSpacingScale * 8 }
+            ];
+
+            xOffset = 0;
+            for (const token of spacingTokens) {
+                // Visual representation
+                const box = figma.createRectangle();
+                box.resize(token.value, token.value);
+                box.x = xOffset;
+                box.y = yOffset;
+                box.fills = [{ type: 'SOLID', color: hexToRgb(data.colors.primary) }];
+                box.cornerRadius = 4;
+
+                // Label
+                createLabel(`${token.name} (${token.value}px)`, xOffset, yOffset + token.value + 10, 12);
+
+                xOffset += Math.max(token.value, 60) + 20;
+            }
+
+            yOffset += 150 + sectionGap;
+
+            // ============================================
+            // SECTION 4: RADIUS TOKENS
+            // ============================================
+            createSectionTitle('⭕ Border Radius', yOffset);
+            yOffset += 60;
+
+            const radiusTokens = [
+                { name: 'SM', value: data.tokens.radius / 2 },
+                { name: 'MD', value: data.tokens.radius },
+                { name: 'LG', value: data.tokens.radius * 2 },
+                { name: 'XL', value: data.tokens.radius * 3 }
+            ];
+
+            xOffset = 0;
+            for (const token of radiusTokens) {
+                const box = figma.createRectangle();
+                box.resize(80, 80);
+                box.x = xOffset;
+                box.y = yOffset;
+                box.fills = [{ type: 'SOLID', color: hexToRgb(data.colors.secondary) }];
+                box.cornerRadius = token.value;
+
+                createLabel(`${token.name} (${token.value}px)`, xOffset, yOffset + 90, 12);
+
+                xOffset += 100;
+            }
+
+            yOffset += 130 + sectionGap;
+
+            // ============================================
+            // SECTION 5: COMPONENTS
+            // ============================================
+            if (data.components && data.components.length > 0) {
+                createSectionTitle('🧩 Components', yOffset);
+                yOffset += 60;
+
+                const componentList = figma.createText();
+                componentList.fontName = { family: "Inter", style: "Regular" };
+                componentList.fontSize = 16;
+                componentList.characters = `Created Components:\n\n${data.components.map(c => `• ${c}`).join('\n')}`;
+                componentList.x = 0;
+                componentList.y = yOffset;
+                componentList.fills = [{ type: 'SOLID', color: { r: 0.3, g: 0.3, b: 0.3 } }];
+                componentList.lineHeight = { value: 150, unit: 'PERCENT' };
+            }
+
+            // Zoom to fit all content
+            figma.viewport.scrollAndZoomIntoView([designSystemPage]);
+
+            // Success!
+            figma.ui.postMessage({ type: 'loading-complete' });
+            figma.ui.postMessage({
+                type: 'show-success',
+                title: '✅ Design System Created!',
+                message: 'Your complete design system has been generated successfully with colors, typography, tokens, components, and documentation page.'
+            });
+            figma.notify('✨ Design System created successfully!');
+
+            // Switch to manual mode after 2 seconds
+            setTimeout(() => {
+                figma.ui.postMessage({ type: 'switch-to-manual-mode' });
+            }, 2000);
+
+        } catch (error) {
+            figma.notify(`❌ Error generating design system: ${error.message}`);
+            figma.ui.postMessage({ type: 'loading-complete' });
+            console.error('Design system generation error:', error);
         }
     }
 
