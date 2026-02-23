@@ -17,6 +17,17 @@ figma.ui.onmessage = async (msg) => {
                 collection = figma.variables.createVariableCollection("Colors");
             }
 
+            // Create dark mode if it doesn't exist
+            let lightModeId = collection.modes[0].modeId;
+            let darkModeId;
+
+            if (collection.modes.length === 1) {
+                collection.addMode("Dark");
+                darkModeId = collection.modes[1].modeId;
+            } else {
+                darkModeId = collection.modes[1].modeId;
+            }
+
             const colors = msg.colors;
             const includeStatus = msg.includeStatus;
             const includeNeutral = msg.includeNeutral;
@@ -64,8 +75,13 @@ figma.ui.onmessage = async (msg) => {
                         // Convert hex to RGB
                         const rgb = hexToRgb(shades[i]);
 
-                        // Set the value
-                        variable.setValueForMode(collection.modes[0].modeId, rgb);
+                        // Set the value for light mode
+                        variable.setValueForMode(lightModeId, rgb);
+
+                        // Set inverted value for dark mode (reverse the shade order)
+                        const darkShadeIndex = shades.length - 1 - i;
+                        const darkRgb = hexToRgb(shades[darkShadeIndex]);
+                        variable.setValueForMode(darkModeId, darkRgb);
                     } catch (err) {
                         console.error(`Error creating variable ${variableName}:`, err);
                         throw new Error(`Failed to create ${variableName}: ${err.message}`);
@@ -94,7 +110,12 @@ figma.ui.onmessage = async (msg) => {
                         }
 
                         const rgb = hexToRgb(shades[i]);
-                        variable.setValueForMode(collection.modes[0].modeId, rgb);
+                        variable.setValueForMode(lightModeId, rgb);
+
+                        // Set inverted value for dark mode
+                        const darkShadeIndex = shades.length - 1 - i;
+                        const darkRgb = hexToRgb(shades[darkShadeIndex]);
+                        variable.setValueForMode(darkModeId, darkRgb);
                     }
                 }
             }
@@ -117,7 +138,12 @@ figma.ui.onmessage = async (msg) => {
                     }
 
                     const rgb = hexToRgb(neutralShades[i]);
-                    variable.setValueForMode(collection.modes[0].modeId, rgb);
+                    variable.setValueForMode(lightModeId, rgb);
+
+                    // Set inverted value for dark mode
+                    const darkShadeIndex = neutralShades.length - 1 - i;
+                    const darkRgb = hexToRgb(neutralShades[darkShadeIndex]);
+                    variable.setValueForMode(darkModeId, darkRgb);
                 }
             }
 
