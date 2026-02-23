@@ -1,0 +1,2746 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            /* Primary Colors - 10 shades */
+            --primary-50: #E6EDFF;
+            --primary-100: #CCE0FF;
+            --primary-200: #99C2FF;
+            --primary-300: #66A3FF;
+            --primary-400: #3385FF;
+            --primary-500: #1350FF;
+            --primary-600: #0F40CC;
+            --primary-700: #0B3099;
+            --primary-800: #082066;
+            --primary-900: #041033;
+
+            /* Neutral Colors - 10 shades */
+            --neutral-50: #F9FAFB;
+            --neutral-100: #F3F4F6;
+            --neutral-200: #E5E7EB;
+            --neutral-300: #D1D5DB;
+            --neutral-400: #9CA3AF;
+            --neutral-500: #6B7280;
+            --neutral-600: #4B5563;
+            --neutral-700: #374151;
+            --neutral-800: #1F2937;
+            --neutral-900: #111827;
+
+            /* Status Colors - Success (5 shades) */
+            --success-100: #D1FAE5;
+            --success-300: #6EE7B7;
+            --success-500: #10B981;
+            --success-700: #047857;
+            --success-900: #064E3B;
+
+            /* Status Colors - Warning (5 shades) */
+            --warning-100: #FEF3C7;
+            --warning-300: #FCD34D;
+            --warning-500: #F59E0B;
+            --warning-700: #B45309;
+            --warning-900: #78350F;
+
+            /* Status Colors - Error (5 shades) */
+            --error-100: #FEE2E2;
+            --error-300: #FCA5A5;
+            --error-500: #EF4444;
+            --error-700: #B91C1C;
+            --error-900: #7F1D1D;
+
+            /* Status Colors - Info (5 shades) */
+            --info-100: #DBEAFE;
+            --info-300: #93C5FD;
+            --info-500: #3B82F6;
+            --info-700: #1D4ED8;
+            --info-900: #1E3A8A;
+
+            /* Spacing Variables */
+            --spacing-2: 2px;
+            --spacing-4: 4px;
+            --spacing-8: 8px;
+            --spacing-12: 12px;
+            --spacing-16: 16px;
+            --spacing-20: 20px;
+            --spacing-24: 24px;
+            --spacing-32: 32px;
+            --spacing-40: 40px;
+            --spacing-48: 48px;
+            --spacing-64: 64px;
+            --spacing-80: 80px;
+
+            /* Padding Variables */
+            --padding-2: 2px;
+            --padding-4: 4px;
+            --padding-8: 8px;
+            --padding-6: 6px;
+            --padding-12: 12px;
+            --padding-16: 16px;
+            --padding-20: 20px;
+            --padding-24: 24px;
+            --padding-32: 32px;
+            --padding-40: 40px;
+            --padding-48: 48px;
+
+            /* Border Radius Variables */
+            --radius-2: 2px;
+            --radius-4: 4px;
+            --radius-6: 6px;
+            --radius-8: 8px;
+            --radius-12: 12px;
+            --radius-16: 16px;
+            --radius-20: 20px;
+            --radius-24: 24px;
+            --radius-full: 9999px;
+
+            /* Stroke/Border Width Variables */
+            --stroke-1: 1px;
+            --stroke-2: 2px;
+            --stroke-3: 3px;
+            --stroke-4: 4px;
+            --stroke-6: 6px;
+            --stroke-8: 8px;
+
+            /* Shadow Variables */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Screen Management */
+        .screen {
+            display: none;
+            width: 100%;
+            height: 100vh;
+        }
+
+        .active-screen {
+            display: block;
+        }
+
+        /* Welcome & Onboarding Screens - 400x700 */
+        #welcome-screen,
+        #onboarding-screen {
+            width: 400px;
+            height: 700px;
+            overflow: hidden;
+        }
+
+        /* Auto Setup Screen - 800x700 */
+        #auto-setup-screen {
+            width: 800px;
+            height: 700px;
+            overflow: hidden;
+        }
+
+        /* Main App Screen - 800x700 */
+        #main-app-screen {
+            width: 800px;
+            height: 700px;
+        }
+
+        /* Tab Management */
+        .tab-section {
+            display: none;
+            width: 100%;
+            height: calc(100vh - 100px);
+        }
+
+        .active-tab {
+            display: block;
+        }
+
+        /* Token Panel Management */
+        .token-content-panel {
+            display: none;
+        }
+
+        .active-token-panel {
+            display: block;
+        }
+
+        /* Active States */
+        .sidebar-option {
+            cursor: pointer;
+            padding: 8px 12px;
+        }
+
+        .active-sidebar-option {
+            font-weight: bold;
+            background: #e0e0e0;
+        }
+
+        .tab-button {
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            padding: var(--padding-16) var(--padding-32);
+            border: none;
+            background: transparent;
+            color: #1F2937;
+            transition: all 0.2s;
+            flex: 1;
+            text-align: center;
+        }
+
+        .tab-button:hover {
+            background: #F3F4F6;
+        }
+
+        .active-tab-button {
+            background: #4F46E5;
+            color: #FFFFFF;
+            font-weight: 500;
+        }
+
+        .active-tab-button:hover {
+            background: #4338CA;
+        }
+
+        /* Layout Helpers */
+        .flex-row {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .flex-col {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .flex-1 {
+            flex: 1;
+        }
+
+        .space-between {
+            justify-content: space-between;
+        }
+
+        .align-center {
+            align-items: center;
+        }
+
+        .justify-center {
+            justify-content: center;
+        }
+
+        /* Welcome Screen */
+        .welcome-screen-wrapper-unique {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background: #FAFAFA;
+        }
+
+        .welcome-main-content-unique {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--padding-40);
+            text-align: center;
+        }
+
+        .welcome-logo-unique {
+            margin-bottom: var(--spacing-32);
+        }
+
+        .welcome-title-unique {
+            font-family: 'Instrument Serif', serif;
+            font-size: 40px;
+            font-weight: 400;
+            color: #000000;
+            margin-bottom: var(--spacing-16);
+            line-height: 1.2;
+        }
+
+        .welcome-subtitle-unique {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            color: #6B7280;
+            margin-bottom: var(--spacing-40);
+        }
+
+        .welcome-start-button-unique {
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            padding: var(--padding-12) var(--padding-24);
+            cursor: pointer;
+            border: none;
+            background: #2563EB;
+            color: #FFFFFF;
+            border-radius: var(--radius-full);
+            width: 100%;
+        }
+
+        .welcome-start-button-unique:hover {
+            background: #1D4ED8;
+        }
+
+        .welcome-footer-section-unique {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--padding-16) var(--padding-24);
+            border-top: 1px solid #E5E7EB;
+            background: #FAFAFA;
+            flex-shrink: 0;
+        }
+
+        .welcome-footer-left-logo-unique {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .welcome-footer-right-link-unique {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            color: #6B7280;
+            text-decoration: none;
+        }
+
+        .welcome-footer-right-link-unique:hover {
+            color: #2563EB;
+        }
+
+        /* Onboarding Screen */
+        .onboarding-screen-wrapper-unique {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            background: #FAFAFA;
+        }
+
+        .onboarding-main-content-unique {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: var(--padding-40) var(--padding-24);
+            overflow-y: auto;
+            min-height: 0;
+        }
+
+        .onboarding-heading-unique {
+            font-family: 'Instrument Serif', serif;
+            font-size: 28px;
+            font-weight: 400;
+            color: #000000;
+            margin-bottom: var(--spacing-12);
+            line-height: 1.2;
+        }
+
+        .onboarding-subheading-unique {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            color: #6B7280;
+            margin-bottom: var(--spacing-40);
+        }
+
+        .onboarding-options-container-unique {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-16);
+            margin-bottom: var(--spacing-32);
+        }
+
+        .onboarding-auto-setup-card-unique,
+        .onboarding-manual-setup-card-unique {
+            border: 1px solid #E5E7EB;
+            border-radius: var(--radius-12);
+            padding: var(--padding-16);
+            cursor: pointer;
+            background: #FFFFFF;
+            transition: all 0.2s;
+        }
+
+        .onboarding-auto-setup-card-unique:hover,
+        .onboarding-manual-setup-card-unique:hover {
+            border-color: #2563EB;
+        }
+
+        .onboarding-manual-setup-card-unique.selected {
+            border: 1px solid #2563EB;
+            background: #EFF6FF;
+        }
+
+        .onboarding-auto-setup-card-unique.selected {
+            border: 1px solid transparent;
+            background: linear-gradient(#FDF4FF, #FDF4FF) padding-box,
+                linear-gradient(90deg, #1350FF 0%, #D900FF 100%) border-box;
+        }
+
+        .onboarding-card-title-unique {
+            font-family: 'Instrument Serif', serif;
+            font-size: 22px;
+            font-weight: 400;
+            color: #000000;
+            margin-bottom: var(--spacing-8);
+        }
+
+        .onboarding-card-description-unique {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            color: #6B7280;
+            line-height: 1.5;
+        }
+
+        .onboarding-continue-button-unique {
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            padding: 14px var(--padding-24);
+            cursor: pointer;
+            border: none;
+            background: #2563EB;
+            color: #FFFFFF;
+            border-radius: var(--radius-full);
+            width: 100%;
+        }
+
+        .onboarding-continue-button-unique:hover {
+            background: #1D4ED8;
+        }
+
+        /* Auto Setup Screen */
+        .auto-setup-screen-wrapper-unique {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+            background: #FAFAFA;
+        }
+
+        .auto-setup-topbar-unique {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--padding-16) var(--padding-24);
+            border-bottom: 1px solid #E5E7EB;
+            background: #FFFFFF;
+        }
+
+        .auto-setup-topbar-left-unique {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            color: #6B7280;
+            text-decoration: none;
+        }
+
+        .auto-setup-topbar-left-unique:hover {
+            color: #2563EB;
+        }
+
+        .auto-setup-main-content-unique {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--padding-40) var(--padding-24);
+            text-align: center;
+        }
+
+        .auto-setup-emoji-unique {
+            margin-bottom: var(--spacing-32);
+        }
+
+        .auto-setup-description-unique {
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: var(--spacing-8);
+            line-height: 1.5;
+        }
+
+        .auto-setup-subtitle-unique {
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: var(--spacing-40);
+            line-height: 1.5;
+        }
+
+        .auto-setup-back-button-unique {
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            padding: 14px var(--padding-48);
+            cursor: pointer;
+            border: none;
+            background: #2563EB;
+            color: #FFFFFF;
+            border-radius: var(--radius-full);
+        }
+
+        .auto-setup-back-button-unique:hover {
+            background: #1D4ED8;
+        }
+
+        /* Main App Screen */
+        .main-app-wrapper-unique {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .main-topbar-wrapper-unique {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--padding-16) var(--padding-24);
+            border-bottom: 1px solid #E5E7EB;
+            background: #FFFFFF;
+        }
+
+        .main-topbar-left-link-unique {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .main-topbar-right-logo-unique {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            color: #6B7280;
+            text-decoration: none;
+        }
+
+        .main-topbar-right-logo-unique:hover {
+            color: #2563EB;
+        }
+
+        .main-subnav-wrapper-unique {
+            display: flex;
+            gap: 0;
+            padding: 0;
+            border-bottom: 1px solid #E5E7EB;
+            background: #FFFFFF;
+        }
+
+        /* Colors Tab */
+        .colors-layout-unique {
+            display: flex;
+            height: 100%;
+        }
+
+        .colors-left-panel-unique {
+            width: 30%;
+            border-right: 1px solid #E5E7EB;
+            display: flex;
+            flex-direction: column;
+            background: #FFFFFF;
+        }
+
+        .colors-left-content-unique {
+            flex: 1;
+            padding: 12px;
+            overflow-y: auto;
+        }
+
+        .colors-section-title-unique {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            color: #1F2937;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .color-delete-icon-wrapper {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .color-delete-icon-wrapper:hover {
+            background: #FEE2E2;
+        }
+
+        .color-delete-icon-svg {
+            width: 14px;
+            height: 14px;
+            color: #EF4444;
+        }
+
+        .brand-color-input-wrapper-unique {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-12);
+            padding: 6px 6px 6px 12px;
+            border: 1px solid #E5E7EB;
+            border-radius: var(--radius-full);
+            background: #FFFFFF;
+            margin-bottom: var(--spacing-24);
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .brand-color-input-wrapper-unique:hover {
+            border-color: #4F46E5;
+        }
+
+        .brand-color-input-wrapper-unique.selected {
+            border-color: #4F46E5;
+            background: #EFF6FF;
+        }
+
+        .brand-color-hex-input-unique {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            color: #1F2937;
+            background: transparent;
+        }
+
+        .brand-color-circle-unique {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid #E5E7EB;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .brand-color-picker-popup-unique {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            width: 0px;
+            height: 0px;
+            border: 2px solid #E5E7EB;
+            border-radius: var(--radius-8);
+            cursor: pointer;
+            display: none;
+            z-index: 1000;
+            display: none;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .brand-color-picker-popup-unique.active {
+            display: block;
+        }
+
+        .color-toggle-section-unique {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 8px 8px 12px;
+            border: 1px solid #E5E7EB;
+            border-radius: var(--radius-full);
+            background: #FFFFFF;
+            margin-bottom: var(--spacing-12);
+            cursor: pointer;
+        }
+
+        .color-toggle-label-unique {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            color: #1F2937;
+        }
+
+        .toggle-switch-unique {
+            width: 36px;
+            height: 20px;
+            background: #D1D5DB;
+            border-radius: var(--radius-full);
+            position: relative;
+            transition: background 0.3s;
+        }
+
+        .toggle-switch-unique.active {
+            background: #4F46E5;
+        }
+
+        .toggle-switch-knob-unique {
+            width: 16px;
+            height: 16px;
+            background: #FFFFFF;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: left 0.3s;
+        }
+
+        .toggle-switch-unique.active .toggle-switch-knob-unique {
+            left: 18px;
+        }
+
+        .colors-add-section-unique {
+            padding: 12px;
+            border-top: 1px solid #E5E7EB;
+        }
+
+        .colors-add-button-unique {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #4F46E5;
+            border-radius: var(--radius-full);
+            background: #FFFFFF;
+            color: #4F46E5;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--spacing-8);
+            transition: all 0.2s;
+            margin-top: var(--spacing-12);
+        }
+
+        .colors-add-button-unique:hover {
+            background: #EEF2FF;
+        }
+
+        /* Add Color Modal */
+        .add-color-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .add-color-modal-overlay.active {
+            display: flex;
+        }
+
+        .add-color-modal {
+            background: #FFFFFF;
+            border-radius: var(--radius-12);
+            padding: var(--padding-24);
+            width: 320px;
+            box-shadow: var(--shadow-2xl);
+        }
+
+        .add-color-modal-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: var(--spacing-20);
+        }
+
+        .add-color-modal-field {
+            margin-bottom: var(--spacing-16);
+        }
+
+        .add-color-modal-label {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: var(--spacing-8);
+            display: block;
+        }
+
+        .add-color-modal-input {
+            width: 100%;
+            padding: var(--padding-12);
+            border: 1px solid #E5E7EB;
+            border-radius: var(--radius-8);
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            color: #1F2937;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .add-color-modal-input:focus {
+            border-color: #4F46E5;
+        }
+
+        .add-color-modal-picker-wrapper {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-12);
+        }
+
+        .add-color-modal-picker {
+            width: 60px;
+            height: 40px;
+            border: 1px solid #E5E7EB;
+            border-radius: var(--radius-8);
+            cursor: pointer;
+        }
+
+        .add-color-modal-hex-input {
+            flex: 1;
+            padding: var(--padding-12);
+            border: 1px solid #E5E7EB;
+            border-radius: var(--radius-8);
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            color: #1F2937;
+            outline: none;
+        }
+
+        .add-color-modal-hex-input:focus {
+            border-color: #4F46E5;
+        }
+
+        .add-color-modal-buttons {
+            display: flex;
+            gap: var(--spacing-12);
+            margin-top: var(--spacing-24);
+        }
+
+        .add-color-modal-button {
+            flex: 1;
+            padding: var(--padding-12);
+            border-radius: var(--radius-8);
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .add-color-modal-button-cancel {
+            background: #F3F4F6;
+            color: #374151;
+        }
+
+        .add-color-modal-button-cancel:hover {
+            background: #E5E7EB;
+        }
+
+        .add-color-modal-button-add {
+            background: #4F46E5;
+            color: #FFFFFF;
+        }
+
+        .add-color-modal-button-add:hover {
+            background: #4338CA;
+        }
+
+        .colors-right-panel-unique {
+            width: 70%;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+            background: #FFFFFF;
+            gap: 0;
+            overflow: hidden;
+        }
+
+        .colors-shades-preview-unique {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 12px;
+            padding-right: 14px;
+            overflow-y: auto;
+        }
+
+        .color-shade-card {
+            box-sizing: border-box;
+            display: none;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 8px;
+            gap: 12px;
+            background: #FFFFFF;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            align-self: stretch;
+        }
+
+        .color-shade-card.visible {
+            display: flex;
+        }
+
+        .color-shade-header {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0px;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .color-shade-title-wrapper {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            padding: 0px 6px;
+            gap: 8px;
+        }
+
+        .color-shade-title {
+            font-family: 'Poppins', sans-serif;
+            font-style: normal;
+            font-weight: 500;
+            font-size: 12px;
+            line-height: 160%;
+            color: #000000;
+        }
+
+        .color-shade-count {
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            padding: 2px 4px 2px 10px;
+            gap: 6px;
+            background: #FFFFFF;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 6px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .color-shade-count-select {
+            font-family: 'Poppins', sans-serif;
+            font-style: normal;
+            font-weight: 500;
+            font-size: 12px;
+            line-height: 160%;
+            color: rgba(0, 0, 0, 0.7);
+            border: none;
+            background: transparent;
+            outline: none;
+            cursor: pointer;
+            appearance: none;
+            padding-right: 20px;
+        }
+
+        .color-shade-count-text {
+            font-family: 'Poppins', sans-serif;
+            font-style: normal;
+            font-weight: 500;
+            font-size: 12px;
+            line-height: 160%;
+            color: rgba(0, 0, 0, 0.7);
+        }
+
+        .color-shade-dropdown-icon {
+            width: 14px;
+            height: 14px;
+            pointer-events: none;
+            position: absolute;
+            right: 4px;
+        }
+
+        .color-shades-grid {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            padding: 0px;
+            gap: 2px;
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+
+        .color-shades-grid::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .color-shades-grid::-webkit-scrollbar-track {
+            background: #F3F4F6;
+            border-radius: 3px;
+        }
+
+        .color-shades-grid::-webkit-scrollbar-thumb {
+            background: #D1D5DB;
+            border-radius: 3px;
+        }
+
+        .color-shades-grid::-webkit-scrollbar-thumb:hover {
+            background: #D1D5DB;
+        }
+
+        .color-shade-item {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            padding: 0px;
+            gap: 8px;
+            isolation: isolate;
+            flex: 1 1 0;
+            min-width: 40px;
+            height: 57.93px;
+            position: relative;
+        }
+
+        .color-shade-box {
+            width: 100%;
+            height: 57.93px;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .color-shade-box.with-border {
+            box-sizing: border-box;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .color-shade-label {
+            position: absolute;
+            left: 6px;
+            bottom: 6.93px;
+            font-family: 'Inter', sans-serif;
+            font-style: normal;
+            font-weight: 600;
+            font-size: 10px;
+            line-height: 12px;
+            color: #141414;
+        }
+
+        .color-shade-label.light-text {
+            color: #FFFFFF;
+        }
+
+        .color-shade-indicator {
+            box-sizing: border-box;
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            right: 6px;
+            top: 3.5px;
+            background: #FFFFFF;
+            border: 0.8px solid #000000;
+            border-radius: 50%;
+        }
+
+        .colors-footer-wrapper-unique {
+            padding: 12px;
+            border-top: 1px solid #E5E7EB;
+            background: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--spacing-16);
+            margin: 0;
+        }
+
+        .colors-footer-text-unique {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            color: #6B7280;
+        }
+
+        .colors-footer-button-unique {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 10px 20px;
+            background: #4F46E5;
+            color: #FFFFFF;
+            border: none;
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .colors-footer-button-unique:hover {
+            background: #4338CA;
+        }
+
+        .colors-footer-button-icon {
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        /* Tokens Tab */
+        .tokens-layout-flex-unique {
+            display: flex;
+            height: 100%;
+        }
+
+        .tokens-left-sidebar-unique {
+            width: 180px;
+            border-right: 1px solid #ddd;
+            padding: 12px;
+        }
+
+        .tokens-right-content-wrapper-unique {
+            flex: 1;
+            padding: 20px;
+        }
+
+        /* Typography Tab */
+        .typography-layout-unique {
+            display: flex;
+            height: 100%;
+        }
+
+        .typography-left-input-panel-unique {
+            width: 200px;
+            border-right: 1px solid #ddd;
+            padding: 16px;
+        }
+
+        .typography-right-preview-panel-unique {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+        }
+
+        .typography-footer-unique {
+            padding: 12px;
+            border-top: 1px solid #ddd;
+        }
+
+        /* Components Tab */
+        .components-search-bar-unique {
+            padding: 16px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .components-grid-layout-unique {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            padding: 16px;
+        }
+
+        .component-card-1,
+        .component-card-2,
+        .component-card-3 {
+            border: 1px solid #ddd;
+            padding: 20px;
+            cursor: pointer;
+            min-height: 120px;
+        }
+
+        .component-detail-wrapper-unique {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .component-detail-wrapper-unique.active {
+            display: flex;
+        }
+
+        .component-detail-header-unique {
+            padding: 16px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .component-preview-area-unique {
+            flex: 1;
+            padding: 16px;
+        }
+
+        .component-config-fields-unique {
+            padding: 16px;
+            border-top: 1px solid #ddd;
+        }
+
+        .component-detail-footer-unique {
+            padding: 12px;
+            border-top: 1px solid #ddd;
+        }
+
+        .back-button-unique {
+            padding: 8px 16px;
+            border: 1px solid #000;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        /* Icons Tab */
+        .icons-selection-layout-unique {
+            padding: 16px;
+        }
+
+        .icons-library-select-unique,
+        .icons-category-select-unique {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 12px;
+        }
+
+        .icons-footer-wrapper-unique {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 12px;
+            border-top: 1px solid #ddd;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- WELCOME SCREEN -->
+    <div class="screen active-screen" id="welcome-screen">
+        <div class="welcome-screen-wrapper-unique">
+            <div class="welcome-main-content-unique">
+                <div>
+                    <div class="welcome-logo-unique">
+                        <svg width="62" height="62" viewBox="0 0 62 62" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M30.75 58.425C30.75 60.1233 29.3698 61.516 27.68 61.3464C22.683 60.8451 17.8679 59.1252 13.6662 56.3177C8.60939 52.9388 4.66812 48.1363 2.34072 42.5175C0.0133225 36.8987 -0.595627 30.7159 0.590865 24.751C1.77736 18.7861 4.70601 13.3069 9.0065 9.0065C13.3069 4.70601 18.7861 1.77736 24.751 0.590865C30.7159 -0.595627 36.8987 0.0133225 42.5175 2.34072C48.1364 4.66812 52.9388 8.60939 56.3177 13.6662C59.1252 17.8679 60.8451 22.683 61.3464 27.68C61.516 29.3698 60.1233 30.75 58.425 30.75C56.7268 30.75 55.3698 29.368 55.1581 27.6829C54.6833 23.9043 53.3355 20.2728 51.2041 17.083C48.5011 13.0375 44.6591 9.88446 40.164 8.02258C35.6689 6.1607 30.7227 5.67351 25.9508 6.62267C21.1788 7.57191 16.7955 9.91479 13.3552 13.3552C9.91479 16.7955 7.57191 21.1788 6.62267 25.9508C5.67351 30.7227 6.1607 35.6689 8.02258 40.164C9.88446 44.6591 13.0375 48.5011 17.083 51.2041C20.2728 53.3355 23.9043 54.6833 27.6829 55.1581C29.368 55.3698 30.75 56.7268 30.75 58.425Z"
+                                fill="#4F46E5" />
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M49.7586 33.3967C48.8675 29.4726 43.2914 29.4971 42.4344 33.4288L42.4018 33.5788L42.3382 33.8699C41.4035 38.0723 38.0376 41.2971 33.8094 42.0356C29.7302 42.7483 29.7303 48.6279 33.8094 49.3405C38.0523 50.0815 41.427 53.3264 42.3479 57.5504L42.4344 57.9473C43.2914 61.879 48.8675 61.9035 49.7586 57.9794L49.8639 57.5169C50.8197 53.308 54.1994 50.0869 58.4354 49.347C62.5215 48.6332 62.5215 42.743 58.4354 42.0291C54.2219 41.2931 50.8556 38.1022 49.8792 33.9261C49.8519 33.8094 49.8266 33.6979 49.7993 33.5764L49.7586 33.3967Z"
+                                fill="url(#paint0_linear_61_2164)" />
+                            <defs>
+                                <linearGradient id="paint0_linear_61_2164" x1="46.125" y1="26.9705" x2="46.125"
+                                    y2="64.4056" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#D54BF6" />
+                                    <stop offset="1" stop-color="#4B10D1" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <h1 class="welcome-title-unique">Slate.Design</h1>
+                    <p class="welcome-subtitle-unique">Create beautiful design systems with ease</p>
+                    <button class="welcome-start-button-unique" onclick="navigateTo('onboarding-screen')">
+                        Get Started
+                    </button>
+                </div>
+            </div>
+            <div class="welcome-footer-section-unique">
+                <div class="welcome-footer-left-logo-unique">
+                    <svg width="124" height="18" viewBox="0 0 124 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_61_2141)">
+                            <path
+                                d="M26.5766 12.7106C25.8877 12.3271 25.3438 11.7975 24.945 11.14C24.5462 10.4644 24.3468 9.7156 24.3468 8.87554C24.3468 8.03548 24.5462 7.28674 24.945 6.61104C25.3438 5.93534 25.8877 5.424 26.5766 5.04049C27.2655 4.65699 28.045 4.47437 28.9152 4.47437C29.6041 4.47437 30.2567 4.6022 30.8187 4.83961C31.3988 5.07702 31.8883 5.44226 32.2871 5.89881L31.2719 6.86671C30.6555 6.19101 29.8941 5.86229 28.9877 5.86229C28.4076 5.86229 27.8819 5.99012 27.4105 6.24579C26.9392 6.50146 26.5947 6.86671 26.3228 7.32326C26.069 7.77981 25.9421 8.29115 25.9421 8.87554C25.9421 9.45993 26.069 9.97127 26.3228 10.4278C26.5766 10.8844 26.9392 11.2496 27.4105 11.5053C27.8819 11.761 28.3895 11.8888 28.9877 11.8888C29.8941 11.8888 30.6555 11.5418 31.2719 10.8661L32.2871 11.8523C31.8883 12.3271 31.3988 12.6741 30.8187 12.9115C30.2386 13.1489 29.6041 13.2767 28.8971 13.2767C28.045 13.2767 27.2655 13.0758 26.5766 12.7106Z"
+                                fill="black" />
+                            <path
+                                d="M35.2602 12.7105C34.5713 12.327 34.0093 11.7974 33.6105 11.1217C33.2117 10.446 33.0123 9.69724 33.0123 8.85718C33.0123 8.01713 33.2117 7.26838 33.6105 6.59268C34.0093 5.91698 34.5532 5.38738 35.2602 5.00387C35.9491 4.62037 36.7468 4.43774 37.6169 4.43774C38.4871 4.43774 39.2666 4.62037 39.9737 5.00387C40.6626 5.38738 41.2245 5.91698 41.6234 6.57442C42.0222 7.25012 42.2216 7.99886 42.2216 8.83892C42.2216 9.67898 42.0222 10.4277 41.6234 11.1034C41.2245 11.7791 40.6807 12.2905 39.9737 12.674C39.2848 13.0575 38.4871 13.2401 37.6169 13.2401C36.7468 13.2766 35.9491 13.0757 35.2602 12.7105ZM39.1397 11.4869C39.593 11.2313 39.9555 10.866 40.2093 10.4095C40.4631 9.95291 40.59 9.42331 40.59 8.85718C40.59 8.29106 40.4631 7.76146 40.2093 7.3049C39.9555 6.84835 39.593 6.4831 39.1397 6.22743C38.6865 5.97176 38.1789 5.84393 37.5988 5.84393C37.0368 5.84393 36.5111 5.97176 36.0579 6.22743C35.6047 6.4831 35.2421 6.84835 34.9883 7.3049C34.7345 7.76146 34.6076 8.29106 34.6076 8.85718C34.6076 9.42331 34.7345 9.95291 34.9883 10.4095C35.2421 10.866 35.6047 11.2313 36.0579 11.4869C36.5111 11.7426 37.0187 11.8704 37.5988 11.8704C38.1789 11.8704 38.6865 11.7426 39.1397 11.4869Z"
+                                fill="black" />
+                            <path
+                                d="M43.8713 4.56567H47.5877C48.4941 4.56567 49.3099 4.7483 50.0169 5.09528C50.724 5.44226 51.2678 5.9536 51.6667 6.61103C52.0474 7.26847 52.2468 8.01722 52.2468 8.85728C52.2468 9.7156 52.0474 10.4643 51.6667 11.1035C51.286 11.761 50.724 12.254 50.0169 12.6193C49.3099 12.9663 48.5123 13.1489 47.6058 13.1489H43.8713V4.56567ZM47.5152 11.7975C48.1316 11.7975 48.6936 11.6697 49.1649 11.4322C49.6362 11.1948 49.9988 10.8479 50.2526 10.4096C50.5064 9.97127 50.6333 9.44167 50.6333 8.85728C50.6333 8.27289 50.5064 7.74329 50.2526 7.305C49.9988 6.8667 49.6362 6.51972 49.1649 6.28232C48.6936 6.04491 48.1316 5.91707 47.5152 5.91707H45.4485V11.7975H47.5152Z"
+                                fill="black" />
+                            <path
+                                d="M60.314 11.8157V13.1489H53.9327V4.56567H60.1509V5.89881H55.5099V8.12679H59.6251V9.44167H55.5099V11.8157H60.314Z"
+                                fill="black" />
+                            <path d="M63.8129 5.91707H60.9848V4.56567H68.2181V5.91707H65.39V13.1489H63.8129V5.91707Z"
+                                fill="black" />
+                            <path
+                                d="M76.9743 4.56567V13.1489H75.3971V9.47819H70.9918V13.1489H69.4146V4.56567H70.9918V8.10853H75.3971V4.56567H76.9743Z"
+                                fill="black" />
+                            <path
+                                d="M85.6398 11.8157V13.1489H79.2585V4.56567H85.4766V5.89881H80.8357V8.12679H84.9509V9.44167H80.8357V11.8157H85.6398Z"
+                                fill="black" />
+                            <path
+                                d="M89.0117 12.7105C88.3228 12.327 87.7608 11.7974 87.362 11.1217C86.9632 10.446 86.7637 9.69724 86.7637 8.85718C86.7637 8.01713 86.9632 7.26838 87.362 6.59268C87.7608 5.91698 88.3047 5.38738 89.0117 5.00387C89.7187 4.62037 90.4982 4.43774 91.3684 4.43774C92.2386 4.43774 93.0181 4.62037 93.7251 5.00387C94.414 5.38738 94.976 5.91698 95.3748 6.57442C95.7737 7.25012 95.9731 7.99886 95.9731 8.83892C95.9731 9.67898 95.7737 10.4277 95.3748 11.1034C94.976 11.7791 94.4322 12.2905 93.7251 12.674C93.0363 13.0575 92.2386 13.2401 91.3684 13.2401C90.4801 13.2766 89.7006 13.0757 89.0117 12.7105ZM92.8912 11.4869C93.3444 11.2313 93.707 10.866 93.9608 10.4095C94.2146 9.95291 94.3415 9.42331 94.3415 8.85718C94.3415 8.29106 94.2146 7.76146 93.9608 7.3049C93.707 6.84835 93.3444 6.4831 92.8912 6.22743C92.438 5.97176 91.9304 5.84393 91.3503 5.84393C90.7883 5.84393 90.2626 5.97176 89.8094 6.22743C89.3561 6.4831 88.9936 6.84835 88.7398 7.3049C88.486 7.76146 88.3591 8.29106 88.3591 8.85718C88.3591 9.42331 88.486 9.95291 88.7398 10.4095C88.9936 10.866 89.3561 11.2313 89.8094 11.4869C90.2626 11.7426 90.7702 11.8704 91.3503 11.8704C91.9304 11.8704 92.438 11.7426 92.8912 11.4869Z"
+                                fill="black" />
+                            <path
+                                d="M103.188 13.1489L101.448 10.6287C101.375 10.6287 101.267 10.647 101.122 10.647H99.2V13.1489H97.6228V4.56567H101.122C101.865 4.56567 102.499 4.69351 103.043 4.93092C103.587 5.16832 104.004 5.53357 104.294 5.99012C104.584 6.44668 104.729 6.99454 104.729 7.61545C104.729 8.25463 104.566 8.82076 104.258 9.27731C103.95 9.75212 103.496 10.0991 102.916 10.3183L104.892 13.1489H103.188ZM102.626 6.35536C102.264 6.06317 101.738 5.91707 101.049 5.91707H99.2V9.3321H101.049C101.738 9.3321 102.264 9.186 102.626 8.87554C102.989 8.58335 103.17 8.16332 103.17 7.61545C103.152 7.06759 102.989 6.64756 102.626 6.35536Z"
+                                fill="black" />
+                            <path
+                                d="M112.905 11.8157V13.1489H106.524V4.56567H112.742V5.89881H108.101V8.12679H112.216V9.44167H108.101V11.8157H112.905Z"
+                                fill="black" />
+                            <path
+                                d="M122.495 13.1489L122.477 7.46936L119.685 12.181H118.978L116.187 7.5424V13.1489H114.682V4.56567H115.987L119.377 10.2452L122.677 4.56567H123.982L124 13.1489H122.495Z"
+                                fill="black" />
+                            <path
+                                d="M18.9263 13.6967H1.0152C0.181279 13.6967 -0.290066 12.7471 0.217536 12.0714L8.86491 0.566225C9.44502 -0.200786 10.5871 -0.200786 11.1491 0.566225L19.7421 12.0531C20.2316 12.7288 19.7602 13.6967 18.9263 13.6967Z"
+                                fill="url(#paint0_linear_61_2141)" />
+                            <path
+                                d="M2.30232 15.9248L9.28185 6.66587C9.73507 6.06322 10.6234 6.08148 11.0585 6.66587L17.9836 15.9248C18.5275 16.6735 18.0199 17.7145 17.0953 17.7145H3.19063C2.26606 17.7145 1.74033 16.6553 2.30232 15.9248Z"
+                                fill="url(#paint1_linear_61_2141)" />
+                            <path
+                                d="M16.2977 13.6968L11.0585 6.66586C10.6053 6.0632 9.73508 6.0632 9.28186 6.66586L3.98829 13.6968H16.2977Z"
+                                fill="#6699FF" />
+                        </g>
+                        <defs>
+                            <linearGradient id="paint0_linear_61_2141" x1="0.0078125" y1="6.84384" x2="19.9404"
+                                y2="6.84384" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#3F71FF" />
+                                <stop offset="1" stop-color="#6A73FF" />
+                            </linearGradient>
+                            <linearGradient id="paint1_linear_61_2141" x1="2.07092" y1="11.9676" x2="18.2071"
+                                y2="11.9676" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#3F71FF" />
+                                <stop offset="1" stop-color="#6A73FF" />
+                            </linearGradient>
+                            <clipPath id="clip0_61_2141">
+                                <rect width="124" height="17.7143" fill="white" />
+                            </clipPath>
+                        </defs>
+                    </svg>
+                </div>
+                <a href="https://www.codetheorem.co" target="_blank" class="welcome-footer-right-link-unique">
+                    www.codetheorem.co
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ONBOARDING SCREEN -->
+    <div class="screen" id="onboarding-screen">
+        <div class="onboarding-screen-wrapper-unique">
+            <div class="onboarding-main-content-unique">
+                <h1 class="onboarding-heading-unique">Set up your Design System</h1>
+                <p class="onboarding-subheading-unique">Choose how you want to create your styles and variables in
+                    Figma.</p>
+
+                <div class="onboarding-options-container-unique">
+                    <div class="onboarding-auto-setup-card-unique" onclick="selectSetupOption(this, 'auto')">
+                        <h3 class="onboarding-card-title-unique">Auto Setup</h3>
+                        <p class="onboarding-card-description-unique">Create all styles in one click.</p>
+                    </div>
+                    <div class="onboarding-manual-setup-card-unique" onclick="selectSetupOption(this, 'manual')">
+                        <h3 class="onboarding-card-title-unique">Manual Setup</h3>
+                        <p class="onboarding-card-description-unique">Create variables step by step.</p>
+                    </div>
+                </div>
+
+                <button class="onboarding-continue-button-unique" onclick="handleContinue()">
+                    Continue
+                </button>
+            </div>
+            <div class="welcome-footer-section-unique">
+                <div class="welcome-footer-left-logo-unique">
+                    <svg width="124" height="18" viewBox="0 0 124 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_104_4056)">
+                            <path
+                                d="M26.5766 12.7106C25.8877 12.3271 25.3438 11.7975 24.945 11.14C24.5462 10.4644 24.3467 9.7156 24.3467 8.87554C24.3467 8.03548 24.5462 7.28674 24.945 6.61104C25.3438 5.93534 25.8877 5.424 26.5766 5.04049C27.2655 4.65699 28.045 4.47437 28.9152 4.47437C29.6041 4.47437 30.2567 4.6022 30.8187 4.83961C31.3988 5.07702 31.8883 5.44226 32.2871 5.89881L31.2719 6.86671C30.6555 6.19101 29.8941 5.86229 28.9877 5.86229C28.4076 5.86229 27.8818 5.99012 27.4105 6.24579C26.9391 6.50146 26.5947 6.86671 26.3228 7.32326C26.069 7.77981 25.9421 8.29115 25.9421 8.87554C25.9421 9.45993 26.069 9.97127 26.3228 10.4278C26.5766 10.8844 26.9391 11.2496 27.4105 11.5053C27.8818 11.761 28.3894 11.8888 28.9877 11.8888C29.8941 11.8888 30.6555 11.5418 31.2719 10.8661L32.2871 11.8523C31.8883 12.3271 31.3988 12.6741 30.8187 12.9115C30.2386 13.1489 29.604 13.2767 28.897 13.2767C28.045 13.2767 27.2655 13.0758 26.5766 12.7106Z"
+                                fill="black" />
+                            <path
+                                d="M35.2602 12.7105C34.5713 12.327 34.0093 11.7974 33.6105 11.1217C33.2116 10.446 33.0122 9.69724 33.0122 8.85718C33.0122 8.01713 33.2116 7.26838 33.6105 6.59268C34.0093 5.91698 34.5531 5.38738 35.2602 5.00387C35.949 4.62037 36.7467 4.43774 37.6169 4.43774C38.4871 4.43774 39.2666 4.62037 39.9736 5.00387C40.6625 5.38738 41.2245 5.91698 41.6233 6.57442C42.0221 7.25012 42.2216 7.99886 42.2216 8.83892C42.2216 9.67898 42.0221 10.4277 41.6233 11.1034C41.2245 11.7791 40.6806 12.2905 39.9736 12.674C39.2847 13.0575 38.4871 13.2401 37.6169 13.2401C36.7467 13.2766 35.949 13.0757 35.2602 12.7105ZM39.1397 11.4869C39.5929 11.2313 39.9555 10.866 40.2093 10.4095C40.4631 9.95291 40.59 9.42331 40.59 8.85718C40.59 8.29106 40.4631 7.76146 40.2093 7.3049C39.9555 6.84835 39.5929 6.4831 39.1397 6.22743C38.6865 5.97176 38.1789 5.84393 37.5988 5.84393C37.0368 5.84393 36.511 5.97176 36.0578 6.22743C35.6046 6.4831 35.242 6.84835 34.9882 7.3049C34.7344 7.76146 34.6075 8.29106 34.6075 8.85718C34.6075 9.42331 34.7344 9.95291 34.9882 10.4095C35.242 10.866 35.6046 11.2313 36.0578 11.4869C36.511 11.7426 37.0186 11.8704 37.5988 11.8704C38.1789 11.8704 38.6865 11.7426 39.1397 11.4869Z"
+                                fill="black" />
+                            <path
+                                d="M43.8713 4.56567H47.5877C48.4941 4.56567 49.3099 4.7483 50.0169 5.09528C50.7239 5.44226 51.2678 5.9536 51.6666 6.61103C52.0473 7.26847 52.2467 8.01722 52.2467 8.85728C52.2467 9.7156 52.0473 10.4643 51.6666 11.1035C51.2859 11.761 50.7239 12.254 50.0169 12.6193C49.3099 12.9663 48.5122 13.1489 47.6058 13.1489H43.8713V4.56567ZM47.5151 11.7975C48.1315 11.7975 48.6935 11.6697 49.1648 11.4322C49.6362 11.1948 49.9988 10.8479 50.2526 10.4096C50.5064 9.97127 50.6333 9.44167 50.6333 8.85728C50.6333 8.27289 50.5064 7.74329 50.2526 7.305C49.9988 6.8667 49.6362 6.51972 49.1648 6.28232C48.6935 6.04491 48.1315 5.91707 47.5151 5.91707H45.4485V11.7975H47.5151Z"
+                                fill="black" />
+                            <path
+                                d="M60.314 11.8157V13.1489H53.9327V4.56567H60.1508V5.89881H55.5099V8.12679H59.6251V9.44167H55.5099V11.8157H60.314Z"
+                                fill="black" />
+                            <path d="M63.8128 5.91707H60.9847V4.56567H68.2181V5.91707H65.39V13.1489H63.8128V5.91707Z"
+                                fill="black" />
+                            <path
+                                d="M76.9742 4.56567V13.1489H75.397V9.47819H70.9917V13.1489H69.4146V4.56567H70.9917V8.10853H75.397V4.56567H76.9742Z"
+                                fill="black" />
+                            <path
+                                d="M85.6397 11.8157V13.1489H79.2584V4.56567H85.4766V5.89881H80.8356V8.12679H84.9508V9.44167H80.8356V11.8157H85.6397Z"
+                                fill="black" />
+                            <path
+                                d="M89.0117 12.7105C88.3228 12.327 87.7608 11.7974 87.362 11.1217C86.9631 10.446 86.7637 9.69724 86.7637 8.85718C86.7637 8.01713 86.9631 7.26838 87.362 6.59268C87.7608 5.91698 88.3047 5.38738 89.0117 5.00387C89.7187 4.62037 90.4982 4.43774 91.3684 4.43774C92.2386 4.43774 93.0181 4.62037 93.7251 5.00387C94.414 5.38738 94.976 5.91698 95.3748 6.57442C95.7737 7.25012 95.9731 7.99886 95.9731 8.83892C95.9731 9.67898 95.7737 10.4277 95.3748 11.1034C94.976 11.7791 94.4321 12.2905 93.7251 12.674C93.0362 13.0575 92.2386 13.2401 91.3684 13.2401C90.4801 13.2766 89.7006 13.0757 89.0117 12.7105ZM92.8912 11.4869C93.3444 11.2313 93.707 10.866 93.9608 10.4095C94.2146 9.95291 94.3415 9.42331 94.3415 8.85718C94.3415 8.29106 94.2146 7.76146 93.9608 7.3049C93.707 6.84835 93.3444 6.4831 92.8912 6.22743C92.438 5.97176 91.9304 5.84393 91.3503 5.84393C90.7883 5.84393 90.2626 5.97176 89.8093 6.22743C89.3561 6.4831 88.9936 6.84835 88.7398 7.3049C88.486 7.76146 88.3591 8.29106 88.3591 8.85718C88.3591 9.42331 88.486 9.95291 88.7398 10.4095C88.9936 10.866 89.3561 11.2313 89.8093 11.4869C90.2626 11.7426 90.7702 11.8704 91.3503 11.8704C91.9304 11.8704 92.438 11.7426 92.8912 11.4869Z"
+                                fill="black" />
+                            <path
+                                d="M103.188 13.1489L101.448 10.6287C101.375 10.6287 101.267 10.647 101.122 10.647H99.2V13.1489H97.6228V4.56567H101.122C101.865 4.56567 102.499 4.69351 103.043 4.93092C103.587 5.16832 104.004 5.53357 104.294 5.99012C104.584 6.44668 104.729 6.99454 104.729 7.61545C104.729 8.25463 104.566 8.82076 104.258 9.27731C103.95 9.75212 103.496 10.0991 102.916 10.3183L104.892 13.1489H103.188ZM102.626 6.35536C102.264 6.06317 101.738 5.91707 101.049 5.91707H99.2V9.3321H101.049C101.738 9.3321 102.264 9.186 102.626 8.87554C102.989 8.58335 103.17 8.16332 103.17 7.61545C103.152 7.06759 102.989 6.64756 102.626 6.35536Z"
+                                fill="black" />
+                            <path
+                                d="M112.905 11.8157V13.1489H106.524V4.56567H112.742V5.89881H108.101V8.12679H112.216V9.44167H108.101V11.8157H112.905Z"
+                                fill="black" />
+                            <path
+                                d="M122.495 13.1489L122.477 7.46936L119.685 12.181H118.978L116.187 7.5424V13.1489H114.682V4.56567H115.987L119.377 10.2452L122.677 4.56567H123.982L124 13.1489H122.495Z"
+                                fill="black" />
+                            <path
+                                d="M18.9263 13.6967H1.0152C0.181279 13.6967 -0.290066 12.7471 0.217536 12.0714L8.86491 0.566225C9.44502 -0.200786 10.5871 -0.200786 11.1491 0.566225L19.7421 12.0531C20.2316 12.7288 19.7602 13.6967 18.9263 13.6967Z"
+                                fill="url(#paint0_linear_104_4056)" />
+                            <path
+                                d="M2.30232 15.9248L9.28186 6.66587C9.73507 6.06322 10.6234 6.08148 11.0585 6.66587L17.9836 15.9248C18.5275 16.6735 18.0199 17.7145 17.0953 17.7145H3.19063C2.26607 17.7145 1.74034 16.6553 2.30232 15.9248Z"
+                                fill="url(#paint1_linear_104_4056)" />
+                            <path
+                                d="M16.2976 13.6968L11.0585 6.66586C10.6052 6.0632 9.73506 6.0632 9.28185 6.66586L3.98828 13.6968H16.2976Z"
+                                fill="#6699FF" />
+                        </g>
+                        <defs>
+                            <linearGradient id="paint0_linear_104_4056" x1="0.0078125" y1="6.84384" x2="19.9404"
+                                y2="6.84384" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#3F71FF" />
+                                <stop offset="1" stop-color="#6A73FF" />
+                            </linearGradient>
+                            <linearGradient id="paint1_linear_104_4056" x1="2.07092" y1="11.9676" x2="18.2071"
+                                y2="11.9676" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#3F71FF" />
+                                <stop offset="1" stop-color="#6A73FF" />
+                            </linearGradient>
+                            <clipPath id="clip0_104_4056">
+                                <rect width="124" height="17.7143" fill="white" />
+                            </clipPath>
+                        </defs>
+                    </svg>
+                </div>
+                <a href="https://www.codetheorem.co" target="_blank" class="welcome-footer-right-link-unique">
+                    www.codetheorem.co
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- AUTO SETUP SCREEN -->
+    <div class="screen" id="auto-setup-screen">
+        <div class="auto-setup-screen-wrapper-unique">
+            <div class="auto-setup-topbar-unique">
+                <div>
+                    <svg width="124" height="18" viewBox="0 0 124 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_318_907)">
+                            <path
+                                d="M26.5766 12.7106C25.8877 12.3271 25.3438 11.7975 24.945 11.14C24.5462 10.4644 24.3467 9.7156 24.3467 8.87554C24.3467 8.03548 24.5462 7.28674 24.945 6.61104C25.3438 5.93534 25.8877 5.424 26.5766 5.04049C27.2655 4.65699 28.045 4.47437 28.9152 4.47437C29.6041 4.47437 30.2567 4.6022 30.8187 4.83961C31.3988 5.07702 31.8883 5.44226 32.2871 5.89881L31.2719 6.86671C30.6555 6.19101 29.8941 5.86229 28.9877 5.86229C28.4076 5.86229 27.8818 5.99012 27.4105 6.24579C26.9391 6.50146 26.5947 6.86671 26.3228 7.32326C26.069 7.77981 25.9421 8.29115 25.9421 8.87554C25.9421 9.45993 26.069 9.97127 26.3228 10.4278C26.5766 10.8844 26.9391 11.2496 27.4105 11.5053C27.8818 11.761 28.3894 11.8888 28.9877 11.8888C29.8941 11.8888 30.6555 11.5418 31.2719 10.8661L32.2871 11.8523C31.8883 12.3271 31.3988 12.6741 30.8187 12.9115C30.2386 13.1489 29.604 13.2767 28.897 13.2767C28.045 13.2767 27.2655 13.0758 26.5766 12.7106Z"
+                                fill="black" />
+                            <path
+                                d="M35.2602 12.7105C34.5713 12.327 34.0093 11.7974 33.6105 11.1217C33.2116 10.446 33.0122 9.69724 33.0122 8.85718C33.0122 8.01713 33.2116 7.26838 33.6105 6.59268C34.0093 5.91698 34.5531 5.38738 35.2602 5.00387C35.949 4.62037 36.7467 4.43774 37.6169 4.43774C38.4871 4.43774 39.2666 4.62037 39.9736 5.00387C40.6625 5.38738 41.2245 5.91698 41.6233 6.57442C42.0221 7.25012 42.2216 7.99886 42.2216 8.83892C42.2216 9.67898 42.0221 10.4277 41.6233 11.1034C41.2245 11.7791 40.6806 12.2905 39.9736 12.674C39.2847 13.0575 38.4871 13.2401 37.6169 13.2401C36.7467 13.2766 35.949 13.0757 35.2602 12.7105ZM39.1397 11.4869C39.5929 11.2313 39.9555 10.866 40.2093 10.4095C40.4631 9.95291 40.59 9.42331 40.59 8.85718C40.59 8.29106 40.4631 7.76146 40.2093 7.3049C39.9555 6.84835 39.5929 6.4831 39.1397 6.22743C38.6865 5.97176 38.1789 5.84393 37.5988 5.84393C37.0368 5.84393 36.511 5.97176 36.0578 6.22743C35.6046 6.4831 35.242 6.84835 34.9882 7.3049C34.7344 7.76146 34.6075 8.29106 34.6075 8.85718C34.6075 9.42331 34.7344 9.95291 34.9882 10.4095C35.242 10.866 35.6046 11.2313 36.0578 11.4869C36.511 11.7426 37.0186 11.8704 37.5988 11.8704C38.1789 11.8704 38.6865 11.7426 39.1397 11.4869Z"
+                                fill="black" />
+                            <path
+                                d="M43.8713 4.56567H47.5877C48.4941 4.56567 49.3099 4.7483 50.0169 5.09528C50.7239 5.44226 51.2678 5.9536 51.6666 6.61103C52.0473 7.26847 52.2467 8.01722 52.2467 8.85728C52.2467 9.7156 52.0473 10.4643 51.6666 11.1035C51.2859 11.761 50.7239 12.254 50.0169 12.6193C49.3099 12.9663 48.5122 13.1489 47.6058 13.1489H43.8713V4.56567ZM47.5151 11.7975C48.1315 11.7975 48.6935 11.6697 49.1648 11.4322C49.6362 11.1948 49.9988 10.8479 50.2526 10.4096C50.5064 9.97127 50.6333 9.44167 50.6333 8.85728C50.6333 8.27289 50.5064 7.74329 50.2526 7.305C49.9988 6.8667 49.6362 6.51972 49.1648 6.28232C48.6935 6.04491 48.1315 5.91707 47.5151 5.91707H45.4485V11.7975H47.5151Z"
+                                fill="black" />
+                            <path
+                                d="M60.314 11.8157V13.1489H53.9327V4.56567H60.1508V5.89881H55.5099V8.12679H59.6251V9.44167H55.5099V11.8157H60.314Z"
+                                fill="black" />
+                            <path d="M63.8128 5.91707H60.9847V4.56567H68.2181V5.91707H65.39V13.1489H63.8128V5.91707Z"
+                                fill="black" />
+                            <path
+                                d="M76.9742 4.56567V13.1489H75.397V9.47819H70.9917V13.1489H69.4146V4.56567H70.9917V8.10853H75.397V4.56567H76.9742Z"
+                                fill="black" />
+                            <path
+                                d="M85.6397 11.8157V13.1489H79.2584V4.56567H85.4766V5.89881H80.8356V8.12679H84.9508V9.44167H80.8356V11.8157H85.6397Z"
+                                fill="black" />
+                            <path
+                                d="M89.0117 12.7105C88.3228 12.327 87.7608 11.7974 87.362 11.1217C86.9631 10.446 86.7637 9.69724 86.7637 8.85718C86.7637 8.01713 86.9631 7.26838 87.362 6.59268C87.7608 5.91698 88.3047 5.38738 89.0117 5.00387C89.7187 4.62037 90.4982 4.43774 91.3684 4.43774C92.2386 4.43774 93.0181 4.62037 93.7251 5.00387C94.414 5.38738 94.976 5.91698 95.3748 6.57442C95.7737 7.25012 95.9731 7.99886 95.9731 8.83892C95.9731 9.67898 95.7737 10.4277 95.3748 11.1034C94.976 11.7791 94.4321 12.2905 93.7251 12.674C93.0362 13.0575 92.2386 13.2401 91.3684 13.2401C90.4801 13.2766 89.7006 13.0757 89.0117 12.7105ZM92.8912 11.4869C93.3444 11.2313 93.707 10.866 93.9608 10.4095C94.2146 9.95291 94.3415 9.42331 94.3415 8.85718C94.3415 8.29106 94.2146 7.76146 93.9608 7.3049C93.707 6.84835 93.3444 6.4831 92.8912 6.22743C92.438 5.97176 91.9304 5.84393 91.3503 5.84393C90.7883 5.84393 90.2626 5.97176 89.8093 6.22743C89.3561 6.4831 88.9936 6.84835 88.7398 7.3049C88.486 7.76146 88.3591 8.29106 88.3591 8.85718C88.3591 9.42331 88.486 9.95291 88.7398 10.4095C88.9936 10.866 89.3561 11.2313 89.8093 11.4869C90.2626 11.7426 90.7702 11.8704 91.3503 11.8704C91.9304 11.8704 92.438 11.7426 92.8912 11.4869Z"
+                                fill="black" />
+                            <path
+                                d="M103.188 13.1489L101.448 10.6287C101.375 10.6287 101.267 10.647 101.122 10.647H99.2V13.1489H97.6228V4.56567H101.122C101.865 4.56567 102.499 4.69351 103.043 4.93092C103.587 5.16832 104.004 5.53357 104.294 5.99012C104.584 6.44668 104.729 6.99454 104.729 7.61545C104.729 8.25463 104.566 8.82076 104.258 9.27731C103.95 9.75212 103.496 10.0991 102.916 10.3183L104.892 13.1489H103.188ZM102.626 6.35536C102.264 6.06317 101.738 5.91707 101.049 5.91707H99.2V9.3321H101.049C101.738 9.3321 102.264 9.186 102.626 8.87554C102.989 8.58335 103.17 8.16332 103.17 7.61545C103.152 7.06759 102.989 6.64756 102.626 6.35536Z"
+                                fill="black" />
+                            <path
+                                d="M112.905 11.8157V13.1489H106.524V4.56567H112.742V5.89881H108.101V8.12679H112.216V9.44167H108.101V11.8157H112.905Z"
+                                fill="black" />
+                            <path
+                                d="M122.495 13.1489L122.477 7.46936L119.685 12.181H118.978L116.187 7.5424V13.1489H114.682V4.56567H115.987L119.377 10.2452L122.677 4.56567H123.982L124 13.1489H122.495Z"
+                                fill="black" />
+                            <path
+                                d="M18.9263 13.6967H1.0152C0.181279 13.6967 -0.290066 12.7471 0.217536 12.0714L8.86491 0.566225C9.44502 -0.200786 10.5871 -0.200786 11.1491 0.566225L19.7421 12.0531C20.2316 12.7288 19.7602 13.6967 18.9263 13.6967Z"
+                                fill="url(#paint0_linear_318_907)" />
+                            <path
+                                d="M2.30232 15.9248L9.28186 6.66587C9.73507 6.06322 10.6234 6.08148 11.0585 6.66587L17.9836 15.9248C18.5275 16.6735 18.0199 17.7145 17.0953 17.7145H3.19063C2.26607 17.7145 1.74034 16.6553 2.30232 15.9248Z"
+                                fill="url(#paint1_linear_318_907)" />
+                            <path
+                                d="M16.2976 13.6968L11.0585 6.66586C10.6052 6.0632 9.73506 6.0632 9.28185 6.66586L3.98828 13.6968H16.2976Z"
+                                fill="#6699FF" />
+                        </g>
+                        <defs>
+                            <linearGradient id="paint0_linear_318_907" x1="0.0078125" y1="6.84384" x2="19.9404"
+                                y2="6.84384" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#3F71FF" />
+                                <stop offset="1" stop-color="#6A73FF" />
+                            </linearGradient>
+                            <linearGradient id="paint1_linear_318_907" x1="2.07092" y1="11.9676" x2="18.2071"
+                                y2="11.9676" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#3F71FF" />
+                                <stop offset="1" stop-color="#6A73FF" />
+                            </linearGradient>
+                            <clipPath id="clip0_318_907">
+                                <rect width="124" height="17.7143" fill="white" />
+                            </clipPath>
+                        </defs>
+                    </svg>
+                </div>
+                <a href="https://www.codetheorem.co" target="_blank" class="auto-setup-topbar-left-unique">
+                    www.codetheorem.co
+                </a>
+            </div>
+
+            <div class="auto-setup-main-content-unique">
+                <div class="auto-setup-emoji-unique">
+                    <svg width="124" height="124" viewBox="0 0 124 124" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_104_3969)">
+                            <path
+                                d="M124 62C124 96.2356 96.2356 124 62 124C46.3838 124 32.1044 118.226 21.1962 108.674C8.215 97.3013 0 80.6194 0 62C0 27.7644 27.7644 0 62 0C80.6194 0 97.3013 8.215 108.674 21.1962C118.226 32.1044 124 46.3838 124 62Z"
+                                fill="#FFCC4D" />
+                            <path
+                                d="M86.0056 78.9531C85.1531 84.6493 82.2081 89.7062 77.965 93.3293C73.7025 96.9718 68.1225 99.1612 62.0194 99.1612C55.9163 99.1612 50.3169 96.9718 46.0544 93.3293C41.7919 89.7062 38.8663 84.6493 38.0138 78.9531C37.7425 77.1512 39.1956 75.5237 41.0363 75.5237H83.0025C84.8238 75.5431 86.2769 77.1512 86.0056 78.9531Z"
+                                fill="#2E435A" />
+                            <path
+                                d="M77.9457 93.3486C73.6832 96.9911 68.1032 99.1804 62 99.1804C55.8969 99.1804 50.2975 96.9911 46.035 93.3486C49.7744 89.6867 55.5288 87.3617 62 87.3617C68.4713 87.3423 74.2257 89.6867 77.9457 93.3486Z"
+                                fill="#D3333F" />
+                            <path
+                                d="M13.9694 47.1782C13.4463 47.1782 12.9038 47.062 12.4 46.8295C10.5788 45.9576 9.78439 43.7876 10.6563 41.947C13.64 35.6501 18.9681 31.0582 24.9356 29.6438C30.1281 28.4232 35.495 29.702 40.0288 33.267C41.6175 34.5263 41.8888 36.8126 40.6488 38.4207C39.3894 40.0095 37.1031 40.2807 35.495 39.0407C32.6663 36.8126 29.6825 36.057 26.6213 36.7738C22.8625 37.6651 19.2781 40.8426 17.2825 45.0663C16.6625 46.4032 15.345 47.1782 13.9694 47.1782ZM110.031 47.1782C108.655 47.1782 107.338 46.4032 106.718 45.0857C104.722 40.862 101.138 37.6651 97.3788 36.7932C94.3175 36.0763 91.3338 36.832 88.505 39.0601C86.9163 40.3195 84.6106 40.0288 83.3513 38.4401C82.0919 36.8513 82.3825 34.5457 83.9713 33.2863C88.505 29.7213 93.8719 28.4232 99.0644 29.6632C105.032 31.0776 110.379 35.6695 113.344 41.9663C114.216 43.7876 113.421 45.977 111.6 46.8488C111.096 47.062 110.554 47.1782 110.031 47.1782Z"
+                                fill="#2E435A" />
+                            <path
+                                d="M105.245 58.8418C105.245 64.3443 100.789 68.8006 95.2862 68.8006C89.7837 68.8006 85.3275 64.3443 85.3275 58.8418C85.3275 53.3393 89.7837 48.8831 95.2862 48.8831C100.789 48.9024 105.245 53.3587 105.245 58.8418Z"
+                                fill="#2E435A" />
+                            <path
+                                d="M28.6943 68.8006C34.1944 68.8006 38.6531 64.3419 38.6531 58.8418C38.6531 53.3417 34.1944 48.8831 28.6943 48.8831C23.1943 48.8831 18.7356 53.3417 18.7356 58.8418C18.7356 64.3419 23.1943 68.8006 28.6943 68.8006Z"
+                                fill="#2E435A" />
+                        </g>
+                        <defs>
+                            <clipPath id="clip0_104_3969">
+                                <rect width="124" height="124" fill="white" />
+                            </clipPath>
+                        </defs>
+                    </svg>
+                </div>
+                <p class="auto-setup-description-unique">We're building this feature.</p>
+                <p class="auto-setup-subtitle-unique">Thanks for using the plugin 🙌</p>
+                <button class="auto-setup-back-button-unique" onclick="navigateTo('onboarding-screen')">
+                    Go to Home Screen
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP SCREEN -->
+    <div class="screen" id="main-app-screen">
+        <div class="main-app-wrapper-unique">
+
+            <!-- Top Bar -->
+            <div class="main-topbar-wrapper-unique">
+                <div class="main-topbar-left-link-unique">
+                    <svg width="124" height="18" viewBox="0 0 124 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g clip-path="url(#clip0_318_907_main)">
+                            <path
+                                d="M26.5766 12.7106C25.8877 12.3271 25.3438 11.7975 24.945 11.14C24.5462 10.4644 24.3467 9.7156 24.3467 8.87554C24.3467 8.03548 24.5462 7.28674 24.945 6.61104C25.3438 5.93534 25.8877 5.424 26.5766 5.04049C27.2655 4.65699 28.045 4.47437 28.9152 4.47437C29.6041 4.47437 30.2567 4.6022 30.8187 4.83961C31.3988 5.07702 31.8883 5.44226 32.2871 5.89881L31.2719 6.86671C30.6555 6.19101 29.8941 5.86229 28.9877 5.86229C28.4076 5.86229 27.8818 5.99012 27.4105 6.24579C26.9391 6.50146 26.5947 6.86671 26.3228 7.32326C26.069 7.77981 25.9421 8.29115 25.9421 8.87554C25.9421 9.45993 26.069 9.97127 26.3228 10.4278C26.5766 10.8844 26.9391 11.2496 27.4105 11.5053C27.8818 11.761 28.3894 11.8888 28.9877 11.8888C29.8941 11.8888 30.6555 11.5418 31.2719 10.8661L32.2871 11.8523C31.8883 12.3271 31.3988 12.6741 30.8187 12.9115C30.2386 13.1489 29.604 13.2767 28.897 13.2767C28.045 13.2767 27.2655 13.0758 26.5766 12.7106Z"
+                                fill="black" />
+                            <path
+                                d="M35.2602 12.7105C34.5713 12.327 34.0093 11.7974 33.6105 11.1217C33.2116 10.446 33.0122 9.69724 33.0122 8.85718C33.0122 8.01713 33.2116 7.26838 33.6105 6.59268C34.0093 5.91698 34.5531 5.38738 35.2602 5.00387C35.949 4.62037 36.7467 4.43774 37.6169 4.43774C38.4871 4.43774 39.2666 4.62037 39.9736 5.00387C40.6625 5.38738 41.2245 5.91698 41.6233 6.57442C42.0221 7.25012 42.2216 7.99886 42.2216 8.83892C42.2216 9.67898 42.0221 10.4277 41.6233 11.1034C41.2245 11.7791 40.6806 12.2905 39.9736 12.674C39.2847 13.0575 38.4871 13.2401 37.6169 13.2401C36.7467 13.2766 35.949 13.0757 35.2602 12.7105ZM39.1397 11.4869C39.5929 11.2313 39.9555 10.866 40.2093 10.4095C40.4631 9.95291 40.59 9.42331 40.59 8.85718C40.59 8.29106 40.4631 7.76146 40.2093 7.3049C39.9555 6.84835 39.5929 6.4831 39.1397 6.22743C38.6865 5.97176 38.1789 5.84393 37.5988 5.84393C37.0368 5.84393 36.511 5.97176 36.0578 6.22743C35.6046 6.4831 35.242 6.84835 34.9882 7.3049C34.7344 7.76146 34.6075 8.29106 34.6075 8.85718C34.6075 9.42331 34.7344 9.95291 34.9882 10.4095C35.242 10.866 35.6046 11.2313 36.0578 11.4869C36.511 11.7426 37.0186 11.8704 37.5988 11.8704C38.1789 11.8704 38.6865 11.7426 39.1397 11.4869Z"
+                                fill="black" />
+                            <path
+                                d="M43.8713 4.56567H47.5877C48.4941 4.56567 49.3099 4.7483 50.0169 5.09528C50.7239 5.44226 51.2678 5.9536 51.6666 6.61103C52.0473 7.26847 52.2467 8.01722 52.2467 8.85728C52.2467 9.7156 52.0473 10.4643 51.6666 11.1035C51.2859 11.761 50.7239 12.254 50.0169 12.6193C49.3099 12.9663 48.5122 13.1489 47.6058 13.1489H43.8713V4.56567ZM47.5151 11.7975C48.1315 11.7975 48.6935 11.6697 49.1648 11.4322C49.6362 11.1948 49.9988 10.8479 50.2526 10.4096C50.5064 9.97127 50.6333 9.44167 50.6333 8.85728C50.6333 8.27289 50.5064 7.74329 50.2526 7.305C49.9988 6.8667 49.6362 6.51972 49.1648 6.28232C48.6935 6.04491 48.1315 5.91707 47.5151 5.91707H45.4485V11.7975H47.5151Z"
+                                fill="black" />
+                            <path
+                                d="M60.314 11.8157V13.1489H53.9327V4.56567H60.1508V5.89881H55.5099V8.12679H59.6251V9.44167H55.5099V11.8157H60.314Z"
+                                fill="black" />
+                            <path d="M63.8128 5.91707H60.9847V4.56567H68.2181V5.91707H65.39V13.1489H63.8128V5.91707Z"
+                                fill="black" />
+                            <path
+                                d="M76.9742 4.56567V13.1489H75.397V9.47819H70.9917V13.1489H69.4146V4.56567H70.9917V8.10853H75.397V4.56567H76.9742Z"
+                                fill="black" />
+                            <path
+                                d="M85.6397 11.8157V13.1489H79.2584V4.56567H85.4766V5.89881H80.8356V8.12679H84.9508V9.44167H80.8356V11.8157H85.6397Z"
+                                fill="black" />
+                            <path
+                                d="M89.0117 12.7105C88.3228 12.327 87.7608 11.7974 87.362 11.1217C86.9631 10.446 86.7637 9.69724 86.7637 8.85718C86.7637 8.01713 86.9631 7.26838 87.362 6.59268C87.7608 5.91698 88.3047 5.38738 89.0117 5.00387C89.7187 4.62037 90.4982 4.43774 91.3684 4.43774C92.2386 4.43774 93.0181 4.62037 93.7251 5.00387C94.414 5.38738 94.976 5.91698 95.3748 6.57442C95.7737 7.25012 95.9731 7.99886 95.9731 8.83892C95.9731 9.67898 95.7737 10.4277 95.3748 11.1034C94.976 11.7791 94.4321 12.2905 93.7251 12.674C93.0362 13.0575 92.2386 13.2401 91.3684 13.2401C90.4801 13.2766 89.7006 13.0757 89.0117 12.7105ZM92.8912 11.4869C93.3444 11.2313 93.707 10.866 93.9608 10.4095C94.2146 9.95291 94.3415 9.42331 94.3415 8.85718C94.3415 8.29106 94.2146 7.76146 93.9608 7.3049C93.707 6.84835 93.3444 6.4831 92.8912 6.22743C92.438 5.97176 91.9304 5.84393 91.3503 5.84393C90.7883 5.84393 90.2626 5.97176 89.8093 6.22743C89.3561 6.4831 88.9936 6.84835 88.7398 7.3049C88.486 7.76146 88.3591 8.29106 88.3591 8.85718C88.3591 9.42331 88.486 9.95291 88.7398 10.4095C88.9936 10.866 89.3561 11.2313 89.8093 11.4869C90.2626 11.7426 90.7702 11.8704 91.3503 11.8704C91.9304 11.8704 92.438 11.7426 92.8912 11.4869Z"
+                                fill="black" />
+                            <path
+                                d="M103.188 13.1489L101.448 10.6287C101.375 10.6287 101.267 10.647 101.122 10.647H99.2V13.1489H97.6228V4.56567H101.122C101.865 4.56567 102.499 4.69351 103.043 4.93092C103.587 5.16832 104.004 5.53357 104.294 5.99012C104.584 6.44668 104.729 6.99454 104.729 7.61545C104.729 8.25463 104.566 8.82076 104.258 9.27731C103.95 9.75212 103.496 10.0991 102.916 10.3183L104.892 13.1489H103.188ZM102.626 6.35536C102.264 6.06317 101.738 5.91707 101.049 5.91707H99.2V9.3321H101.049C101.738 9.3321 102.264 9.186 102.626 8.87554C102.989 8.58335 103.17 8.16332 103.17 7.61545C103.152 7.06759 102.989 6.64756 102.626 6.35536Z"
+                                fill="black" />
+                            <path
+                                d="M112.905 11.8157V13.1489H106.524V4.56567H112.742V5.89881H108.101V8.12679H112.216V9.44167H108.101V11.8157H112.905Z"
+                                fill="black" />
+                            <path
+                                d="M122.495 13.1489L122.477 7.46936L119.685 12.181H118.978L116.187 7.5424V13.1489H114.682V4.56567H115.987L119.377 10.2452L122.677 4.56567H123.982L124 13.1489H122.495Z"
+                                fill="black" />
+                            <path
+                                d="M18.9263 13.6967H1.0152C0.181279 13.6967 -0.290066 12.7471 0.217536 12.0714L8.86491 0.566225C9.44502 -0.200786 10.5871 -0.200786 11.1491 0.566225L19.7421 12.0531C20.2316 12.7288 19.7602 13.6967 18.9263 13.6967Z"
+                                fill="url(#paint0_linear_318_907_main)" />
+                            <path
+                                d="M2.30232 15.9248L9.28186 6.66587C9.73507 6.06322 10.6234 6.08148 11.0585 6.66587L17.9836 15.9248C18.5275 16.6735 18.0199 17.7145 17.0953 17.7145H3.19063C2.26607 17.7145 1.74034 16.6553 2.30232 15.9248Z"
+                                fill="url(#paint1_linear_318_907_main)" />
+                            <path
+                                d="M16.2976 13.6968L11.0585 6.66586C10.6052 6.0632 9.73506 6.0632 9.28185 6.66586L3.98828 13.6968H16.2976Z"
+                                fill="#6699FF" />
+                        </g>
+                        <defs>
+                            <linearGradient id="paint0_linear_318_907_main" x1="0.0078125" y1="6.84384" x2="19.9404"
+                                y2="6.84384" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#3F71FF" />
+                                <stop offset="1" stop-color="#6A73FF" />
+                            </linearGradient>
+                            <linearGradient id="paint1_linear_318_907_main" x1="2.07092" y1="11.9676" x2="18.2071"
+                                y2="11.9676" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#3F71FF" />
+                                <stop offset="1" stop-color="#6A73FF" />
+                            </linearGradient>
+                            <clipPath id="clip0_318_907_main">
+                                <rect width="124" height="17.7143" fill="white" />
+                            </clipPath>
+                        </defs>
+                    </svg>
+                </div>
+                <a href="https://www.codetheorem.co" target="_blank" class="main-topbar-right-logo-unique">
+                    www.codetheorem.co
+                </a>
+            </div>
+
+            <!-- Sub Navigation -->
+            <div class="main-subnav-wrapper-unique">
+                <div class="tab-button active-tab-button" id="tab-colors-btn" onclick="switchTab('colors-tab')">
+                    Colors
+                </div>
+                <div class="tab-button" id="tab-tokens-btn" onclick="switchTab('tokens-tab')">
+                    Tokens
+                </div>
+                <div class="tab-button" id="tab-typography-btn" onclick="switchTab('typography-tab')">
+                    Typography
+                </div>
+                <div class="tab-button" id="tab-components-btn" onclick="switchTab('components-tab')">
+                    Components
+                </div>
+                <div class="tab-button" id="tab-icons-btn" onclick="switchTab('icons-tab')">
+                    Icons
+                </div>
+            </div>
+
+            <!-- COLORS TAB -->
+            <div class="tab-section active-tab" id="colors-tab">
+                <div class="colors-tab-wrapper-unique">
+                    <div class="colors-layout-unique">
+                        <div class="colors-left-panel-unique">
+                            <div class="colors-left-content-unique">
+                                <h3 class="colors-section-title-unique">Brand color</h3>
+
+                                <!-- Brand Color Input -->
+                                <div class="brand-color-input-wrapper-unique" style="position: relative;"
+                                    data-color-name="Brand color" data-color-hex="#000000"
+                                    onclick="selectColor('brand-color')">
+                                    <input type="text" class="brand-color-hex-input-unique" id="brand-color-hex"
+                                        value="#000000" oninput="updateBrandColor(this.value)"
+                                        onclick="event.stopPropagation();" />
+                                    <div class="brand-color-circle-unique" id="brand-color-circle"
+                                        style="background-color: #000000;"
+                                        onclick="event.stopPropagation(); toggleColorPicker();"></div>
+                                    <input type="color" id="brand-color-picker" value="#000000"
+                                        class="brand-color-picker-popup-unique"
+                                        onchange="updateBrandColorFromPicker(this.value)" onblur="hideColorPicker()" />
+                                </div>
+                            </div>
+
+                            <!-- Status, Natural Colors & Add Button Section -->
+                            <div class="colors-add-section-unique">
+                                <!-- Status Colors Toggle -->
+                                <div class="color-toggle-section-unique" onclick="toggleColorSection('status-colors')">
+                                    <span class="color-toggle-label-unique">Status Colors</span>
+                                    <div class="toggle-switch-unique" id="status-colors-toggle">
+                                        <div class="toggle-switch-knob-unique"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Natural Color Toggle -->
+                                <div class="color-toggle-section-unique" onclick="toggleColorSection('natural-color')">
+                                    <span class="color-toggle-label-unique">Natural Color</span>
+                                    <div class="toggle-switch-unique" id="natural-color-toggle">
+                                        <div class="toggle-switch-knob-unique"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Add Colors Button -->
+                                <button class="colors-add-button-unique" onclick="addNewColor()">
+                                    <span style="font-size: px;">+</span>
+                                    <span>Add Colors</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="colors-right-panel-unique">
+                            <div class="colors-shades-preview-unique">
+                                <!-- Color Shade Cards will be dynamically generated here -->
+                            </div>
+
+                            <!-- Colors Footer -->
+                            <div class="colors-footer-wrapper-unique">
+                                <span class="colors-footer-text-unique">Choose brand colors for light and dark</span>
+                                <button class="colors-footer-button-unique" onclick="addVariables()">
+                                    <span class="colors-footer-button-icon">+</span>
+                                    <span>Add Variables</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TOKENS TAB -->
+            <div class="tab-section" id="tokens-tab">
+                <div class="tokens-tab-wrapper-unique">
+                    <div class="tokens-layout-flex-unique">
+                        <div class="tokens-left-sidebar-unique">
+                            <div class="sidebar-option active-sidebar-option"
+                                onclick="switchTokenPanel('token-spacing-content', this)">
+                                Spacing
+                            </div>
+                            <div class="sidebar-option" onclick="switchTokenPanel('token-padding-content', this)">
+                                Padding
+                            </div>
+                            <div class="sidebar-option" onclick="switchTokenPanel('token-radius-content', this)">
+                                Radius
+                            </div>
+                            <div class="sidebar-option" onclick="switchTokenPanel('token-stroke-content', this)">
+                                Stroke
+                            </div>
+                            <div class="sidebar-option" onclick="switchTokenPanel('token-shadow-content', this)">
+                                Shadow
+                            </div>
+                            <div class="sidebar-option" onclick="switchTokenPanel('token-grid-content', this)">
+                                Grid
+                            </div>
+                        </div>
+                        <div class="tokens-right-content-wrapper-unique">
+                            <div class="token-content-panel active-token-panel" id="token-spacing-content">
+                                <h3>Spacing Token Configuration Area</h3>
+                                <p>Configure spacing tokens here</p>
+                            </div>
+                            <div class="token-content-panel" id="token-padding-content">
+                                <h3>Padding Token Configuration Area</h3>
+                                <p>Configure padding tokens here</p>
+                            </div>
+                            <div class="token-content-panel" id="token-radius-content">
+                                <h3>Radius Token Configuration Area</h3>
+                                <p>Configure radius tokens here</p>
+                            </div>
+                            <div class="token-content-panel" id="token-stroke-content">
+                                <h3>Stroke Token Configuration Area</h3>
+                                <p>Configure stroke tokens here</p>
+                            </div>
+                            <div class="token-content-panel" id="token-shadow-content">
+                                <h3>Shadow Token Configuration Area</h3>
+                                <p>Configure shadow tokens here</p>
+                            </div>
+                            <div class="token-content-panel" id="token-grid-content">
+                                <h3>Grid Token Configuration Area</h3>
+                                <p>Configure grid tokens here</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TYPOGRAPHY TAB -->
+            <div class="tab-section" id="typography-tab">
+                <div class="typography-tab-wrapper-unique">
+                    <div class="typography-layout-unique">
+                        <div class="typography-left-input-panel-unique">
+                            <p>Typography Scale List</p>
+                        </div>
+                        <div class="typography-right-preview-panel-unique">
+                            <div style="flex: 1;">
+                                <p>Typography Preview Area</p>
+                            </div>
+                            <div class="typography-footer-unique">
+                                <p>Typography Footer Actions</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COMPONENTS TAB -->
+            <div class="tab-section" id="components-tab">
+                <div class="components-tab-wrapper-unique">
+                    <div class="components-search-bar-unique">
+                        <input type="text" placeholder="Search components..." style="width: 100%; padding: 8px;">
+                    </div>
+                    <div class="components-grid-layout-unique" id="components-grid">
+                        <div class="component-card-1" onclick="openComponentDetail()">
+                            <h4>Button</h4>
+                            <p>Component card 1</p>
+                        </div>
+                        <div class="component-card-2" onclick="openComponentDetail()">
+                            <h4>Input</h4>
+                            <p>Component card 2</p>
+                        </div>
+                        <div class="component-card-3" onclick="openComponentDetail()">
+                            <h4>Card</h4>
+                            <p>Component card 3</p>
+                        </div>
+                    </div>
+                    <div class="component-detail-wrapper-unique" id="component-detail">
+                        <div class="component-detail-header-unique">
+                            <span class="back-button-unique" onclick="closeComponentDetail()">← Back</span>
+                            <h3>Component Detail View</h3>
+                        </div>
+                        <div class="component-preview-area-unique">
+                            <p>Component Preview Area</p>
+                        </div>
+                        <div class="component-config-fields-unique">
+                            <p>Component Configuration Fields</p>
+                        </div>
+                        <div class="component-detail-footer-unique">
+                            <p>Component Actions</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ICONS TAB -->
+            <div class="tab-section" id="icons-tab">
+                <div class="icons-tab-wrapper-unique">
+                    <div class="icons-selection-layout-unique">
+                        <select class="icons-library-select-unique">
+                            <option>Select Icon Library</option>
+                            <option>Material Icons</option>
+                            <option>Feather Icons</option>
+                        </select>
+                        <select class="icons-category-select-unique">
+                            <option>Select Category</option>
+                            <option>Actions</option>
+                            <option>Navigation</option>
+                        </select>
+                        <p>Icon grid will appear here</p>
+                    </div>
+                    <div class="icons-footer-wrapper-unique">
+                        <p>Icon Library Footer</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Add Color Modal -->
+    <div class="add-color-modal-overlay" id="add-color-modal">
+        <div class="add-color-modal">
+            <h3 class="add-color-modal-title">Add New Color</h3>
+
+            <div class="add-color-modal-field">
+                <label class="add-color-modal-label">Color Name</label>
+                <input type="text" class="add-color-modal-input" id="new-color-name"
+                    placeholder="e.g., Primary, Secondary">
+            </div>
+
+            <div class="add-color-modal-field">
+                <label class="add-color-modal-label">Color</label>
+                <div class="add-color-modal-picker-wrapper">
+                    <input type="color" class="add-color-modal-picker" id="new-color-picker" value="#4F46E5"
+                        oninput="updateModalColorHex(this.value)">
+                    <input type="text" class="add-color-modal-hex-input" id="new-color-hex" value="#4F46E5"
+                        oninput="updateModalColorPicker(this.value)">
+                </div>
+            </div>
+
+            <div class="add-color-modal-buttons">
+                <button class="add-color-modal-button add-color-modal-button-cancel" onclick="closeAddColorModal()">
+                    Cancel
+                </button>
+                <button class="add-color-modal-button add-color-modal-button-add" onclick="confirmAddColor()">
+                    Add Color
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Screen Navigation
+        function navigateTo(screenId) {
+            const screens = document.querySelectorAll('.screen');
+            screens.forEach(screen => screen.classList.remove('active-screen'));
+            document.getElementById(screenId).classList.add('active-screen');
+
+            // Resize plugin window based on screen
+            if (screenId === 'welcome-screen' || screenId === 'onboarding-screen') {
+                parent.postMessage({ pluginMessage: { type: 'resize', width: 400, height: 700 } }, '*');
+            } else if (screenId === 'main-app-screen' || screenId === 'auto-setup-screen') {
+                parent.postMessage({ pluginMessage: { type: 'resize', width: 800, height: 700 } }, '*');
+            }
+        }
+
+        // Tab Switching
+        function switchTab(tabId) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-section');
+            tabs.forEach(tab => tab.classList.remove('active-tab'));
+
+            // Show selected tab
+            document.getElementById(tabId).classList.add('active-tab');
+
+            // Update tab button states
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(btn => btn.classList.remove('active-tab-button'));
+
+            // Convert tab ID to button ID (e.g., 'colors-tab' -> 'tab-colors-btn')
+            const buttonId = 'tab-' + tabId.replace('-tab', '') + '-btn';
+            document.getElementById(buttonId).classList.add('active-tab-button');
+        }
+
+        // Token Sidebar Switching
+        function switchTokenPanel(panelId, optionElement) {
+            // Hide all token panels
+            const panels = document.querySelectorAll('.token-content-panel');
+            panels.forEach(panel => panel.classList.remove('active-token-panel'));
+
+            // Show selected panel
+            document.getElementById(panelId).classList.add('active-token-panel');
+
+            // Update sidebar option states
+            const options = document.querySelectorAll('.sidebar-option');
+            options.forEach(opt => opt.classList.remove('active-sidebar-option'));
+            optionElement.classList.add('active-sidebar-option');
+        }
+
+        // Component Detail Toggle
+        function openComponentDetail() {
+            document.getElementById('components-grid').style.display = 'none';
+            document.getElementById('component-detail').classList.add('active');
+        }
+
+        function closeComponentDetail() {
+            document.getElementById('components-grid').style.display = 'grid';
+            document.getElementById('component-detail').classList.remove('active');
+        }
+
+        // Setup Option Selection
+        function selectSetupOption(element, type) {
+            // Remove selected class from all cards
+            document.querySelectorAll('.onboarding-auto-setup-card-unique, .onboarding-manual-setup-card-unique').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            // Add selected class to clicked card
+            element.classList.add('selected');
+
+            // Store the selected setup type
+            window.selectedSetupType = type;
+        }
+
+        // Handle Continue Button
+        function handleContinue() {
+            // Check which setup option was selected
+            if (window.selectedSetupType === 'auto') {
+                navigateTo('auto-setup-screen');
+            } else if (window.selectedSetupType === 'manual') {
+                navigateTo('main-app-screen');
+            } else {
+                // If nothing selected, default to main app screen
+                navigateTo('main-app-screen');
+            }
+        }
+
+        // Brand Color Functions - Moved below with shade generation
+
+        function toggleColorPicker() {
+            const picker = document.getElementById('brand-color-picker');
+            if (picker) {
+                picker.classList.toggle('active');
+                if (picker.classList.contains('active')) {
+                    picker.focus();
+                    picker.click();
+                }
+            }
+        }
+
+        function hideColorPicker() {
+            const picker = document.getElementById('brand-color-picker');
+            if (picker) {
+                setTimeout(() => {
+                    picker.classList.remove('active');
+                }, 200);
+            }
+        }
+
+        // Toggle Color Section
+        function toggleColorSection(sectionId) {
+            const toggle = document.getElementById(sectionId + '-toggle');
+            if (toggle) {
+                toggle.classList.toggle('active');
+            }
+        }
+
+        // Add New Color
+        function addNewColor() {
+            const modal = document.getElementById('add-color-modal');
+            if (modal) {
+                modal.classList.add('active');
+                // Reset form
+                document.getElementById('new-color-name').value = '';
+                document.getElementById('new-color-hex').value = '#4F46E5';
+                document.getElementById('new-color-picker').value = '#4F46E5';
+            }
+        }
+
+        // Close Add Color Modal
+        function closeAddColorModal() {
+            const modal = document.getElementById('add-color-modal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        }
+
+        // Update Modal Color Hex from Picker
+        function updateModalColorHex(hexValue) {
+            const hexInput = document.getElementById('new-color-hex');
+            if (hexInput) {
+                hexInput.value = hexValue.toUpperCase();
+            }
+        }
+
+        // Update Modal Color Picker from Hex Input
+        function updateModalColorPicker(hexValue) {
+            if (!hexValue.startsWith('#')) {
+                hexValue = '#' + hexValue;
+            }
+            const picker = document.getElementById('new-color-picker');
+            if (picker && /^#[0-9A-F]{6}$/i.test(hexValue)) {
+                picker.value = hexValue;
+            }
+        }
+
+        // Confirm Add Color
+        function confirmAddColor() {
+            const colorName = document.getElementById('new-color-name').value.trim();
+            const colorHex = document.getElementById('new-color-hex').value.trim();
+
+            console.log('Adding color:', colorName, colorHex);
+
+            if (!colorName) {
+                alert('Please enter a color name');
+                return;
+            }
+
+            if (!/^#?[0-9A-F]{6}$/i.test(colorHex)) {
+                alert('Please enter a valid hex color');
+                return;
+            }
+
+            // Check if user already has 3 colors (excluding Brand color)
+            const existingColors = document.querySelectorAll('.colors-left-content-unique .brand-color-input-wrapper-unique');
+            // Count only added colors (Brand color is always there, so we check if there are more than 1)
+            const addedColorsCount = existingColors.length - 1; // Subtract 1 for Brand color
+
+            if (addedColorsCount >= 2) {
+                alert('You can only add 3 colors maximum');
+                return;
+            }
+
+            // Ensure hex starts with #
+            const finalHex = colorHex.startsWith('#') ? colorHex : '#' + colorHex;
+
+            console.log('Final hex:', finalHex);
+
+            // Add the color to the sidebar
+            addColorToSidebar(colorName, finalHex);
+
+            // Close modal
+            closeAddColorModal();
+        }
+
+        // Add Color to Sidebar
+        function addColorToSidebar(colorName, colorHex) {
+            console.log('addColorToSidebar called with:', colorName, colorHex);
+
+            const colorsLeftContent = document.querySelector('.colors-left-content-unique');
+            const colorsShadesPreview = document.querySelector('.colors-shades-preview-unique');
+
+            console.log('colorsLeftContent:', colorsLeftContent);
+            console.log('colorsShadesPreview:', colorsShadesPreview);
+
+            if (!colorsLeftContent || !colorsShadesPreview) {
+                console.error('Could not find required elements');
+                return;
+            }
+
+            // Create section title wrapper for the new color
+            const sectionTitle = document.createElement('h3');
+            sectionTitle.className = 'colors-section-title-unique';
+            sectionTitle.setAttribute('data-color-name', colorName);
+
+            // Create color name span
+            const colorNameSpan = document.createElement('span');
+            colorNameSpan.textContent = colorName;
+
+            // Create delete icon wrapper
+            const deleteIconWrapper = document.createElement('div');
+            deleteIconWrapper.className = 'color-delete-icon-wrapper';
+            deleteIconWrapper.onclick = function (e) {
+                e.stopPropagation();
+                deleteColor(colorName);
+            };
+
+            // Create delete icon (trash icon)
+            const deleteIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            deleteIcon.setAttribute('class', 'color-delete-icon-svg');
+            deleteIcon.setAttribute('viewBox', '0 0 24 24');
+            deleteIcon.setAttribute('fill', 'none');
+            deleteIcon.setAttribute('stroke', 'currentColor');
+            deleteIcon.setAttribute('stroke-width', '2');
+            deleteIcon.setAttribute('stroke-linecap', 'round');
+            deleteIcon.setAttribute('stroke-linejoin', 'round');
+
+            // Trash can icon paths
+            const path1 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path1.setAttribute('d', 'M3 6h18');
+
+            const path2 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path2.setAttribute('d', 'M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6');
+
+            const path3 = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path3.setAttribute('d', 'M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2');
+
+            deleteIcon.appendChild(path1);
+            deleteIcon.appendChild(path2);
+            deleteIcon.appendChild(path3);
+            deleteIconWrapper.appendChild(deleteIcon);
+
+            sectionTitle.appendChild(colorNameSpan);
+            sectionTitle.appendChild(deleteIconWrapper);
+
+            // Create new color input wrapper
+            const colorWrapper = document.createElement('div');
+            colorWrapper.className = 'brand-color-input-wrapper-unique';
+            colorWrapper.style.marginBottom = '24px';
+            colorWrapper.setAttribute('data-color-name', colorName);
+            colorWrapper.setAttribute('data-color-hex', colorHex);
+
+            // Create hex input
+            const hexInput = document.createElement('input');
+            hexInput.type = 'text';
+            hexInput.className = 'brand-color-hex-input-unique';
+            hexInput.value = colorHex;
+            hexInput.oninput = function () {
+                updateCustomColor(colorName, this.value);
+            };
+            hexInput.onclick = function (e) {
+                e.stopPropagation();
+            };
+
+            // Create color circle with color picker
+            const colorCircle = document.createElement('div');
+            colorCircle.className = 'brand-color-circle-unique';
+            colorCircle.style.backgroundColor = colorHex;
+            colorCircle.onclick = function (e) {
+                e.stopPropagation();
+                const picker = colorWrapper.querySelector('.custom-color-picker');
+                if (picker) {
+                    picker.click();
+                }
+            };
+
+            // Create hidden color picker
+            const colorPicker = document.createElement('input');
+            colorPicker.type = 'color';
+            colorPicker.className = 'custom-color-picker';
+            colorPicker.value = colorHex;
+            colorPicker.style.display = 'none';
+            colorPicker.onchange = function () {
+                updateCustomColorFromPicker(colorName, this.value);
+            };
+
+            colorWrapper.appendChild(hexInput);
+            colorWrapper.appendChild(colorCircle);
+            colorWrapper.appendChild(colorPicker);
+
+            // Insert at the beginning (before Brand color)
+            const firstChild = colorsLeftContent.firstChild;
+            colorsLeftContent.insertBefore(colorWrapper, firstChild);
+            colorsLeftContent.insertBefore(sectionTitle, colorWrapper);
+
+            // Create shade card for this color
+            createShadeCard(colorName, colorHex, colorsShadesPreview);
+
+            console.log('Color added successfully!');
+        }
+
+        // Delete Color
+        function deleteColor(colorName) {
+            if (!confirm(`Are you sure you want to delete "${colorName}"?`)) {
+                return;
+            }
+
+            // Remove from sidebar
+            const colorWrapper = document.querySelector(`.brand-color-input-wrapper-unique[data-color-name="${colorName}"]`);
+            const colorTitle = document.querySelector(`.colors-section-title-unique[data-color-name="${colorName}"]`);
+
+            if (colorWrapper) colorWrapper.remove();
+            if (colorTitle) colorTitle.remove();
+
+            // Remove shade card
+            const shadeCard = document.querySelector(`.color-shade-card[data-color-name="${colorName}"]`);
+            if (shadeCard) shadeCard.remove();
+
+            console.log('Color deleted:', colorName);
+        }
+
+        // Add Variables Function
+        function addVariables() {
+            console.log('Add Variables clicked');
+
+            // Collect all colors and their shades
+            const colors = [];
+
+            // Get all color wrappers
+            const colorWrappers = document.querySelectorAll('.brand-color-input-wrapper-unique[data-color-name]');
+
+            console.log('Found color wrappers:', colorWrappers.length);
+
+            colorWrappers.forEach(wrapper => {
+                const colorName = wrapper.getAttribute('data-color-name');
+                const colorHex = wrapper.getAttribute('data-color-hex');
+
+                console.log('Processing color:', colorName, colorHex);
+
+                // Get the shades for this color
+                const shadesGrid = document.querySelector(`.color-shades-grid[data-color-name="${colorName}"]`);
+                if (shadesGrid) {
+                    const shadeBoxes = shadesGrid.querySelectorAll('.color-shade-box');
+                    console.log('Found shade boxes for', colorName, ':', shadeBoxes.length);
+
+                    const shades = Array.from(shadeBoxes).map(box => {
+                        // Extract hex color from background style
+                        const bg = box.style.background;
+                        console.log('Background style:', bg);
+
+                        // Convert rgb/rgba to hex if needed
+                        if (bg.startsWith('rgb')) {
+                            const rgbMatch = bg.match(/\d+/g);
+                            if (rgbMatch && rgbMatch.length >= 3) {
+                                const r = parseInt(rgbMatch[0]);
+                                const g = parseInt(rgbMatch[1]);
+                                const b = parseInt(rgbMatch[2]);
+                                const hexColor = rgbToHexString(r, g, b);
+                                console.log('Converted RGB to hex:', hexColor);
+                                return hexColor;
+                            }
+                        }
+                        return bg; // Already hex
+                    });
+
+                    console.log('Shades for', colorName, ':', shades);
+
+                    colors.push({
+                        name: colorName,
+                        baseColor: colorHex,
+                        shades: shades
+                    });
+                } else {
+                    console.warn('No shades grid found for:', colorName);
+                }
+            });
+
+            // Check toggle states
+            const statusToggle = document.getElementById('status-colors-toggle');
+            const neutralToggle = document.getElementById('natural-color-toggle');
+
+            const includeStatus = statusToggle ? statusToggle.classList.contains('active') : false;
+            const includeNeutral = neutralToggle ? neutralToggle.classList.contains('active') : false;
+
+            console.log('Colors to create:', colors);
+            console.log('Include Status:', includeStatus);
+            console.log('Include Neutral:', includeNeutral);
+
+            if (colors.length === 0) {
+                alert('No colors found. Please add at least one color.');
+                return;
+            }
+
+            // Send message to Figma plugin
+            parent.postMessage({
+                pluginMessage: {
+                    type: 'create-variables',
+                    colors: colors,
+                    includeStatus: includeStatus,
+                    includeNeutral: includeNeutral
+                }
+            }, '*');
+        }
+
+        // Helper function to convert RGB to Hex string
+        function rgbToHexString(r, g, b) {
+            const toHex = (n) => {
+                const hex = Math.max(0, Math.min(255, n)).toString(16);
+                return hex.length === 1 ? '0' + hex : hex;
+            };
+            return '#' + toHex(r) + toHex(g) + toHex(b);
+        }
+
+        // Listen for response from Figma
+        window.addEventListener('message', function (event) {
+            if (event.data.pluginMessage && event.data.pluginMessage.type === 'variables-created') {
+                if (event.data.pluginMessage.success) {
+                    console.log('Variables created successfully!');
+                } else {
+                    console.error('Error creating variables:', event.data.pluginMessage.error);
+                }
+            }
+        });
+
+        // Create Shade Card for a Color
+        function createShadeCard(colorName, colorHex, container) {
+            // Create shade card
+            const shadeCard = document.createElement('div');
+            shadeCard.className = 'color-shade-card visible';
+            shadeCard.setAttribute('data-color-name', colorName);
+
+            // Create header
+            const header = document.createElement('div');
+            header.className = 'color-shade-header';
+
+            const titleWrapper = document.createElement('div');
+            titleWrapper.className = 'color-shade-title-wrapper';
+
+            const title = document.createElement('span');
+            title.className = 'color-shade-title';
+            title.textContent = colorName;
+
+            titleWrapper.appendChild(title);
+
+            const countWrapper = document.createElement('div');
+            countWrapper.className = 'color-shade-count';
+
+            const select = document.createElement('select');
+            select.className = 'color-shade-count-select';
+            select.onchange = function () { updateShadeCount(colorName, this.value); };
+
+            [10, 15, 20, 25, 30].forEach(num => {
+                const option = document.createElement('option');
+                option.value = num;
+                option.textContent = num;
+                if (num === 10) option.selected = true;
+                select.appendChild(option);
+            });
+
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('class', 'color-shade-dropdown-icon');
+            svg.setAttribute('viewBox', '0 0 14 14');
+            svg.setAttribute('fill', 'none');
+
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', 'M3.5 5.25L7 8.75L10.5 5.25');
+            path.setAttribute('stroke', 'rgba(0, 0, 0, 0.5)');
+            path.setAttribute('stroke-width', '1.5');
+            path.setAttribute('stroke-linecap', 'round');
+            path.setAttribute('stroke-linejoin', 'round');
+
+            svg.appendChild(path);
+            countWrapper.appendChild(select);
+            countWrapper.appendChild(svg);
+
+            header.appendChild(titleWrapper);
+            header.appendChild(countWrapper);
+
+            // Create shades grid
+            const shadesGrid = document.createElement('div');
+            shadesGrid.className = 'color-shades-grid';
+            shadesGrid.setAttribute('data-color-name', colorName);
+
+            shadeCard.appendChild(header);
+            shadeCard.appendChild(shadesGrid);
+
+            // Insert at the beginning
+            container.insertBefore(shadeCard, container.firstChild);
+
+            // Generate shades
+            generateColorShadesForCard(colorName, colorHex, 10);
+        }
+
+        // Update Shade Count for a specific color
+        function updateShadeCount(colorName, count) {
+            const shadeCard = document.querySelector(`.color-shade-card[data-color-name="${colorName}"]`);
+            if (!shadeCard) return;
+
+            const colorWrapper = document.querySelector(`.brand-color-input-wrapper-unique[data-color-name="${colorName}"]`);
+            if (!colorWrapper) return;
+
+            const colorHex = colorWrapper.getAttribute('data-color-hex');
+            generateColorShadesForCard(colorName, colorHex, parseInt(count));
+        }
+
+        // Generate Color Shades for a specific card
+        function generateColorShadesForCard(colorName, baseColor, shadeCount = 10) {
+            const shadesGrid = document.querySelector(`.color-shades-grid[data-color-name="${colorName}"]`);
+            if (!shadesGrid) return;
+
+            // Convert hex to RGB
+            const hex = baseColor.replace('#', '');
+            const r = parseInt(hex.substring(0, 2), 16);
+            const g = parseInt(hex.substring(2, 4), 16);
+            const b = parseInt(hex.substring(4, 6), 16);
+
+            // Calculate the base color position (middle)
+            const baseIndex = Math.floor(shadeCount / 2);
+            const shades = [];
+
+            // Generate shades
+            for (let i = 0; i < shadeCount; i++) {
+                if (i < baseIndex) {
+                    // Lighter shades
+                    const amount = 1 - (i / baseIndex) * 0.95;
+                    shades.push(lightenColor(r, g, b, amount));
+                } else if (i === baseIndex) {
+                    // Base color
+                    shades.push(rgbToHex(r, g, b));
+                } else {
+                    // Darker shades
+                    const amount = ((i - baseIndex) / (shadeCount - baseIndex - 1)) * 0.90;
+                    shades.push(darkenColor(r, g, b, amount));
+                }
+            }
+
+            // Clear existing shades
+            shadesGrid.innerHTML = '';
+
+            // Create shade items
+            shades.forEach((shade, index) => {
+                const shadeItem = document.createElement('div');
+                shadeItem.className = 'color-shade-item';
+
+                const shadeBox = document.createElement('div');
+                shadeBox.className = 'color-shade-box';
+                shadeBox.style.background = shade;
+
+                // Add border for very light colors
+                if (index === 0) {
+                    shadeBox.classList.add('with-border');
+                }
+
+                const shadeLabel = document.createElement('span');
+                shadeLabel.className = 'color-shade-label';
+                shadeLabel.textContent = 'Aa';
+
+                // Update text color based on brightness
+                const isLight = isLightColor(shade);
+                if (!isLight) {
+                    shadeLabel.classList.add('light-text');
+                }
+
+                shadeBox.appendChild(shadeLabel);
+
+                // Add indicator to base color
+                if (index === baseIndex) {
+                    const indicator = document.createElement('div');
+                    indicator.className = 'color-shade-indicator';
+                    shadeBox.appendChild(indicator);
+                }
+
+                shadeItem.appendChild(shadeBox);
+                shadesGrid.appendChild(shadeItem);
+            });
+        }
+
+        // Select New Color
+        function selectNewColor(element, colorHex, colorName) {
+            // Remove selected class from all color inputs
+            document.querySelectorAll('.brand-color-input-wrapper-unique').forEach(wrapper => {
+                wrapper.classList.remove('selected');
+            });
+
+            // Add selected class to clicked color
+            element.classList.add('selected');
+
+            // Update the color shade card title
+            const shadeTitle = document.querySelector('.color-shade-title');
+            if (shadeTitle) {
+                shadeTitle.textContent = colorName;
+            }
+
+            // Get the selected shade count
+            const shadeCountSelect = document.getElementById('shade-count-select');
+            const shadeCount = shadeCountSelect ? parseInt(shadeCountSelect.value) : 10;
+
+            // Generate color shades
+            generateColorShades(colorHex, shadeCount);
+
+            // Show the color shade card
+            const shadeCard = document.querySelector('.color-shade-card');
+            if (shadeCard) {
+                shadeCard.classList.add('visible');
+            }
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function (event) {
+            const modal = document.getElementById('add-color-modal');
+            if (modal && event.target === modal) {
+                closeAddColorModal();
+            }
+        });
+
+        // Initialize Brand Color Shade Card on page load
+        window.addEventListener('DOMContentLoaded', function () {
+            const brandColorHex = document.getElementById('brand-color-hex');
+            if (brandColorHex) {
+                const colorsShadesPreview = document.querySelector('.colors-shades-preview-unique');
+                if (colorsShadesPreview) {
+                    createShadeCard('Brand color', brandColorHex.value || '#000000', colorsShadesPreview);
+                }
+            }
+        });
+
+        // Select Color and Show Shades
+        function selectColor(colorId) {
+            // Remove selected class from all color inputs
+            document.querySelectorAll('.brand-color-input-wrapper-unique').forEach(wrapper => {
+                wrapper.classList.remove('selected');
+            });
+
+            // Add selected class to clicked color
+            const selectedWrapper = document.querySelector('.brand-color-input-wrapper-unique');
+            if (selectedWrapper) {
+                selectedWrapper.classList.add('selected');
+            }
+
+            // Get the selected color
+            const hexInput = document.getElementById('brand-color-hex');
+            const baseColor = hexInput ? hexInput.value : '#000000';
+
+            // Get the selected shade count
+            const shadeCountSelect = document.getElementById('shade-count-select');
+            const shadeCount = shadeCountSelect ? parseInt(shadeCountSelect.value) : 10;
+
+            // Generate color shades
+            generateColorShades(baseColor, shadeCount);
+
+            // Show the color shade card
+            const shadeCard = document.querySelector('.color-shade-card');
+            if (shadeCard) {
+                shadeCard.classList.add('visible');
+            }
+        }
+
+        // Change Shade Count
+        function changeShadeCount(count) {
+            const hexInput = document.getElementById('brand-color-hex');
+            const baseColor = hexInput ? hexInput.value : '#000000';
+            generateColorShades(baseColor, parseInt(count));
+        }
+
+        // Generate Color Shades
+        function generateColorShades(baseColor, shadeCount = 10) {
+            // Convert hex to RGB
+            const hex = baseColor.replace('#', '');
+            const r = parseInt(hex.substring(0, 2), 16);
+            const g = parseInt(hex.substring(2, 4), 16);
+            const b = parseInt(hex.substring(4, 6), 16);
+
+            // Calculate the base color position (middle)
+            const baseIndex = Math.floor(shadeCount / 2);
+            const shades = [];
+
+            // Generate shades
+            for (let i = 0; i < shadeCount; i++) {
+                if (i < baseIndex) {
+                    // Lighter shades
+                    const amount = 1 - (i / baseIndex) * 0.95;
+                    shades.push(lightenColor(r, g, b, amount));
+                } else if (i === baseIndex) {
+                    // Base color
+                    shades.push(rgbToHex(r, g, b));
+                } else {
+                    // Darker shades
+                    const amount = ((i - baseIndex) / (shadeCount - baseIndex - 1)) * 0.90;
+                    shades.push(darkenColor(r, g, b, amount));
+                }
+            }
+
+            // Clear existing shades
+            const shadesGrid = document.getElementById('color-shades-grid');
+            if (!shadesGrid) return;
+
+            shadesGrid.innerHTML = '';
+
+            // Create shade items
+            shades.forEach((shade, index) => {
+                const shadeItem = document.createElement('div');
+                shadeItem.className = 'color-shade-item';
+
+                const shadeBox = document.createElement('div');
+                shadeBox.className = 'color-shade-box';
+                shadeBox.style.background = shade;
+
+                // Add border for very light colors
+                if (index === 0) {
+                    shadeBox.classList.add('with-border');
+                }
+
+                const shadeLabel = document.createElement('span');
+                shadeLabel.className = 'color-shade-label';
+                shadeLabel.textContent = 'Aa';
+
+                // Update text color based on brightness
+                const isLight = isLightColor(shade);
+                if (!isLight) {
+                    shadeLabel.classList.add('light-text');
+                }
+
+                shadeBox.appendChild(shadeLabel);
+
+                // Add indicator to base color
+                if (index === baseIndex) {
+                    const indicator = document.createElement('div');
+                    indicator.className = 'color-shade-indicator';
+                    shadeBox.appendChild(indicator);
+                }
+
+                shadeItem.appendChild(shadeBox);
+                shadesGrid.appendChild(shadeItem);
+            });
+        }
+
+        // Lighten color
+        function lightenColor(r, g, b, amount) {
+            const newR = Math.round(r + (255 - r) * amount);
+            const newG = Math.round(g + (255 - g) * amount);
+            const newB = Math.round(b + (255 - b) * amount);
+            return rgbToHex(newR, newG, newB);
+        }
+
+        // Darken color
+        function darkenColor(r, g, b, amount) {
+            const newR = Math.round(r * (1 - amount));
+            const newG = Math.round(g * (1 - amount));
+            const newB = Math.round(b * (1 - amount));
+            return rgbToHex(newR, newG, newB);
+        }
+
+        // Convert RGB to Hex
+        function rgbToHex(r, g, b) {
+            const toHex = (n) => {
+                const hex = Math.max(0, Math.min(255, n)).toString(16);
+                return hex.length === 1 ? '0' + hex : hex;
+            };
+            return '#' + toHex(r) + toHex(g) + toHex(b);
+        }
+
+        // Check if color is light
+        function isLightColor(hexColor) {
+            const hex = hexColor.replace('#', '');
+            const r = parseInt(hex.substring(0, 2), 16);
+            const g = parseInt(hex.substring(2, 4), 16);
+            const b = parseInt(hex.substring(4, 6), 16);
+
+            // Calculate relative luminance
+            const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+            return luminance > 0.5;
+        }
+
+        // Update brand color and regenerate shades
+        function updateBrandColor(hexValue) {
+            // Ensure hex value starts with #
+            if (!hexValue.startsWith('#')) {
+                hexValue = '#' + hexValue;
+            }
+
+            // Update the color circle
+            const circle = document.getElementById('brand-color-circle');
+            const picker = document.getElementById('brand-color-picker');
+            const wrapper = document.querySelector('.brand-color-input-wrapper-unique[data-color-name="Brand color"]');
+
+            if (circle) circle.style.backgroundColor = hexValue;
+            if (picker) picker.value = hexValue;
+            if (wrapper) wrapper.setAttribute('data-color-hex', hexValue);
+
+            // Real-time update: regenerate shades for Brand color card
+            const shadeCard = document.querySelector('.color-shade-card[data-color-name="Brand color"]');
+            if (shadeCard) {
+                const select = shadeCard.querySelector('.color-shade-count-select');
+                const shadeCount = select ? parseInt(select.value) : 10;
+                generateColorShadesForCard('Brand color', hexValue, shadeCount);
+            }
+        }
+
+        // Update brand color from picker and regenerate shades
+        function updateBrandColorFromPicker(hexValue) {
+            const input = document.getElementById('brand-color-hex');
+            const circle = document.getElementById('brand-color-circle');
+            const wrapper = document.querySelector('.brand-color-input-wrapper-unique[data-color-name="Brand color"]');
+
+            if (input) input.value = hexValue;
+            if (circle) circle.style.backgroundColor = hexValue;
+            if (wrapper) wrapper.setAttribute('data-color-hex', hexValue);
+
+            // Real-time update: regenerate shades for Brand color card
+            const shadeCard = document.querySelector('.color-shade-card[data-color-name="Brand color"]');
+            if (shadeCard) {
+                const select = shadeCard.querySelector('.color-shade-count-select');
+                const shadeCount = select ? parseInt(select.value) : 10;
+                generateColorShadesForCard('Brand color', hexValue, shadeCount);
+            }
+        }
+
+        // Update custom color and regenerate shades in real-time
+        function updateCustomColor(colorName, hexValue) {
+            // Ensure hex value starts with #
+            if (!hexValue.startsWith('#')) {
+                hexValue = '#' + hexValue;
+            }
+
+            // Update the wrapper's data attribute
+            const wrapper = document.querySelector(`.brand-color-input-wrapper-unique[data-color-name="${colorName}"]`);
+            if (wrapper) {
+                wrapper.setAttribute('data-color-hex', hexValue);
+
+                // Update color circle
+                const circle = wrapper.querySelector('.brand-color-circle-unique');
+                if (circle) circle.style.backgroundColor = hexValue;
+
+                // Update color picker
+                const picker = wrapper.querySelector('.custom-color-picker');
+                if (picker) picker.value = hexValue;
+            }
+
+            // Real-time update: regenerate shades for this color card
+            const shadeCard = document.querySelector(`.color-shade-card[data-color-name="${colorName}"]`);
+            if (shadeCard) {
+                const select = shadeCard.querySelector('.color-shade-count-select');
+                const shadeCount = select ? parseInt(select.value) : 10;
+                generateColorShadesForCard(colorName, hexValue, shadeCount);
+            }
+        }
+
+        // Update custom color from picker and regenerate shades in real-time
+        function updateCustomColorFromPicker(colorName, hexValue) {
+            const wrapper = document.querySelector(`.brand-color-input-wrapper-unique[data-color-name="${colorName}"]`);
+            if (wrapper) {
+                wrapper.setAttribute('data-color-hex', hexValue);
+
+                // Update hex input
+                const input = wrapper.querySelector('.brand-color-hex-input-unique');
+                if (input) input.value = hexValue;
+
+                // Update color circle
+                const circle = wrapper.querySelector('.brand-color-circle-unique');
+                if (circle) circle.style.backgroundColor = hexValue;
+            }
+
+            // Real-time update: regenerate shades for this color card
+            const shadeCard = document.querySelector(`.color-shade-card[data-color-name="${colorName}"]`);
+            if (shadeCard) {
+                const select = shadeCard.querySelector('.color-shade-count-select');
+                const shadeCount = select ? parseInt(select.value) : 10;
+                generateColorShadesForCard(colorName, hexValue, shadeCount);
+            }
+        }
+    </script>
+
+</body>
+
+</html>
