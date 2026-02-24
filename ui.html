@@ -1251,6 +1251,37 @@
             border-color: #3B82F6;
         }
 
+        .padding-visual-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 60px;
+            height: 60px;
+        }
+
+        .padding-card.selected .padding-outer-rect {
+            fill: rgba(59, 130, 246, 0.1);
+            stroke: #3B82F6;
+        }
+
+        .padding-card.selected .padding-inner-rect {
+            fill: rgba(59, 130, 246, 0.2);
+            stroke: #3B82F6;
+        }
+
+        .radius-visual-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 60px;
+            height: 60px;
+        }
+
+        .radius-card.selected .radius-rect {
+            fill: rgba(59, 130, 246, 0.2);
+            stroke: #3B82F6;
+        }
+
         .spacing-visual {
             display: flex;
             flex-direction: row;
@@ -1397,27 +1428,91 @@
         }
 
         /* Typography Tab */
+        .typography-tab-wrapper-unique {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
         .typography-layout-unique {
             display: flex;
-            height: 100%;
+            flex: 1;
+            min-height: 0;
         }
 
         .typography-left-input-panel-unique {
             width: 200px;
             border-right: 1px solid #ddd;
-            padding: 16px;
         }
 
         .typography-right-preview-panel-unique {
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 16px;
+            padding: 0;
+            background: #FFFFFF;
+        }
+
+        /* Custom Scrollbar for Typography Preview */
+        #typography-preview-area::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        #typography-preview-area::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        #typography-preview-area::-webkit-scrollbar-thumb {
+            background: #D1D5DB;
+            border-radius: 2px;
+        }
+
+        #typography-preview-area::-webkit-scrollbar-thumb:hover {
+            background: #9CA3AF;
         }
 
         .typography-footer-unique {
-            padding: 12px;
-            border-top: 1px solid #ddd;
+            padding: 12px 12px 24px 12px;
+            border-top: 1px solid #E5E7EB;
+            background: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--spacing-16);
+            margin: 0;
+        }
+
+        .typography-footer-text-unique {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 400;
+            color: #6B7280;
+        }
+
+        .typography-footer-button-unique {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 10px 20px;
+            background: #4F46E5;
+            color: #FFFFFF;
+            border: none;
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .typography-footer-button-unique:hover {
+            background: #4338CA;
+        }
+
+        .typography-footer-button-icon {
+            font-size: 18px;
+            line-height: 1;
         }
 
         /* Components Tab */
@@ -1954,10 +2049,10 @@
 
                             <!-- Colors Footer -->
                             <div class="colors-footer-wrapper-unique">
-                                <span class="colors-footer-text-unique">Choose brand colors for light and dark</span>
+                                <span class="colors-footer-text-unique">Configure design tokens for your system</span>
                                 <button class="colors-footer-button-unique" onclick="addVariables()">
                                     <span class="colors-footer-button-icon">+</span>
-                                    <span>Add Variables</span>
+                                    <span>Add Tokens</span>
                                 </button>
                             </div>
                         </div>
@@ -2108,24 +2203,724 @@
                                 </div>
                             </div>
                             <div class="token-content-panel" id="token-padding-content">
-                                <h3>Padding Token Configuration Area</h3>
-                                <p>Configure padding tokens here</p>
+                                <div class="spacing-container">
+                                    <div class="spacing-content-wrapper">
+                                        <div class="spacing-main-section">
+                                            <div class="spacing-title">Padding</div>
+                                            <div class="spacing-grid-wrapper">
+                                                <!-- First Row -->
+                                                <div class="spacing-row">
+                                                    <div class="spacing-card padding-card" data-padding="2"
+                                                        onclick="selectPaddingCard(this)">
+                                                        <div class="spacing-visual">
+                                                            <div class="padding-visual-wrapper">
+                                                                <svg width="60" height="60" viewBox="0 0 60 60"
+                                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                    <rect class="padding-outer-rect" x="0.25" y="0.25"
+                                                                        width="59.5" height="59.5"
+                                                                        fill="rgba(0, 0, 0, 0.05)" stroke="black"
+                                                                        stroke-width="0.5" stroke-dasharray="2 2" />
+                                                                    <rect class="padding-inner-rect" x="8" y="8"
+                                                                        width="44" height="44"
+                                                                        fill="rgba(0, 0, 0, 0.05)" stroke="black"
+                                                                        stroke-width="0.5" stroke-dasharray="2 2" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                        <div class="spacing-label-wrapper">
+                                                            <div class="spacing-label">2px</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="spacing-card padding-card" data-padding="4"
+                                                        onclick="selectPaddingCard(this)">
+                                                        <div class="spacing-visual">
+                                                            <div class="padding-visual-wrapper">
+                                                                <svg width="60" height="60" viewBox="0 0 60 60"
+                                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                    <rect class="padding-outer-rect" x="0.25" y="0.25"
+                                                                        width="59.5" height="59.5"
+                                                                        fill="rgba(0, 0, 0, 0.05)" stroke="black"
+                                                                        stroke-width="0.5" stroke-dasharray="2 2" />
+                                                                    <rect class="padding-inner-rect" x="10" y="10"
+                                                                        width="40" height="40"
+                                                                        fill="rgba(0, 0, 0, 0.05)" stroke="black"
+                                                                        stroke-width="0.5" stroke-dasharray="2 2" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                        <div class="spacing-label-wrapper">
+                                                            <div class="spacing-label">4px</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="spacing-card padding-card" data-padding="6"
+                                                        onclick="selectPaddingCard(this)">
+                                                        <div class="spacing-visual">
+                                                            <div class="padding-visual-wrapper">
+                                                                <svg width="60" height="60" viewBox="0 0 60 60"
+                                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                    <rect class="padding-outer-rect" x="0.25" y="0.25"
+                                                                        width="59.5" height="59.5"
+                                                                        fill="rgba(0, 0, 0, 0.05)" stroke="black"
+                                                                        stroke-width="0.5" stroke-dasharray="2 2" />
+                                                                    <rect class="padding-inner-rect" x="12" y="12"
+                                                                        width="36" height="36"
+                                                                        fill="rgba(0, 0, 0, 0.05)" stroke="black"
+                                                                        stroke-width="0.5" stroke-dasharray="2 2" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                        <div class="spacing-label-wrapper">
+                                                            <div class="spacing-label">6px</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="spacing-card padding-card" data-padding="8"
+                                                        onclick="selectPaddingCard(this)">
+                                                        <div class="spacing-visual">
+                                                            <div class="padding-visual-wrapper">
+                                                                <svg width="60" height="60" viewBox="0 0 60 60"
+                                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                    <rect class="padding-outer-rect" x="0.25" y="0.25"
+                                                                        width="59.5" height="59.5"
+                                                                        fill="rgba(0, 0, 0, 0.05)" stroke="black"
+                                                                        stroke-width="0.5" stroke-dasharray="2 2" />
+                                                                    <rect class="padding-inner-rect" x="14" y="14"
+                                                                        width="32" height="32"
+                                                                        fill="rgba(0, 0, 0, 0.05)" stroke="black"
+                                                                        stroke-width="0.5" stroke-dasharray="2 2" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                        <div class="spacing-label-wrapper">
+                                                            <div class="spacing-label">8px</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- Second Row -->
+                                                <div class="spacing-row">
+                                                    <div class="spacing-card padding-card" data-padding="10"
+                                                        onclick="selectPaddingCard(this)">
+                                                        <div class="spacing-visual">
+                                                            <div class="padding-visual-wrapper">
+                                                                <svg width="60" height="60" viewBox="0 0 60 60"
+                                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                    <rect class="padding-outer-rect" x="0.25" y="0.25"
+                                                                        width="59.5" height="59.5"
+                                                                        fill="rgba(0, 0, 0, 0.05)" stroke="black"
+                                                                        stroke-width="0.5" stroke-dasharray="2 2" />
+                                                                    <rect class="padding-inner-rect" x="16" y="16"
+                                                                        width="28" height="28"
+                                                                        fill="rgba(0, 0, 0, 0.05)" stroke="black"
+                                                                        stroke-width="0.5" stroke-dasharray="2 2" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                        <div class="spacing-label-wrapper">
+                                                            <div class="spacing-label">10px</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="spacing-card padding-card" data-padding="12"
+                                                        onclick="selectPaddingCard(this)">
+                                                        <div class="spacing-visual">
+                                                            <div class="padding-visual-wrapper">
+                                                                <svg width="60" height="60" viewBox="0 0 60 60"
+                                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                    <rect class="padding-outer-rect" x="0.25" y="0.25"
+                                                                        width="59.5" height="59.5"
+                                                                        fill="rgba(0, 0, 0, 0.05)" stroke="black"
+                                                                        stroke-width="0.5" stroke-dasharray="2 2" />
+                                                                    <rect class="padding-inner-rect" x="18" y="18"
+                                                                        width="24" height="24"
+                                                                        fill="rgba(0, 0, 0, 0.05)" stroke="black"
+                                                                        stroke-width="0.5" stroke-dasharray="2 2" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                        <div class="spacing-label-wrapper">
+                                                            <div class="spacing-label">12px</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="spacing-card padding-card" data-padding="14"
+                                                        onclick="selectPaddingCard(this)">
+                                                        <div class="spacing-visual">
+                                                            <div class="padding-visual-wrapper">
+                                                                <svg width="60" height="60" viewBox="0 0 60 60"
+                                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                    <rect class="padding-outer-rect" x="0.25" y="0.25"
+                                                                        width="59.5" height="59.5"
+                                                                        fill="rgba(0, 0, 0, 0.05)" stroke="black"
+                                                                        stroke-width="0.5" stroke-dasharray="2 2" />
+                                                                    <rect class="padding-inner-rect" x="20" y="20"
+                                                                        width="20" height="20"
+                                                                        fill="rgba(0, 0, 0, 0.05)" stroke="black"
+                                                                        stroke-width="0.5" stroke-dasharray="2 2" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                        <div class="spacing-label-wrapper">
+                                                            <div class="spacing-label">14px</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="spacing-card padding-card" data-padding="16"
+                                                        onclick="selectPaddingCard(this)">
+                                                        <div class="spacing-visual">
+                                                            <div class="padding-visual-wrapper">
+                                                                <svg width="60" height="60" viewBox="0 0 60 60"
+                                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                    <rect class="padding-outer-rect" x="0.25" y="0.25"
+                                                                        width="59.5" height="59.5"
+                                                                        fill="rgba(0, 0, 0, 0.05)" stroke="black"
+                                                                        stroke-width="0.5" stroke-dasharray="2 2" />
+                                                                    <rect class="padding-inner-rect" x="22" y="22"
+                                                                        width="16" height="16"
+                                                                        fill="rgba(0, 0, 0, 0.05)" stroke="black"
+                                                                        stroke-width="0.5" stroke-dasharray="2 2" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                        <div class="spacing-label-wrapper">
+                                                            <div class="spacing-label">16px</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="spacing-footer">
+                                            <div class="spacing-footer-title">Select Number of Padding</div>
+                                            <div class="spacing-dropdown">
+                                                <select id="padding-count-select">
+                                                    <option value="10">10</option>
+                                                    <option value="12" selected>12</option>
+                                                    <option value="15">15</option>
+                                                    <option value="20">20</option>
+                                                    <option value="25">25</option>
+                                                    <option value="30">30</option>
+                                                </select>
+                                                <svg class="spacing-dropdown-icon" viewBox="0 0 20 20" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M5.55556 7.77778L10 12.2222L14.4444 7.77778"
+                                                        stroke="rgba(0, 0, 0, 0.5)" stroke-width="1.5"
+                                                        stroke-linecap="round" stroke-linejoin="round" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="token-content-panel" id="token-radius-content">
-                                <h3>Radius Token Configuration Area</h3>
-                                <p>Configure radius tokens here</p>
+                                <div class="spacing-container">
+                                    <div class="spacing-content-wrapper">
+                                        <div class="spacing-main-section">
+                                            <div class="spacing-title">Radius</div>
+                                            <div class="spacing-grid-wrapper">
+                                                <!-- First Row -->
+                                                <div class="spacing-row">
+                                                    <div class="spacing-card radius-card" data-radius="0"
+                                                        onclick="selectRadiusCard(this)">
+                                                        <div class="spacing-visual">
+                                                            <div class="radius-visual-wrapper">
+                                                                <svg width="60" height="60" viewBox="0 0 60 60"
+                                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                    <rect class="radius-rect" x="0.25" y="0.25"
+                                                                        width="59.5" height="59.5" rx="0"
+                                                                        fill="rgba(0, 0, 0, 0.05)" stroke="black"
+                                                                        stroke-width="0.5" stroke-dasharray="2 2" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                        <div class="spacing-label-wrapper">
+                                                            <div class="spacing-label">0px</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="spacing-card radius-card" data-radius="2"
+                                                        onclick="selectRadiusCard(this)">
+                                                        <div class="spacing-visual">
+                                                            <div class="radius-visual-wrapper">
+                                                                <svg width="60" height="60" viewBox="0 0 60 60"
+                                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                    <rect class="radius-rect" x="0.25" y="0.25"
+                                                                        width="59.5" height="59.5" rx="2"
+                                                                        fill="rgba(0, 0, 0, 0.05)" stroke="black"
+                                                                        stroke-width="0.5" stroke-dasharray="2 2" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                        <div class="spacing-label-wrapper">
+                                                            <div class="spacing-label">2px</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="spacing-card radius-card" data-radius="4"
+                                                        onclick="selectRadiusCard(this)">
+                                                        <div class="spacing-visual">
+                                                            <div class="radius-visual-wrapper">
+                                                                <svg width="60" height="60" viewBox="0 0 60 60"
+                                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                    <rect class="radius-rect" x="0.25" y="0.25"
+                                                                        width="59.5" height="59.5" rx="4"
+                                                                        fill="rgba(0, 0, 0, 0.05)" stroke="black"
+                                                                        stroke-width="0.5" stroke-dasharray="2 2" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                        <div class="spacing-label-wrapper">
+                                                            <div class="spacing-label">4px</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="spacing-card radius-card" data-radius="6"
+                                                        onclick="selectRadiusCard(this)">
+                                                        <div class="spacing-visual">
+                                                            <div class="radius-visual-wrapper">
+                                                                <svg width="60" height="60" viewBox="0 0 60 60"
+                                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                    <rect class="radius-rect" x="0.25" y="0.25"
+                                                                        width="59.5" height="59.5" rx="6"
+                                                                        fill="rgba(0, 0, 0, 0.05)" stroke="black"
+                                                                        stroke-width="0.5" stroke-dasharray="2 2" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                        <div class="spacing-label-wrapper">
+                                                            <div class="spacing-label">6px</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- Second Row -->
+                                                <div class="spacing-row">
+                                                    <div class="spacing-card radius-card" data-radius="8"
+                                                        onclick="selectRadiusCard(this)">
+                                                        <div class="spacing-visual">
+                                                            <div class="radius-visual-wrapper">
+                                                                <svg width="60" height="60" viewBox="0 0 60 60"
+                                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                    <rect class="radius-rect" x="0.25" y="0.25"
+                                                                        width="59.5" height="59.5" rx="8"
+                                                                        fill="rgba(0, 0, 0, 0.05)" stroke="black"
+                                                                        stroke-width="0.5" stroke-dasharray="2 2" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                        <div class="spacing-label-wrapper">
+                                                            <div class="spacing-label">8px</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="spacing-card radius-card" data-radius="10"
+                                                        onclick="selectRadiusCard(this)">
+                                                        <div class="spacing-visual">
+                                                            <div class="radius-visual-wrapper">
+                                                                <svg width="60" height="60" viewBox="0 0 60 60"
+                                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                    <rect class="radius-rect" x="0.25" y="0.25"
+                                                                        width="59.5" height="59.5" rx="10"
+                                                                        fill="rgba(0, 0, 0, 0.05)" stroke="black"
+                                                                        stroke-width="0.5" stroke-dasharray="2 2" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                        <div class="spacing-label-wrapper">
+                                                            <div class="spacing-label">10px</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="spacing-card radius-card" data-radius="12"
+                                                        onclick="selectRadiusCard(this)">
+                                                        <div class="spacing-visual">
+                                                            <div class="radius-visual-wrapper">
+                                                                <svg width="60" height="60" viewBox="0 0 60 60"
+                                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                    <rect class="radius-rect" x="0.25" y="0.25"
+                                                                        width="59.5" height="59.5" rx="12"
+                                                                        fill="rgba(0, 0, 0, 0.05)" stroke="black"
+                                                                        stroke-width="0.5" stroke-dasharray="2 2" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                        <div class="spacing-label-wrapper">
+                                                            <div class="spacing-label">12px</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="spacing-card radius-card" data-radius="14"
+                                                        onclick="selectRadiusCard(this)">
+                                                        <div class="spacing-visual">
+                                                            <div class="radius-visual-wrapper">
+                                                                <svg width="60" height="60" viewBox="0 0 60 60"
+                                                                    fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                    <rect class="radius-rect" x="0.25" y="0.25"
+                                                                        width="59.5" height="59.5" rx="14"
+                                                                        fill="rgba(0, 0, 0, 0.05)" stroke="black"
+                                                                        stroke-width="0.5" stroke-dasharray="2 2" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                        <div class="spacing-label-wrapper">
+                                                            <div class="spacing-label">14px</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="spacing-footer">
+                                            <div class="spacing-footer-title">Select Number of Radius</div>
+                                            <div class="spacing-dropdown">
+                                                <select id="radius-count-select">
+                                                    <option value="10">10</option>
+                                                    <option value="12" selected>12</option>
+                                                    <option value="15">15</option>
+                                                    <option value="20">20</option>
+                                                    <option value="25">25</option>
+                                                    <option value="30">30</option>
+                                                </select>
+                                                <svg class="spacing-dropdown-icon" viewBox="0 0 20 20" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M5.55556 7.77778L10 12.2222L14.4444 7.77778"
+                                                        stroke="rgba(0, 0, 0, 0.5)" stroke-width="1.5"
+                                                        stroke-linecap="round" stroke-linejoin="round" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="token-content-panel" id="token-stroke-content">
-                                <h3>Stroke Token Configuration Area</h3>
-                                <p>Configure stroke tokens here</p>
+                                <!-- Stroke Container -->
+                                <div class="spacing-container">
+                                    <div class="spacing-content-wrapper">
+                                        <!-- Main Section -->
+                                        <div class="spacing-main-section">
+                                            <!-- Title -->
+                                            <div class="spacing-title">Stroke</div>
+
+                                            <!-- Stroke Cards Grid -->
+                                            <div class="spacing-grid-wrapper">
+                                                <div class="spacing-row">
+                                                    <!-- 0.5px Stroke Card -->
+                                                    <div class="spacing-card stroke-card" data-stroke="0.5"
+                                                        onclick="selectStrokeCard(this)">
+                                                        <div class="padding-visual-wrapper">
+                                                            <svg width="60" height="60" viewBox="0 0 60 60" fill="none"
+                                                                xmlns="http://www.w3.org/2000/svg">
+                                                                <rect x="0.25" y="0.25" width="59.5" height="59.5"
+                                                                    fill="rgba(0, 0, 0, 0.05)" stroke="black"
+                                                                    stroke-width="0.5" stroke-dasharray="2 2" />
+                                                            </svg>
+                                                        </div>
+                                                        <div class="spacing-label-wrapper">
+                                                            <div class="spacing-label">0.5px</div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- 1px Stroke Card -->
+                                                    <div class="spacing-card stroke-card" data-stroke="1"
+                                                        onclick="selectStrokeCard(this)">
+                                                        <div class="padding-visual-wrapper">
+                                                            <svg width="60" height="60" viewBox="0 0 60 60" fill="none"
+                                                                xmlns="http://www.w3.org/2000/svg">
+                                                                <rect x="0.5" y="0.5" width="59" height="59" rx="2"
+                                                                    fill="rgba(0, 0, 0, 0.05)" stroke="black"
+                                                                    stroke-width="1" stroke-dasharray="2 2" />
+                                                            </svg>
+                                                        </div>
+                                                        <div class="spacing-label-wrapper">
+                                                            <div class="spacing-label">1px</div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- 1.5px Stroke Card -->
+                                                    <div class="spacing-card stroke-card" data-stroke="1.5"
+                                                        onclick="selectStrokeCard(this)">
+                                                        <div class="padding-visual-wrapper">
+                                                            <svg width="60" height="60" viewBox="0 0 60 60" fill="none"
+                                                                xmlns="http://www.w3.org/2000/svg">
+                                                                <rect x="0.75" y="0.75" width="58.5" height="58.5"
+                                                                    rx="4" fill="rgba(0, 0, 0, 0.05)" stroke="black"
+                                                                    stroke-width="1.5" stroke-dasharray="2 2" />
+                                                            </svg>
+                                                        </div>
+                                                        <div class="spacing-label-wrapper">
+                                                            <div class="spacing-label">1.5px</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Footer with Dropdown -->
+                                        <div class="spacing-footer">
+                                            <div class="spacing-footer-title">Select Number of Stroke</div>
+                                            <div class="spacing-dropdown">
+                                                <select id="stroke-count-select">
+                                                    <option value="10">10</option>
+                                                    <option value="15">15</option>
+                                                    <option value="20" selected>20</option>
+                                                    <option value="25">25</option>
+                                                    <option value="30">30</option>
+                                                </select>
+                                                <svg class="spacing-dropdown-icon" width="20" height="20"
+                                                    viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M5.55556 7.77778L10 12.2222L14.4444 7.77778"
+                                                        stroke="rgba(0, 0, 0, 0.5)" stroke-width="1.5"
+                                                        stroke-linecap="round" stroke-linejoin="round" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="token-content-panel" id="token-shadow-content">
-                                <h3>Shadow Token Configuration Area</h3>
-                                <p>Configure shadow tokens here</p>
+                                <!-- Shadow Container -->
+                                <div class="spacing-container">
+                                    <div class="spacing-content-wrapper">
+                                        <!-- Main Section -->
+                                        <div class="spacing-main-section">
+                                            <!-- Title -->
+                                            <div class="spacing-title">Shadows</div>
+
+                                            <!-- Shadow Cards Grid -->
+                                            <div class="spacing-grid-wrapper">
+                                                <!-- First Row -->
+                                                <div class="spacing-row">
+                                                    <!-- XS Shadow -->
+                                                    <div class="spacing-card shadow-card" data-shadow="xs">
+                                                        <div class="padding-visual-wrapper">
+                                                            <div
+                                                                style="width: 60px; height: 60px; background: #FAFAFA; box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05); border-radius: 8px;">
+                                                            </div>
+                                                        </div>
+                                                        <div class="spacing-label-wrapper">
+                                                            <div class="spacing-label">XS</div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- SM Shadow -->
+                                                    <div class="spacing-card shadow-card" data-shadow="sm">
+                                                        <div class="padding-visual-wrapper">
+                                                            <div
+                                                                style="width: 60px; height: 60px; background: #FAFAFA; box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1); border-radius: 8px;">
+                                                            </div>
+                                                        </div>
+                                                        <div class="spacing-label-wrapper">
+                                                            <div class="spacing-label">SM</div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- BASE Shadow -->
+                                                    <div class="spacing-card shadow-card" data-shadow="base">
+                                                        <div class="padding-visual-wrapper">
+                                                            <div
+                                                                style="width: 60px; height: 60px; background: #FAFAFA; box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); border-radius: 8px;">
+                                                            </div>
+                                                        </div>
+                                                        <div class="spacing-label-wrapper">
+                                                            <div class="spacing-label">BASE</div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- MD Shadow -->
+                                                    <div class="spacing-card shadow-card" data-shadow="md">
+                                                        <div class="padding-visual-wrapper">
+                                                            <div
+                                                                style="width: 60px; height: 60px; background: #FAFAFA; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); border-radius: 8px;">
+                                                            </div>
+                                                        </div>
+                                                        <div class="spacing-label-wrapper">
+                                                            <div class="spacing-label">MD</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- Second Row -->
+                                                <div class="spacing-row">
+                                                    <!-- LG Shadow -->
+                                                    <div class="spacing-card shadow-card" data-shadow="lg">
+                                                        <div class="padding-visual-wrapper">
+                                                            <div
+                                                                style="width: 60px; height: 60px; background: #FAFAFA; box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1); border-radius: 8px;">
+                                                            </div>
+                                                        </div>
+                                                        <div class="spacing-label-wrapper">
+                                                            <div class="spacing-label">LG</div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- XL Shadow -->
+                                                    <div class="spacing-card shadow-card" data-shadow="xl">
+                                                        <div class="padding-visual-wrapper">
+                                                            <div
+                                                                style="width: 60px; height: 60px; background: #FAFAFA; box-shadow: 0px 20px 25px rgba(0, 0, 0, 0.1); border-radius: 8px;">
+                                                            </div>
+                                                        </div>
+                                                        <div class="spacing-label-wrapper">
+                                                            <div class="spacing-label">XL</div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- 2XL Shadow -->
+                                                    <div class="spacing-card shadow-card" data-shadow="2xl">
+                                                        <div class="padding-visual-wrapper">
+                                                            <div
+                                                                style="width: 60px; height: 60px; background: #FAFAFA; box-shadow: 0px 25px 50px rgba(0, 0, 0, 0.15); border-radius: 8px;">
+                                                            </div>
+                                                        </div>
+                                                        <div class="spacing-label-wrapper">
+                                                            <div class="spacing-label">2XL</div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- 3XL Shadow -->
+                                                    <div class="spacing-card shadow-card" data-shadow="3xl">
+                                                        <div class="padding-visual-wrapper">
+                                                            <div
+                                                                style="width: 60px; height: 60px; background: #FAFAFA; box-shadow: 0px 40px 50px rgba(0, 0, 0, 0.15); border-radius: 8px;">
+                                                            </div>
+                                                        </div>
+                                                        <div class="spacing-label-wrapper">
+                                                            <div class="spacing-label">3XL</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="token-content-panel" id="token-grid-content">
-                                <h3>Grid Token Configuration Area</h3>
-                                <p>Configure grid tokens here</p>
+                                <!-- Grid Container -->
+                                <div style="display: flex; flex-direction: column; gap: 12px; padding: 0;">
+                                    <!-- Desktop Grid -->
+                                    <div class="spacing-container" style="height: auto;">
+                                        <div
+                                            style="font-family: 'Poppins'; font-weight: 500; font-size: 12px; color: #000000; margin-bottom: 8px;">
+                                            Desktop Grid
+                                        </div>
+                                        <div style="display: flex; flex-direction: row; gap: 16px; width: 100%;">
+                                            <!-- Columns -->
+                                            <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                                                <div
+                                                    style="font-family: 'Poppins'; font-size: 10px; color: rgba(0, 0, 0, 0.6);">
+                                                    Columns
+                                                </div>
+                                                <div
+                                                    style="box-sizing: border-box; display: flex; padding: 6px 12px; background: #FFFFFF; border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 100px; height: 30px; align-items: center;">
+                                                    <input type="number" id="desktop-columns" value="12"
+                                                        style="border: none; outline: none; background: transparent; font-family: 'Poppins'; font-size: 12px; color: rgba(0, 0, 0, 0.6); width: 100%;" />
+                                                </div>
+                                            </div>
+                                            <!-- Margin -->
+                                            <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                                                <div
+                                                    style="font-family: 'Poppins'; font-size: 10px; color: rgba(0, 0, 0, 0.6);">
+                                                    Margin
+                                                </div>
+                                                <div
+                                                    style="box-sizing: border-box; display: flex; padding: 6px 12px; background: #FFFFFF; border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 100px; height: 30px; align-items: center;">
+                                                    <input type="number" id="desktop-margin" value="124"
+                                                        style="border: none; outline: none; background: transparent; font-family: 'Poppins'; font-size: 12px; color: rgba(0, 0, 0, 0.6); width: 100%;" />
+                                                </div>
+                                            </div>
+                                            <!-- Gutter -->
+                                            <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                                                <div
+                                                    style="font-family: 'Poppins'; font-size: 10px; color: rgba(0, 0, 0, 0.6);">
+                                                    Gutter
+                                                </div>
+                                                <div
+                                                    style="box-sizing: border-box; display: flex; padding: 6px 12px; background: #FFFFFF; border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 100px; height: 30px; align-items: center;">
+                                                    <input type="number" id="desktop-gutter" value="24"
+                                                        style="border: none; outline: none; background: transparent; font-family: 'Poppins'; font-size: 12px; color: rgba(0, 0, 0, 0.6); width: 100%;" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Tablet Grid -->
+                                    <div class="spacing-container" style="height: auto;">
+                                        <div
+                                            style="font-family: 'Poppins'; font-weight: 500; font-size: 12px; color: #000000; margin-bottom: 8px;">
+                                            Tablet Grid
+                                        </div>
+                                        <div style="display: flex; flex-direction: row; gap: 16px; width: 100%;">
+                                            <!-- Columns -->
+                                            <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                                                <div
+                                                    style="font-family: 'Poppins'; font-size: 10px; color: rgba(0, 0, 0, 0.6);">
+                                                    Columns
+                                                </div>
+                                                <div
+                                                    style="box-sizing: border-box; display: flex; padding: 6px 12px; background: #FFFFFF; border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 100px; height: 30px; align-items: center;">
+                                                    <input type="number" id="tablet-columns" value="6"
+                                                        style="border: none; outline: none; background: transparent; font-family: 'Poppins'; font-size: 12px; color: rgba(0, 0, 0, 0.6); width: 100%;" />
+                                                </div>
+                                            </div>
+                                            <!-- Margin -->
+                                            <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                                                <div
+                                                    style="font-family: 'Poppins'; font-size: 10px; color: rgba(0, 0, 0, 0.6);">
+                                                    Margin
+                                                </div>
+                                                <div
+                                                    style="box-sizing: border-box; display: flex; padding: 6px 12px; background: #FFFFFF; border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 100px; height: 30px; align-items: center;">
+                                                    <input type="number" id="tablet-margin" value="54"
+                                                        style="border: none; outline: none; background: transparent; font-family: 'Poppins'; font-size: 12px; color: rgba(0, 0, 0, 0.6); width: 100%;" />
+                                                </div>
+                                            </div>
+                                            <!-- Gutter -->
+                                            <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                                                <div
+                                                    style="font-family: 'Poppins'; font-size: 10px; color: rgba(0, 0, 0, 0.6);">
+                                                    Gutter
+                                                </div>
+                                                <div
+                                                    style="box-sizing: border-box; display: flex; padding: 6px 12px; background: #FFFFFF; border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 100px; height: 30px; align-items: center;">
+                                                    <input type="number" id="tablet-gutter" value="24"
+                                                        style="border: none; outline: none; background: transparent; font-family: 'Poppins'; font-size: 12px; color: rgba(0, 0, 0, 0.6); width: 100%;" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Mobile Grid -->
+                                    <div class="spacing-container" style="height: auto;">
+                                        <div
+                                            style="font-family: 'Poppins'; font-weight: 500; font-size: 12px; color: #000000; margin-bottom: 8px;">
+                                            Mobile Grid
+                                        </div>
+                                        <div style="display: flex; flex-direction: row; gap: 16px; width: 100%;">
+                                            <!-- Columns -->
+                                            <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                                                <div
+                                                    style="font-family: 'Poppins'; font-size: 10px; color: rgba(0, 0, 0, 0.6);">
+                                                    Columns
+                                                </div>
+                                                <div
+                                                    style="box-sizing: border-box; display: flex; padding: 6px 12px; background: #FFFFFF; border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 100px; height: 30px; align-items: center;">
+                                                    <input type="number" id="mobile-columns" value="4"
+                                                        style="border: none; outline: none; background: transparent; font-family: 'Poppins'; font-size: 12px; color: rgba(0, 0, 0, 0.6); width: 100%;" />
+                                                </div>
+                                            </div>
+                                            <!-- Margin -->
+                                            <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                                                <div
+                                                    style="font-family: 'Poppins'; font-size: 10px; color: rgba(0, 0, 0, 0.6);">
+                                                    Margin
+                                                </div>
+                                                <div
+                                                    style="box-sizing: border-box; display: flex; padding: 6px 12px; background: #FFFFFF; border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 100px; height: 30px; align-items: center;">
+                                                    <input type="number" id="mobile-margin" value="24"
+                                                        style="border: none; outline: none; background: transparent; font-family: 'Poppins'; font-size: 12px; color: rgba(0, 0, 0, 0.6); width: 100%;" />
+                                                </div>
+                                            </div>
+                                            <!-- Gutter -->
+                                            <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+                                                <div
+                                                    style="font-family: 'Poppins'; font-size: 10px; color: rgba(0, 0, 0, 0.6);">
+                                                    Gutter
+                                                </div>
+                                                <div
+                                                    style="box-sizing: border-box; display: flex; padding: 6px 12px; background: #FFFFFF; border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 100px; height: 30px; align-items: center;">
+                                                    <input type="number" id="mobile-gutter" value="16"
+                                                        style="border: none; outline: none; background: transparent; font-family: 'Poppins'; font-size: 12px; color: rgba(0, 0, 0, 0.6); width: 100%;" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2144,17 +2939,76 @@
             <div class="tab-section" id="typography-tab">
                 <div class="typography-tab-wrapper-unique">
                     <div class="typography-layout-unique">
+                        <!-- Left Sidebar -->
                         <div class="typography-left-input-panel-unique">
-                            <p>Typography Scale List</p>
+                            <div style="padding: 12px; display: flex; flex-direction: column; gap: 18px;">
+                                <!-- Primary Font -->
+                                <div>
+                                    <label
+                                        style="font-family: 'Poppins'; font-size: 14px; font-weight: 500; color: #000000; display: block; margin-bottom: 8px;">
+                                        Primary Font
+                                    </label>
+                                    <input type="text" id="primary-font" placeholder="Enter Font Name" value="Inter"
+                                        style="width: 100%; padding: 8px 16px; border: 1px solid #E5E7EB; border-radius: 100px; font-family: 'Poppins'; font-size: 14px; outline: none; box-sizing: border-box;">
+                                </div>
+
+                                <!-- Secondary Font Toggle -->
+                                <div>
+                                    <div
+                                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                        <label
+                                            style="font-family: 'Poppins'; font-size: 14px; font-weight: 400; color: #9CA3AF;">
+                                            Secondary Font
+                                        </label>
+                                        <div class="toggle-switch-unique" id="secondary-font-toggle"
+                                            onclick="toggleSecondaryFont()">
+                                            <div class="toggle-switch-knob-unique"></div>
+                                        </div>
+                                    </div>
+                                    <input type="text" id="secondary-font" placeholder="Enter Font Name" disabled
+                                        style="width: 100%; padding: 8px 16px; border: 1px solid #E5E7EB; border-radius: 100px; font-family: 'Poppins'; font-size: 14px; outline: none; box-sizing: border-box; background: #F9FAFB; color: #9CA3AF;">
+                                </div>
+
+                                <!-- Base Font Size -->
+                                <div>
+                                    <label
+                                        style="font-family: 'Poppins'; font-size: 14px; font-weight: 500; color: #000000; display: block; margin-bottom: 8px;">
+                                        Base Font Size
+                                    </label>
+                                    <div style="position: relative;">
+                                        <select id="base-font-size"
+                                            style="width: 100%; padding: 8px 16px; border: 1px solid #E5E7EB; border-radius: 100px; font-family: 'Poppins'; font-size: 14px; outline: none; appearance: none; background: #FFFFFF; cursor: pointer;">
+                                            <option value="10">10</option>
+                                            <option value="12" selected>12</option>
+                                            <option value="14">14</option>
+                                            <option value="16">16</option>
+                                            <option value="18">18</option>
+                                        </select>
+                                        <svg style="position: absolute; right: 16px; top: 50%; transform: translateY(-50%); pointer-events: none;"
+                                            width="12" height="8" viewBox="0 0 12 8" fill="none">
+                                            <path d="M1 1.5L6 6.5L11 1.5" stroke="#6B7280" stroke-width="1.5"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+
+                        <!-- Right Preview Panel -->
                         <div class="typography-right-preview-panel-unique">
-                            <div style="flex: 1;">
-                                <p>Typography Preview Area</p>
-                            </div>
-                            <div class="typography-footer-unique">
-                                <p>Typography Footer Actions</p>
+                            <div style="flex: 1; padding: 12px 12px 80px 12px; overflow-y: auto;"
+                                id="typography-preview-area">
+                                <!-- Typography scale will be generated here -->
                             </div>
                         </div>
+                    </div>
+                    <!-- Typography Footer -->
+                    <div class="typography-footer-unique">
+                        <span class="typography-footer-text-unique">Configure design tokens for your system</span>
+                        <button class="typography-footer-button-unique" onclick="addTypographyTokens()">
+                            <span class="typography-footer-button-icon">+</span>
+                            <span>Add Tokens</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -2307,7 +3161,7 @@
 
         function selectSpacingCard(cardElement) {
             // Remove selected class from all spacing cards
-            const cards = document.querySelectorAll('.spacing-card');
+            const cards = document.querySelectorAll('#token-spacing-content .spacing-card');
             cards.forEach(card => card.classList.remove('selected'));
 
             // Add selected class to clicked card
@@ -2318,24 +3172,168 @@
             selectedSpacingBase = parseInt(label.textContent);
         }
 
-        // Generate Spacing Tokens
+        // Padding Card Click Handler
+        let selectedPaddingBase = 2; // Default base value
+
+        function selectPaddingCard(cardElement) {
+            // Remove selected class from all padding cards
+            const cards = document.querySelectorAll('#token-padding-content .spacing-card');
+            cards.forEach(card => card.classList.remove('selected'));
+
+            // Add selected class to clicked card
+            cardElement.classList.add('selected');
+
+            // Get the padding value from the card
+            const label = cardElement.querySelector('.spacing-label');
+            selectedPaddingBase = parseInt(label.textContent);
+        }
+
+        // Radius Card Click Handler
+        let selectedRadiusBase = 0; // Default base value
+
+        function selectRadiusCard(cardElement) {
+            // Remove selected class from all radius cards
+            const cards = document.querySelectorAll('#token-radius-content .spacing-card');
+            cards.forEach(card => card.classList.remove('selected'));
+
+            // Add selected class to clicked card
+            cardElement.classList.add('selected');
+
+            // Get the radius value from the card
+            const label = cardElement.querySelector('.spacing-label');
+            selectedRadiusBase = parseInt(label.textContent);
+        }
+
+        // Stroke Card Click Handler
+        let selectedStrokeBase = 0.5; // Default base value
+
+        function selectStrokeCard(cardElement) {
+            // Remove selected class from all stroke cards
+            const cards = document.querySelectorAll('#token-stroke-content .spacing-card');
+            cards.forEach(card => card.classList.remove('selected'));
+
+            // Add selected class to clicked card
+            cardElement.classList.add('selected');
+
+            // Get the stroke value from the card
+            const label = cardElement.querySelector('.spacing-label');
+            selectedStrokeBase = parseFloat(label.textContent);
+        }
+
+        // Generate Spacing/Padding Tokens
         function addTokenVariables() {
-            const dropdown = document.querySelector('.spacing-dropdown select');
-            const numberOfTokens = parseInt(dropdown.value);
+            // Check which token panel is active
+            const activePanel = document.querySelector('.token-content-panel.active-token-panel');
 
-            if (!selectedSpacingBase) {
-                figma.notify('Please select a spacing base value first');
-                return;
-            }
+            if (activePanel.id === 'token-spacing-content') {
+                const dropdown = document.querySelector('#token-spacing-content .spacing-dropdown select');
+                const numberOfTokens = parseInt(dropdown.value);
 
-            // Send message to code.js to create spacing variables
-            parent.postMessage({
-                pluginMessage: {
-                    type: 'create-spacing-tokens',
-                    baseValue: selectedSpacingBase,
-                    numberOfTokens: numberOfTokens
+                if (!selectedSpacingBase) {
+                    parent.postMessage({
+                        pluginMessage: { type: 'notify', message: 'Please select a spacing base value first' }
+                    }, '*');
+                    return;
                 }
-            }, '*');
+
+                // Send message to code.js to create spacing variables
+                parent.postMessage({
+                    pluginMessage: {
+                        type: 'create-spacing-tokens',
+                        baseValue: selectedSpacingBase,
+                        numberOfTokens: numberOfTokens
+                    }
+                }, '*');
+            } else if (activePanel.id === 'token-padding-content') {
+                const dropdown = document.querySelector('#padding-count-select');
+                const numberOfTokens = parseInt(dropdown.value);
+
+                if (selectedPaddingBase === undefined) {
+                    parent.postMessage({
+                        pluginMessage: { type: 'notify', message: 'Please select a padding base value first' }
+                    }, '*');
+                    return;
+                }
+
+                // Send message to code.js to create padding variables
+                parent.postMessage({
+                    pluginMessage: {
+                        type: 'create-padding-tokens',
+                        baseValue: selectedPaddingBase,
+                        numberOfTokens: numberOfTokens
+                    }
+                }, '*');
+            } else if (activePanel.id === 'token-radius-content') {
+                const dropdown = document.querySelector('#radius-count-select');
+                const numberOfTokens = parseInt(dropdown.value);
+
+                if (selectedRadiusBase === undefined) {
+                    parent.postMessage({
+                        pluginMessage: { type: 'notify', message: 'Please select a radius base value first' }
+                    }, '*');
+                    return;
+                }
+
+                // Send message to code.js to create radius variables
+                parent.postMessage({
+                    pluginMessage: {
+                        type: 'create-radius-tokens',
+                        baseValue: selectedRadiusBase,
+                        numberOfTokens: numberOfTokens
+                    }
+                }, '*');
+            } else if (activePanel.id === 'token-stroke-content') {
+                const dropdown = document.querySelector('#stroke-count-select');
+                const numberOfTokens = parseInt(dropdown.value);
+
+                if (selectedStrokeBase === undefined) {
+                    parent.postMessage({
+                        pluginMessage: { type: 'notify', message: 'Please select a stroke base value first' }
+                    }, '*');
+                    return;
+                }
+
+                // Send message to code.js to create stroke variables
+                parent.postMessage({
+                    pluginMessage: {
+                        type: 'create-stroke-tokens',
+                        baseValue: selectedStrokeBase,
+                        numberOfTokens: numberOfTokens
+                    }
+                }, '*');
+            } else if (activePanel.id === 'token-shadow-content') {
+                // Send message to code.js to create shadow styles
+                parent.postMessage({
+                    pluginMessage: {
+                        type: 'create-shadow-styles'
+                    }
+                }, '*');
+            } else if (activePanel.id === 'token-grid-content') {
+                // Get grid values from inputs
+                const desktopColumns = parseInt(document.getElementById('desktop-columns').value);
+                const desktopMargin = parseInt(document.getElementById('desktop-margin').value);
+                const desktopGutter = parseInt(document.getElementById('desktop-gutter').value);
+
+                const tabletColumns = parseInt(document.getElementById('tablet-columns').value);
+                const tabletMargin = parseInt(document.getElementById('tablet-margin').value);
+                const tabletGutter = parseInt(document.getElementById('tablet-gutter').value);
+
+                const mobileColumns = parseInt(document.getElementById('mobile-columns').value);
+                const mobileMargin = parseInt(document.getElementById('mobile-margin').value);
+                const mobileGutter = parseInt(document.getElementById('mobile-gutter').value);
+
+                // Send message to code.js to create grid styles
+                parent.postMessage({
+                    pluginMessage: {
+                        type: 'create-grid-styles',
+                        grids: {
+                            desktop: { columns: desktopColumns, margin: desktopMargin, gutter: desktopGutter },
+                            tablet: { columns: tabletColumns, margin: tabletMargin, gutter: tabletGutter },
+                            mobile: { columns: mobileColumns, margin: mobileMargin, gutter: mobileGutter }
+                        }
+                    }
+                }, '*');
+            }
         }
 
         // Component Detail Toggle
@@ -2343,6 +3341,243 @@
             document.getElementById('components-grid').style.display = 'none';
             document.getElementById('component-detail').classList.add('active');
         }
+
+        // Typography Functions
+        let secondaryFontEnabled = false;
+
+        function toggleSecondaryFont() {
+            const toggle = document.getElementById('secondary-font-toggle');
+            const input = document.getElementById('secondary-font');
+
+            secondaryFontEnabled = !secondaryFontEnabled;
+
+            if (secondaryFontEnabled) {
+                toggle.classList.add('active');
+                input.disabled = false;
+                input.style.background = '#FFFFFF';
+                input.style.color = 'rgba(0, 0, 0, 0.6)';
+            } else {
+                toggle.classList.remove('active');
+                input.disabled = true;
+                input.style.background = '#F9FAFB';
+                input.style.color = '#9CA3AF';
+            }
+
+            generateTypographyPreview();
+        }
+
+        function generateTypographyPreview() {
+            const baseFontSize = parseFloat(document.getElementById('base-font-size').value);
+            const primaryFont = document.getElementById('primary-font').value || 'Inter';
+
+            const previewArea = document.getElementById('typography-preview-area');
+
+            // Base multipliers (based on 12px base font)
+            // H1:56, H2:48, H3:34, H4:28, H5:24, H6:20, B1:18, B2:16, B3:14, B4:12
+            const typographyLevels = [
+                { name: 'H1', multiplier: 56 / 12, lineHeight: 1.2, letterSpacing: 0 },
+                { name: 'H2', multiplier: 48 / 12, lineHeight: 1.2, letterSpacing: 0 },
+                { name: 'H3', multiplier: 34 / 12, lineHeight: 1.3, letterSpacing: 0 },
+                { name: 'H4', multiplier: 28 / 12, lineHeight: 1.4, letterSpacing: 0 },
+                { name: 'H5', multiplier: 24 / 12, lineHeight: 1.5, letterSpacing: 0 },
+                { name: 'H6', multiplier: 20 / 12, lineHeight: 1.5, letterSpacing: 0 },
+                { name: 'B1', multiplier: 18 / 12, lineHeight: 1.6, letterSpacing: 0 },
+                { name: 'B2', multiplier: 16 / 12, lineHeight: 1.6, letterSpacing: 0 },
+                { name: 'B3', multiplier: 14 / 12, lineHeight: 1.5, letterSpacing: 0 },
+                { name: 'B4', multiplier: 12 / 12, lineHeight: 1.5, letterSpacing: 0 }
+            ];
+
+            let html = '';
+            const usedSizes = new Set();
+
+            typographyLevels.forEach((level, index) => {
+                // Calculate font size based on base font
+                let fontSize = Math.round(baseFontSize * level.multiplier);
+
+                // Round to nearest even number
+                if (fontSize % 2 !== 0) {
+                    fontSize = fontSize + 1;
+                }
+
+                // Ensure no duplicates - if size exists, increment by 2
+                while (usedSizes.has(fontSize)) {
+                    fontSize += 2;
+                }
+
+                usedSizes.add(fontSize);
+                const cardId = `typo-card-${index}`;
+                const detailsId = `typo-details-${index}`;
+
+                html += `
+                    <div style="box-sizing: border-box; display: flex; flex-direction: column; padding: 8px 14px 14px; gap: 14px; background: #FAFAFA; border: 1px solid rgba(0, 0, 0, 0.1); border-radius: 12px; margin-bottom: 10px;" id="${cardId}">
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <span style="font-family: 'Poppins'; font-size: 12px; line-height: 160%; color: rgba(0, 0, 0, 0.6);">${level.name}</span>
+                                <div style="display: flex; align-items: flex-start; gap: 4px; cursor: pointer;" onclick="toggleTypoDetails('${detailsId}', this)">
+                                    <span style="font-family: 'Poppins'; font-size: 12px; line-height: 160%; color: rgba(0, 0, 0, 0.6);">${fontSize}PX</span>
+                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="flex-shrink: 0; transition: transform 0.3s;" class="typo-arrow">
+                                        <path d="M5.55556 7.77778L10 12.2222L14.4444 7.77778" stroke="rgba(0, 0, 0, 0.5)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div style="font-family: '${primaryFont}', sans-serif; font-size: 16px; font-weight: 500; line-height: 150%; color: #000000;">
+                                Whereas disregard and contempt for human rights have resulted
+                            </div>
+                        </div>
+                        
+                        <!-- Expandable Details Section -->
+                        <div id="${detailsId}" style="display: none; padding-top: 8px; border-top: 1px solid rgba(0, 0, 0, 0.1);">
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+                                <div>
+                                    <label style="font-family: 'Poppins'; font-size: 11px; color: rgba(0, 0, 0, 0.5); display: block; margin-bottom: 6px;">Size</label>
+                                    <input type="number" value="${fontSize}" 
+                                        style="width: 100%; padding: 8px 12px; border: 1px solid #E5E7EB; border-radius: 8px; font-family: 'Poppins'; font-size: 13px; outline: none; box-sizing: border-box;"
+                                        onchange="updateTypoStyle('${cardId}', 'size', this.value)">
+                                </div>
+                                <div>
+                                    <label style="font-family: 'Poppins'; font-size: 11px; color: rgba(0, 0, 0, 0.5); display: block; margin-bottom: 6px;">Line Height</label>
+                                    <input type="number" value="${level.lineHeight}" step="0.1"
+                                        style="width: 100%; padding: 8px 12px; border: 1px solid #E5E7EB; border-radius: 8px; font-family: 'Poppins'; font-size: 13px; outline: none; box-sizing: border-box;"
+                                        onchange="updateTypoStyle('${cardId}', 'lineHeight', this.value)">
+                                </div>
+                                <div>
+                                    <label style="font-family: 'Poppins'; font-size: 11px; color: rgba(0, 0, 0, 0.5); display: block; margin-bottom: 6px;">Letter Spacing</label>
+                                    <input type="number" value="${level.letterSpacing}" step="0.1"
+                                        style="width: 100%; padding: 8px 12px; border: 1px solid #E5E7EB; border-radius: 8px; font-family: 'Poppins'; font-size: 13px; outline: none; box-sizing: border-box;"
+                                        onchange="updateTypoStyle('${cardId}', 'letterSpacing', this.value)">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            previewArea.innerHTML = html;
+        }
+
+        function toggleTypoDetails(detailsId, arrowElement) {
+            const detailsSection = document.getElementById(detailsId);
+            const arrow = arrowElement.querySelector('.typo-arrow');
+
+            if (detailsSection.style.display === 'none') {
+                detailsSection.style.display = 'block';
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                detailsSection.style.display = 'none';
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        function updateTypoStyle(cardId, property, value) {
+            const card = document.getElementById(cardId);
+            const textElement = card.querySelector('div[style*="font-family"]');
+
+            if (property === 'size') {
+                textElement.style.fontSize = value + 'px';
+                // Update the size display
+                const sizeDisplay = card.querySelector('span[style*="font-size: 12px"]');
+                if (sizeDisplay && sizeDisplay.textContent.includes('PX')) {
+                    sizeDisplay.textContent = value + 'PX';
+                }
+            } else if (property === 'lineHeight') {
+                textElement.style.lineHeight = value;
+            } else if (property === 'letterSpacing') {
+                textElement.style.letterSpacing = value + 'px';
+            }
+        }
+
+        function createTypographyStyles() {
+            const baseFontSize = parseFloat(document.getElementById('base-font-size').value);
+            const primaryFont = document.getElementById('primary-font').value || 'Inter';
+            const secondaryFont = secondaryFontEnabled ? document.getElementById('secondary-font').value : null;
+
+            parent.postMessage({
+                pluginMessage: {
+                    type: 'create-typography-styles',
+                    baseFontSize: baseFontSize,
+                    primaryFont: primaryFont,
+                    secondaryFont: secondaryFont
+                }
+            }, '*');
+        }
+
+        function addTypographyTokens() {
+            const baseFontSize = parseFloat(document.getElementById('base-font-size').value);
+            const primaryFont = document.getElementById('primary-font').value || 'Inter';
+            const secondaryFont = secondaryFontEnabled ? document.getElementById('secondary-font').value : null;
+
+            // Base multipliers (based on 12px base font)
+            const typographyLevels = [
+                { name: 'H1', multiplier: 56 / 12, lineHeight: 1.2, letterSpacing: 0 },
+                { name: 'H2', multiplier: 48 / 12, lineHeight: 1.2, letterSpacing: 0 },
+                { name: 'H3', multiplier: 34 / 12, lineHeight: 1.3, letterSpacing: 0 },
+                { name: 'H4', multiplier: 28 / 12, lineHeight: 1.4, letterSpacing: 0 },
+                { name: 'H5', multiplier: 24 / 12, lineHeight: 1.5, letterSpacing: 0 },
+                { name: 'H6', multiplier: 20 / 12, lineHeight: 1.5, letterSpacing: 0 },
+                { name: 'B1', multiplier: 18 / 12, lineHeight: 1.6, letterSpacing: 0 },
+                { name: 'B2', multiplier: 16 / 12, lineHeight: 1.6, letterSpacing: 0 },
+                { name: 'B3', multiplier: 14 / 12, lineHeight: 1.5, letterSpacing: 0 },
+                { name: 'B4', multiplier: 12 / 12, lineHeight: 1.5, letterSpacing: 0 }
+            ];
+
+            const usedSizes = new Set();
+            const typographyData = [];
+
+            typographyLevels.forEach((level) => {
+                // Calculate font size based on base font
+                let fontSize = Math.round(baseFontSize * level.multiplier);
+
+                // Round to nearest even number
+                if (fontSize % 2 !== 0) {
+                    fontSize = fontSize + 1;
+                }
+
+                // Ensure no duplicates - if size exists, increment by 2
+                while (usedSizes.has(fontSize)) {
+                    fontSize += 2;
+                }
+
+                usedSizes.add(fontSize);
+
+                // Calculate line height in pixels (not percentage)
+                const lineHeightPx = Math.round(fontSize * level.lineHeight);
+
+                typographyData.push({
+                    name: level.name,
+                    fontSize: fontSize,
+                    lineHeight: lineHeightPx,
+                    letterSpacing: level.letterSpacing,
+                    fontFamily: primaryFont
+                });
+            });
+
+            // Font weights to create
+            const fontWeights = [
+                { name: 'Regular', weight: 400 },
+                { name: 'Medium', weight: 500 },
+                { name: 'Semibold', weight: 600 },
+                { name: 'Bold', weight: 700 }
+            ];
+
+            parent.postMessage({
+                pluginMessage: {
+                    type: 'create-typography-tokens',
+                    typographyData: typographyData,
+                    fontWeights: fontWeights,
+                    primaryFont: primaryFont,
+                    secondaryFont: secondaryFont
+                }
+            }, '*');
+        }
+
+        // Initialize typography preview on load
+        document.addEventListener('DOMContentLoaded', function () {
+            generateTypographyPreview();
+
+            // Add event listeners for typography inputs
+            document.getElementById('base-font-size').addEventListener('change', generateTypographyPreview);
+            document.getElementById('primary-font').addEventListener('input', generateTypographyPreview);
+        });
 
         function closeComponentDetail() {
             document.getElementById('components-grid').style.display = 'grid';
