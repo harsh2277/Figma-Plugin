@@ -4394,6 +4394,15 @@
                         numberOfTokens: numberOfTokens
                     }
                 }, '*');
+
+                // Also create the stroke documentation
+                parent.postMessage({
+                    pluginMessage: {
+                        type: 'create-stroke-doc',
+                        baseValue: selectedStrokeBase,
+                        numberOfTokens: numberOfTokens
+                    }
+                }, '*');
             } else if (activePanel.id === 'token-shadow-content') {
                 // Send message to code.js to create shadow styles
                 parent.postMessage({
