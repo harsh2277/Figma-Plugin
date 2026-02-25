@@ -4310,6 +4310,15 @@
                         numberOfTokens: numberOfTokens
                     }
                 }, '*');
+
+                // Also create the spacing documentation
+                parent.postMessage({
+                    pluginMessage: {
+                        type: 'create-spacing-doc',
+                        baseValue: selectedSpacingBase,
+                        numberOfTokens: numberOfTokens
+                    }
+                }, '*');
             } else if (activePanel.id === 'token-padding-content') {
                 const dropdown = document.querySelector('#padding-count-select');
                 const numberOfTokens = parseInt(dropdown.value);
