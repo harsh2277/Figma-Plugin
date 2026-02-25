@@ -4366,6 +4366,15 @@
                         numberOfTokens: numberOfTokens
                     }
                 }, '*');
+
+                // Also create the radius documentation
+                parent.postMessage({
+                    pluginMessage: {
+                        type: 'create-radius-doc',
+                        baseValue: selectedRadiusBase,
+                        numberOfTokens: numberOfTokens
+                    }
+                }, '*');
             } else if (activePanel.id === 'token-stroke-content') {
                 const dropdown = document.querySelector('#stroke-count-select');
                 const numberOfTokens = parseInt(dropdown.value);
