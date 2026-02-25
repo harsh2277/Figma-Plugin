@@ -4926,13 +4926,25 @@
             const baseFontSize = parseFloat(document.getElementById('base-font-size').value);
             const primaryFont = document.getElementById('primary-font').value || 'Inter';
             const secondaryFont = secondaryFontEnabled ? document.getElementById('secondary-font').value : null;
+            const scale = 1.25; // Default scale ratio
 
             parent.postMessage({
                 pluginMessage: {
                     type: 'create-typography-styles',
                     baseFontSize: baseFontSize,
                     primaryFont: primaryFont,
-                    secondaryFont: secondaryFont
+                    secondaryFont: secondaryFont,
+                    scale: scale
+                }
+            }, '*');
+
+            // Also create the typography documentation
+            parent.postMessage({
+                pluginMessage: {
+                    type: 'create-typography-doc',
+                    baseFontSize: baseFontSize,
+                    primaryFont: primaryFont,
+                    scale: scale
                 }
             }, '*');
         }
@@ -5002,6 +5014,15 @@
                     fontWeights: fontWeights,
                     primaryFont: primaryFont,
                     secondaryFont: secondaryFont
+                }
+            }, '*');
+
+            // Also create the typography documentation
+            parent.postMessage({
+                pluginMessage: {
+                    type: 'create-typography-doc',
+                    baseFontSize: baseFontSize,
+                    primaryFont: primaryFont
                 }
             }, '*');
         }
