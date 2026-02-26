@@ -3936,7 +3936,7 @@
                         </div>
                         <div class="component-detail-footer">
                             <div class="component-detail-footer-text">Generate Component Set With Icons</div>
-                            <button class="component-detail-add-button">
+                            <button class="component-detail-add-button" onclick="createButtonComponentDoc()">
                                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path d="M9 3.75V14.25" stroke="white" stroke-width="2" stroke-linecap="round" />
@@ -4473,6 +4473,24 @@
             document.getElementById('components-main-screen').classList.remove('hidden');
             document.getElementById('component-detail-screen').classList.remove('active');
             document.getElementById('textfield-detail-screen').classList.remove('active');
+        }
+
+        // Create Button Component Documentation
+        function createButtonComponentDoc() {
+            const buttonText = document.getElementById('button-text-input').value || 'Button';
+            const radius = parseInt(document.getElementById('radius-input').value) || 12;
+            const primaryColor = document.getElementById('primary-color-input').value || '#1350FF';
+            const textColor = document.getElementById('text-color-input').value || '#FFFFFF';
+
+            parent.postMessage({
+                pluginMessage: {
+                    type: 'create-button-doc',
+                    buttonText: buttonText,
+                    radius: radius,
+                    primaryColor: primaryColor,
+                    textColor: textColor
+                }
+            }, '*');
         }
 
         // Live Preview Update for Component Detail
