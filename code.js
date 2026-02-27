@@ -3457,16 +3457,15 @@ figma.ui.onmessage = async (msg) => {
             await figma.loadFontAsync({ family: "Poppins", style: "SemiBold" });
             await figma.loadFontAsync({ family: "Montserrat", style: "Medium" });
             await figma.loadFontAsync({ family: "Inter", style: "Regular" });
+            await figma.loadFontAsync({ family: "Inter", style: "Medium" });
             await figma.loadFontAsync({ family: "Inter", style: "Bold" });
-            await figma.loadFontAsync({ family: "Avenir", style: "Medium" });
-            await figma.loadFontAsync({ family: "Avenir", style: "Heavy" });
 
             // Create text styles for each button size
             const textStylesMap = {};
             const textStyleConfig = {
                 'sm': { fontSize: 14, lineHeight: 1.4, fontWeight: 'Medium' },
                 'md': { fontSize: 16, lineHeight: 1.5, fontWeight: 'Medium' },
-                'lg': { fontSize: 18, lineHeight: 1.5, fontWeight: 'Heavy' }
+                'lg': { fontSize: 18, lineHeight: 1.5, fontWeight: 'Bold' }
             };
 
             for (const [sizeName, config] of Object.entries(textStyleConfig)) {
@@ -3481,7 +3480,7 @@ figma.ui.onmessage = async (msg) => {
                 }
 
                 // Set text style properties
-                textStyle.fontName = { family: "Avenir", style: config.fontWeight };
+                textStyle.fontName = { family: "Inter", style: config.fontWeight };
                 textStyle.fontSize = config.fontSize;
                 // Calculate line height in pixels (fontSize * lineHeight multiplier)
                 const lineHeightPx = config.fontSize * config.lineHeight;
@@ -3579,7 +3578,7 @@ figma.ui.onmessage = async (msg) => {
                 const sizeConfig = {
                     'SM': { padding: 4, hPadding: 8, fontSize: 14, fontWeight: 'Medium', height: 28, iconSize: 16, sizeName: 'sm' },
                     'MD': { padding: 6, hPadding: 16, fontSize: 16, fontWeight: 'Medium', height: 36, iconSize: 20, sizeName: 'md' },
-                    'LG': { padding: 10, hPadding: 20, fontSize: 18, fontWeight: 'Heavy', height: 47, iconSize: 24, sizeName: 'lg' }
+                    'LG': { padding: 10, hPadding: 20, fontSize: 18, fontWeight: 'Bold', height: 47, iconSize: 24, sizeName: 'lg' }
                 };
 
                 const config = sizeConfig[size];
@@ -3823,7 +3822,7 @@ figma.ui.onmessage = async (msg) => {
                     text.textStyleId = textStylesMap[config.sizeName].id;
                 } else {
                     text.fontSize = config.fontSize;
-                    text.fontName = { family: "Avenir", style: config.fontWeight };
+                    text.fontName = { family: "Inter", style: config.fontWeight };
                     text.lineHeight = { value: size === 'SM' ? 140 : 150, unit: "PERCENT" };
                 }
 

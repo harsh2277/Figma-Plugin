@@ -604,6 +604,7 @@
             cursor: pointer;
             transition: all 0.2s;
             position: relative;
+            box-sizing: border-box;
         }
 
         .brand-color-input-wrapper-unique:hover {
@@ -617,6 +618,8 @@
 
         .brand-color-hex-input-unique {
             flex: 1;
+            min-width: 0;
+            width: 100%;
             border: none;
             outline: none;
             font-family: 'Poppins', sans-serif;
@@ -1902,6 +1905,8 @@
             background: transparent;
             outline: none;
             flex: 1;
+            min-width: 0;
+            width: 100%;
         }
 
         .component-property-color-circle {
