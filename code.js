@@ -4259,4 +4259,675 @@ figma.ui.onmessage = async (msg) => {
             console.error(error);
         }
     }
+
+
+    if (msg.type === "create-input-doc") {
+        try {
+            // Get custom values from UI
+            const customLabelText = msg.labelText || 'label';
+            const customRadius = msg.radius !== undefined && msg.radius !== null ? parseInt(msg.radius) : 8;
+            const customBorderColor = msg.borderColor || '#D1D5DB';
+            const customPrimaryColor = msg.primaryColor || '#3B82F6';
+
+            await figma.loadFontAsync({ family: "Poppins", style: "SemiBold" });
+            await figma.loadFontAsync({ family: "Montserrat", style: "Medium" });
+            await figma.loadFontAsync({ family: "Inter", style: "Regular" });
+            await figma.loadFontAsync({ family: "Inter", style: "Medium" });
+            await figma.loadFontAsync({ family: "Inter", style: "Bold" });
+
+            function hexToRgb(hex) {
+                hex = hex.replace('#', '');
+                if (hex.length === 3) {
+                    hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+                }
+                const r = parseInt(hex.substring(0, 2), 16) / 255;
+                const g = parseInt(hex.substring(2, 4), 16) / 255;
+                const b = parseInt(hex.substring(4, 6), 16) / 255;
+                return { r, g, b };
+            }
+
+            // Create shared icon components
+            const searchIconSvg = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="9" cy="9" r="6" stroke="#6B7280" stroke-width="1.5"/><path d="M13.5 13.5L17 17" stroke="#6B7280" stroke-width="1.5" stroke-linecap="round"/></svg>`;
+            const searchIconNode = figma.createNodeFromSvg(searchIconSvg);
+            const sharedSearchIcon = figma.createComponent();
+            sharedSearchIcon.name = "search-icon";
+            sharedSearchIcon.resize(20, 20);
+            sharedSearchIcon.appendChild(searchIconNode);
+            sharedSearchIcon.x = -2000;
+            sharedSearchIcon.y = -2000;
+
+            const leftIconSvg = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.8334 10H4.16675M4.16675 10L10.0001 15.8333M4.16675 10L10.0001 4.16667" stroke="#000000" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+            const leftIconNode = figma.createNodeFromSvg(leftIconSvg);
+            const sharedLeftIcon = figma.createComponent();
+            sharedLeftIcon.name = "arrow-left";
+            sharedLeftIcon.resize(20, 20);
+            sharedLeftIcon.appendChild(leftIconNode);
+            sharedLeftIcon.x = -2000;
+            sharedLeftIcon.y = -2000;
+
+            const rightIconSvg = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.16675 10H15.8334M15.8334 10L10.0001 4.16667M15.8334 10L10.0001 15.8333" stroke="#000000" stroke-width="1.67" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+            const rightIconNode = figma.createNodeFromSvg(rightIconSvg);
+            const sharedRightIcon = figma.createComponent();
+            sharedRightIcon.name = "arrow-right-1";
+            sharedRightIcon.resize(20, 20);
+            sharedRightIcon.appendChild(rightIconNode);
+            sharedRightIcon.x = -2000;
+            sharedRightIcon.y = -2000;
+
+            const dropdownArrowSvg = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.99982 14.0001C9.41649 14.0001 8.83315 13.7751 8.39149 13.3334L2.95815 7.90008C2.71649 7.65841 2.71649 7.25841 2.95815 7.01675C3.19982 6.77508 3.59982 6.77508 3.84149 7.01675L9.27482 12.4501C9.67482 12.8501 10.3248 12.8501 10.7248 12.4501L16.1581 7.01675C16.3998 6.77508 16.7998 6.77508 17.0415 7.01675C17.2831 7.25841 17.2831 7.65841 17.0415 7.90008L11.6081 13.3334C11.1665 13.7751 10.5831 14.0001 9.99982 14.0001Z" fill="#555555"/></svg>`;
+            const dropdownArrowNode = figma.createNodeFromSvg(dropdownArrowSvg);
+            const sharedDropdownArrow = figma.createComponent();
+            sharedDropdownArrow.name = "arrow-down-1";
+            sharedDropdownArrow.resize(20, 20);
+            sharedDropdownArrow.appendChild(dropdownArrowNode);
+            sharedDropdownArrow.x = -2000;
+            sharedDropdownArrow.y = -2000;
+
+            const infoIconSvg = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="6" stroke="#6B7280" stroke-width="1.2"/><path d="M8 8V10.8M8 5.6V6" stroke="#6B7280" stroke-width="1.2" stroke-linecap="round"/></svg>`;
+            const infoIconNode = figma.createNodeFromSvg(infoIconSvg);
+            const sharedInfoIcon = figma.createComponent();
+            sharedInfoIcon.name = "info-circle";
+            sharedInfoIcon.resize(16, 16);
+            sharedInfoIcon.appendChild(infoIconNode);
+            sharedInfoIcon.x = -2000;
+            sharedInfoIcon.y = -2000;
+
+            function createInputField(type, state) {
+                const input = figma.createComponent();
+                input.name = `Type=${type}, State=${state}`;
+                input.layoutMode = "VERTICAL";
+                input.primaryAxisSizingMode = "AUTO";
+                input.counterAxisSizingMode = "AUTO";
+                input.itemSpacing = 6;
+                input.fills = [];
+
+                // Only create label frame for non-Search types
+                let labelFrame;
+                if (type !== 'Search') {
+                    labelFrame = figma.createFrame();
+                    labelFrame.name = "Label Frame";
+                    labelFrame.layoutMode = "HORIZONTAL";
+                    labelFrame.primaryAxisSizingMode = "AUTO";
+                    labelFrame.counterAxisSizingMode = "AUTO";
+                    labelFrame.itemSpacing = 4;
+                    labelFrame.fills = [];
+
+                    const labelText = figma.createText();
+                    labelText.name = "Label";
+                    labelText.characters = customLabelText;
+                    labelText.fontSize = 14;
+                    labelText.fontName = { family: "Inter", style: "Medium" };
+                    labelText.fills = [{ type: 'SOLID', color: hexToRgb('#374151') }];
+
+                    // Add required asterisk (*)
+                    const requiredAsterisk = figma.createText();
+                    requiredAsterisk.name = "Required";
+                    requiredAsterisk.characters = "*";
+                    requiredAsterisk.fontSize = 14;
+                    requiredAsterisk.fontName = { family: "Inter", style: "Medium" };
+                    requiredAsterisk.fills = [{ type: 'SOLID', color: hexToRgb('#FF0000') }];
+                    requiredAsterisk.visible = false;
+
+                    const infoIcon = sharedInfoIcon.createInstance();
+                    infoIcon.name = "Label Info Icon";
+                    infoIcon.visible = false;
+
+                    labelFrame.appendChild(labelText);
+                    labelFrame.appendChild(requiredAsterisk);
+                    labelFrame.appendChild(infoIcon);
+                }
+
+                const inputContainer = figma.createFrame();
+                inputContainer.name = "Input Container";
+                inputContainer.layoutMode = "HORIZONTAL";
+                inputContainer.primaryAxisSizingMode = "AUTO";
+                inputContainer.counterAxisSizingMode = "AUTO";
+
+                if (type === 'OTP') {
+                    inputContainer.itemSpacing = 12;
+                } else if (type === 'Rich Text Box') {
+                    inputContainer.resize(320, 100);
+                    inputContainer.layoutMode = "VERTICAL";
+                    inputContainer.counterAxisSizingMode = "FIXED";
+                    inputContainer.primaryAxisAlignItems = "MIN";
+                    inputContainer.counterAxisAlignItems = "MIN";
+                } else if (type === 'Phone Number') {
+                    inputContainer.itemSpacing = 0;
+                    inputContainer.paddingLeft = 0;
+                    inputContainer.paddingRight = 0;
+                    inputContainer.paddingTop = 0;
+                    inputContainer.paddingBottom = 0;
+                    inputContainer.fills = [];
+                    inputContainer.strokes = [];
+                    inputContainer.cornerRadius = 0;
+                } else {
+                    inputContainer.resize(320, 40);
+                    inputContainer.itemSpacing = 8;
+                    inputContainer.primaryAxisAlignItems = "CENTER";
+                    inputContainer.counterAxisAlignItems = "CENTER";
+                }
+
+                if (type !== 'Phone Number') {
+                    inputContainer.paddingLeft = 12;
+                    inputContainer.paddingRight = 12;
+                    inputContainer.paddingTop = 10;
+                    inputContainer.paddingBottom = 10;
+                    // Cap radius at 18px for Rich Text Box
+                    inputContainer.cornerRadius = type === 'Rich Text Box' ? Math.min(customRadius, 18) : customRadius;
+                }
+
+                let bgColor, borderColor, textColor, placeholderColor;
+                if (state === 'Normal') {
+                    bgColor = '#FFFFFF'; borderColor = customBorderColor; textColor = '#111827'; placeholderColor = '#9CA3AF';
+                } else if (state === 'Hover') {
+                    bgColor = '#FFFFFF'; borderColor = '#9CA3AF'; textColor = '#111827'; placeholderColor = '#9CA3AF';
+                } else if (state === 'Click') {
+                    bgColor = '#FFFFFF'; borderColor = customPrimaryColor; textColor = '#111827'; placeholderColor = '#9CA3AF';
+                } else if (state === 'Error') {
+                    bgColor = '#FFFFFF'; borderColor = '#EF4444'; textColor = '#111827'; placeholderColor = '#9CA3AF';
+                } else {
+                    bgColor = '#F3F4F6'; borderColor = '#E5E7EB'; textColor = '#9CA3AF'; placeholderColor = '#D1D5DB';
+                }
+
+                inputContainer.fills = [{ type: 'SOLID', color: hexToRgb(bgColor) }];
+                inputContainer.strokes = [{ type: 'SOLID', color: hexToRgb(borderColor) }];
+                inputContainer.strokeWeight = 1;
+
+                if (type === 'Phone Number') {
+                    inputContainer.fills = [];
+                    inputContainer.strokes = [];
+                    inputContainer.strokeWeight = 0;
+                }
+
+                if (type === 'Search') {
+                    const searchIcon = sharedSearchIcon.createInstance();
+                    searchIcon.name = "Search Icon";
+                    const placeholderText = figma.createText();
+                    placeholderText.name = "Placeholder";
+                    placeholderText.characters = "Placeholder text...";
+                    placeholderText.fontSize = 14;
+                    placeholderText.fontName = { family: "Inter", style: "Regular" };
+                    placeholderText.fills = [{ type: 'SOLID', color: hexToRgb(placeholderColor) }];
+                    placeholderText.layoutAlign = "STRETCH";
+                    placeholderText.layoutGrow = 1;
+                    const rightIcon = sharedRightIcon.createInstance();
+                    rightIcon.name = "Right Icon";
+                    rightIcon.visible = false;
+                    inputContainer.appendChild(searchIcon);
+                    inputContainer.appendChild(placeholderText);
+                    inputContainer.appendChild(rightIcon);
+                } else if (type === 'OTP') {
+                    // Update container for OTP
+                    inputContainer.itemSpacing = 12;
+                    inputContainer.paddingLeft = 0;
+                    inputContainer.paddingRight = 0;
+                    inputContainer.paddingTop = 0;
+                    inputContainer.paddingBottom = 0;
+                    inputContainer.fills = [];
+                    inputContainer.strokes = [];
+                    inputContainer.strokeWeight = 0;
+                    inputContainer.cornerRadius = 0;
+
+                    for (let i = 0; i < 4; i++) {
+                        const digitBox = figma.createFrame();
+                        digitBox.name = `Field ${i + 1}`;
+                        digitBox.resize(44, 44);
+                        digitBox.layoutMode = "HORIZONTAL";
+                        digitBox.primaryAxisSizingMode = "FIXED";
+                        digitBox.counterAxisSizingMode = "FIXED";
+                        digitBox.primaryAxisAlignItems = "CENTER";
+                        digitBox.counterAxisAlignItems = "CENTER";
+                        digitBox.paddingLeft = 8;
+                        digitBox.paddingRight = 8;
+                        digitBox.paddingTop = 12;
+                        digitBox.paddingBottom = 12;
+                        digitBox.fills = [{ type: 'SOLID', color: hexToRgb(bgColor) }];
+                        digitBox.strokes = [{ type: 'SOLID', color: hexToRgb(borderColor) }];
+                        digitBox.strokeWeight = 1;
+                        digitBox.cornerRadius = customRadius;
+                        const digitText = figma.createText();
+                        digitText.name = "0";
+                        digitText.characters = "0";
+                        digitText.fontSize = 14;
+                        digitText.fontName = { family: "Inter", style: "Medium" };
+                        digitText.fills = [{ type: 'SOLID', color: hexToRgb(textColor) }];
+                        digitText.textAlignHorizontal = "CENTER";
+                        digitBox.appendChild(digitText);
+                        inputContainer.appendChild(digitBox);
+                    }
+
+                    // Add 2 hidden digit boxes for 6-digit OTP option
+                    for (let i = 4; i < 6; i++) {
+                        const digitBox = figma.createFrame();
+                        digitBox.name = `Field ${i + 1}`;
+                        digitBox.resize(44, 44);
+                        digitBox.layoutMode = "HORIZONTAL";
+                        digitBox.primaryAxisSizingMode = "FIXED";
+                        digitBox.counterAxisSizingMode = "FIXED";
+                        digitBox.primaryAxisAlignItems = "CENTER";
+                        digitBox.counterAxisAlignItems = "CENTER";
+                        digitBox.paddingLeft = 8;
+                        digitBox.paddingRight = 8;
+                        digitBox.paddingTop = 12;
+                        digitBox.paddingBottom = 12;
+                        digitBox.fills = [{ type: 'SOLID', color: hexToRgb(bgColor) }];
+                        digitBox.strokes = [{ type: 'SOLID', color: hexToRgb(borderColor) }];
+                        digitBox.strokeWeight = 1;
+                        digitBox.cornerRadius = customRadius;
+                        digitBox.visible = false;
+                        const digitText = figma.createText();
+                        digitText.name = "0";
+                        digitText.characters = "0";
+                        digitText.fontSize = 14;
+                        digitText.fontName = { family: "Inter", style: "Medium" };
+                        digitText.fills = [{ type: 'SOLID', color: hexToRgb(textColor) }];
+                        digitText.textAlignHorizontal = "CENTER";
+                        digitBox.appendChild(digitText);
+                        inputContainer.appendChild(digitBox);
+                    }
+                } else if (type === 'Phone Number') {
+                    // Country Code Field
+                    const countryCodeField = figma.createFrame();
+                    countryCodeField.name = "Filed";
+                    countryCodeField.layoutMode = "HORIZONTAL";
+                    countryCodeField.primaryAxisSizingMode = "AUTO";
+                    countryCodeField.counterAxisSizingMode = "AUTO";
+                    countryCodeField.itemSpacing = 6;
+                    countryCodeField.paddingTop = 12;
+                    countryCodeField.paddingBottom = 12;
+                    countryCodeField.paddingLeft = 16;
+                    countryCodeField.paddingRight = 8;
+                    countryCodeField.fills = [{ type: 'SOLID', color: hexToRgb(bgColor) }];
+                    countryCodeField.strokes = [{ type: 'SOLID', color: hexToRgb(borderColor) }];
+                    countryCodeField.strokeWeight = 1;
+                    countryCodeField.topLeftRadius = customRadius;
+                    countryCodeField.topRightRadius = 0;
+                    countryCodeField.bottomLeftRadius = customRadius;
+                    countryCodeField.bottomRightRadius = 0;
+
+                    const codeText = figma.createText();
+                    codeText.name = "+91";
+                    codeText.characters = "+91";
+                    codeText.fontSize = 14;
+                    codeText.fontName = { family: "Inter", style: "Medium" };
+                    codeText.fills = [{ type: 'SOLID', color: hexToRgb(textColor) }];
+                    codeText.lineHeight = { value: 140, unit: "PERCENT" };
+
+                    const dropdownIcon = sharedDropdownArrow.createInstance();
+                    dropdownIcon.name = "arrow-down-1";
+
+                    countryCodeField.appendChild(codeText);
+                    countryCodeField.appendChild(dropdownIcon);
+
+                    // Phone Number Field
+                    const phoneNumberField = figma.createFrame();
+                    phoneNumberField.name = "Filed";
+                    phoneNumberField.layoutMode = "HORIZONTAL";
+                    phoneNumberField.primaryAxisSizingMode = "FIXED";
+                    phoneNumberField.counterAxisSizingMode = "AUTO";
+                    phoneNumberField.resize(251, 44);
+                    phoneNumberField.itemSpacing = 8;
+                    phoneNumberField.paddingTop = 12;
+                    phoneNumberField.paddingBottom = 12;
+                    phoneNumberField.paddingLeft = 12;
+                    phoneNumberField.paddingRight = 8;
+                    phoneNumberField.fills = [{ type: 'SOLID', color: hexToRgb(bgColor) }];
+                    phoneNumberField.strokes = [{ type: 'SOLID', color: hexToRgb(borderColor) }];
+                    phoneNumberField.strokeWeight = 1;
+                    phoneNumberField.strokeLeftWeight = 0;
+                    phoneNumberField.topLeftRadius = 0;
+                    phoneNumberField.topRightRadius = customRadius;
+                    phoneNumberField.bottomLeftRadius = 0;
+                    phoneNumberField.bottomRightRadius = customRadius;
+
+                    const phoneText = figma.createText();
+                    phoneText.name = "Placeholder";
+                    phoneText.characters = "1234567890";
+                    phoneText.fontSize = 14;
+                    phoneText.fontName = { family: "Inter", style: "Medium" };
+                    phoneText.fills = [{ type: 'SOLID', color: hexToRgb(placeholderColor) }];
+                    phoneText.lineHeight = { value: 140, unit: "PERCENT" };
+
+                    phoneNumberField.appendChild(phoneText);
+
+                    inputContainer.appendChild(countryCodeField);
+                    inputContainer.appendChild(phoneNumberField);
+                } else if (type === 'Rich Text Box') {
+                    const placeholderText = figma.createText();
+                    placeholderText.name = "Placeholder";
+                    placeholderText.characters = "Placeholder text...";
+                    placeholderText.fontSize = 14;
+                    placeholderText.fontName = { family: "Inter", style: "Regular" };
+                    placeholderText.fills = [{ type: 'SOLID', color: hexToRgb(placeholderColor) }];
+                    placeholderText.layoutAlign = "STRETCH";
+                    placeholderText.layoutGrow = 1;
+                    placeholderText.textAlignVertical = "TOP";
+                    inputContainer.appendChild(placeholderText);
+                } else {
+                    // Text Field
+                    const leftIcon = sharedLeftIcon.createInstance();
+                    leftIcon.name = "Left Icon";
+                    leftIcon.visible = false;
+                    const placeholderText = figma.createText();
+                    placeholderText.name = "Placeholder";
+                    placeholderText.characters = "Placeholder text...";
+                    placeholderText.fontSize = 14;
+                    placeholderText.fontName = { family: "Inter", style: "Regular" };
+                    placeholderText.fills = [{ type: 'SOLID', color: hexToRgb(placeholderColor) }];
+                    placeholderText.layoutAlign = "STRETCH";
+                    placeholderText.layoutGrow = 1;
+                    const rightIcon = sharedRightIcon.createInstance();
+                    rightIcon.name = "Right Icon";
+                    rightIcon.visible = false;
+                    inputContainer.appendChild(leftIcon);
+                    inputContainer.appendChild(placeholderText);
+                    inputContainer.appendChild(rightIcon);
+                }
+
+                // Create hint frame with icon first, then text
+                const hintFrame = figma.createFrame();
+                hintFrame.name = "Hint Frame";
+                hintFrame.layoutMode = "HORIZONTAL";
+                hintFrame.primaryAxisSizingMode = "AUTO";
+                hintFrame.counterAxisSizingMode = "AUTO";
+                hintFrame.itemSpacing = 4;
+                hintFrame.fills = [];
+                hintFrame.primaryAxisAlignItems = "CENTER";
+                hintFrame.counterAxisAlignItems = "CENTER";
+                hintFrame.visible = false;
+
+                const hintIcon = sharedInfoIcon.createInstance();
+                hintIcon.name = "Hint Icon";
+                hintIcon.resize(16, 16);
+                hintIcon.layoutAlign = "INHERIT";
+                hintIcon.visible = true;
+
+                const hintText = figma.createText();
+                hintText.name = "Hint Text";
+                hintText.characters = "Hint text to help users";
+                hintText.fontSize = 12;
+                hintText.fontName = { family: "Inter", style: "Regular" };
+                hintText.fills = [{ type: 'SOLID', color: hexToRgb(state === 'Error' ? '#EF4444' : '#6B7280') }];
+                hintText.layoutAlign = "STRETCH";
+                hintText.layoutGrow = 1;
+
+                hintFrame.appendChild(hintIcon);
+                hintFrame.appendChild(hintText);
+
+                // Append frames to input based on type
+                if (type !== 'Search' && labelFrame) {
+                    input.appendChild(labelFrame);
+                }
+                input.appendChild(inputContainer);
+                input.appendChild(hintFrame);
+                return input;
+            }
+
+            // Create ONE component set with all types and states (25 variants)
+            const types = ['Search', 'OTP', 'Text Field', 'Phone Number', 'Rich Text Box'];
+            const states = ['Normal', 'Hover', 'Click', 'Error', 'Disable'];
+            const allComponents = [];
+
+            const startX = 100;
+            const startY = 100;
+            const gapBetweenColumns = 84;
+            const componentGap = 34;
+
+            // First pass: create all components and calculate column widths
+            const columnWidths = [];
+            const componentsByColumn = [];
+
+            for (let typeIndex = 0; typeIndex < types.length; typeIndex++) {
+                const type = types[typeIndex];
+                const columnComponents = [];
+                let maxWidth = 0;
+
+                for (let stateIndex = 0; stateIndex < states.length; stateIndex++) {
+                    const state = states[stateIndex];
+                    const component = createInputField(type, state);
+                    figma.currentPage.appendChild(component);
+                    columnComponents.push(component);
+                    allComponents.push(component);
+                    maxWidth = Math.max(maxWidth, component.width);
+                }
+
+                columnWidths.push(maxWidth);
+                componentsByColumn.push(columnComponents);
+            }
+
+            // Second pass: position components based on actual column widths
+            let currentX = startX;
+            for (let typeIndex = 0; typeIndex < types.length; typeIndex++) {
+                let currentY = startY;
+                const columnComponents = componentsByColumn[typeIndex];
+
+                for (let stateIndex = 0; stateIndex < states.length; stateIndex++) {
+                    const component = columnComponents[stateIndex];
+                    component.x = currentX;
+                    component.y = currentY;
+                    currentY += component.height + componentGap;
+                }
+
+                currentX += columnWidths[typeIndex] + gapBetweenColumns;
+            }
+
+            // Combine ALL components into ONE component set
+            if (typeof figma.combineAsVariants === 'function' && allComponents.length > 0) {
+                figma.currentPage.selection = allComponents;
+                const componentSet = figma.combineAsVariants(allComponents, figma.currentPage);
+                if (componentSet) {
+                    componentSet.name = "Input Field";
+
+                    // Add boolean properties to component set
+                    try {
+                        const labelTextPropId = componentSet.addComponentProperty("Label Text", "TEXT", customLabelText);
+                        const labelInfoIconPropId = componentSet.addComponentProperty("Label Info Icon", "BOOLEAN", false);
+                        const requiredPropId = componentSet.addComponentProperty("Required", "BOOLEAN", false);
+                        const hintFramePropId = componentSet.addComponentProperty("Hint Frame", "BOOLEAN", false);
+                        const hintIconPropId = componentSet.addComponentProperty("Hint Icon", "BOOLEAN", false);
+                        const leftIconPropId = componentSet.addComponentProperty("Left Icon", "BOOLEAN", false);
+                        const rightIconPropId = componentSet.addComponentProperty("Right Icon", "BOOLEAN", false);
+                        const sixDigitsPropId = componentSet.addComponentProperty("6 Digits", "BOOLEAN", false);
+
+                        // Bind properties to layers in all variants
+                        allComponents.forEach(comp => {
+                            // Get the type from component name (safely handle variant name parts)
+                            let compType = "";
+                            const nameParts = comp.name.split(',');
+                            for (const part of nameParts) {
+                                if (part.includes('Type=')) {
+                                    compType = part.split('=')[1].trim();
+                                    break;
+                                }
+                            }
+
+                            // Bind Label Text property to the label text layer
+                            if (compType !== 'Search') {
+                                const labelText = comp.findOne(n => n.name === "Label");
+                                if (labelText && labelText.type === 'TEXT' && labelTextPropId) {
+                                    labelText.componentPropertyReferences = { characters: labelTextPropId };
+                                }
+
+                                const labelInfoIcon = comp.findOne(n => n.name === "Label Info Icon");
+                                if (labelInfoIcon && labelInfoIconPropId) {
+                                    labelInfoIcon.componentPropertyReferences = { visible: labelInfoIconPropId };
+                                }
+
+                                const required = comp.findOne(n => n.name === "Required");
+                                if (required && requiredPropId) {
+                                    required.componentPropertyReferences = { visible: requiredPropId };
+                                }
+                            }
+
+                            const hintFrame = comp.findOne(n => n.name === "Hint Frame");
+                            if (hintFrame && hintFramePropId) {
+                                hintFrame.componentPropertyReferences = { visible: hintFramePropId };
+                            }
+
+                            const hintIcon = comp.findOne(n => n.name === "Hint Icon");
+                            if (hintIcon && hintIconPropId) {
+                                hintIcon.componentPropertyReferences = { visible: hintIconPropId };
+                            }
+
+                            const leftIcon = comp.findOne(n => n.name === "Left Icon");
+                            if (leftIcon && leftIconPropId) {
+                                leftIcon.componentPropertyReferences = { visible: leftIconPropId };
+                            }
+
+                            const rightIcon = comp.findOne(n => n.name === "Right Icon");
+                            if (rightIcon && rightIconPropId) {
+                                rightIcon.componentPropertyReferences = { visible: rightIconPropId };
+                            }
+
+                            // Bind 6 Digits property for OTP
+                            if (compType === 'OTP') {
+                                const field5 = comp.findOne(n => n.name === "Field 5");
+                                const field6 = comp.findOne(n => n.name === "Field 6");
+                                if (field5 && sixDigitsPropId) {
+                                    field5.componentPropertyReferences = { visible: sixDigitsPropId };
+                                }
+                                if (field6 && sixDigitsPropId) {
+                                    field6.componentPropertyReferences = { visible: sixDigitsPropId };
+                                }
+                            }
+                        });
+                    } catch (propError) {
+                        console.error("Error adding properties:", propError);
+                    }
+
+                    // Create documentation frame
+                    const docFrame = figma.createFrame();
+                    docFrame.name = "Input Field Component Set Documentation";
+                    docFrame.fills = [{ type: 'SOLID', color: { r: 1, g: 1, b: 1 } }];
+                    docFrame.paddingTop = 40;
+                    docFrame.paddingBottom = 40;
+                    docFrame.paddingLeft = 40;
+                    docFrame.paddingRight = 40;
+                    docFrame.layoutMode = "VERTICAL";
+                    docFrame.primaryAxisSizingMode = "AUTO";
+                    docFrame.counterAxisSizingMode = "AUTO";
+                    docFrame.itemSpacing = 40;
+                    docFrame.x = 100;
+                    docFrame.y = 100;
+
+                    // Add top border
+                    const borderColor = hexToRgb('#1350FF');
+                    docFrame.strokes = [{ type: 'SOLID', color: borderColor }];
+                    docFrame.strokeWeight = 8;
+                    docFrame.strokeAlign = "INSIDE";
+                    docFrame.strokeTopWeight = 8;
+                    docFrame.strokeBottomWeight = 0;
+                    docFrame.strokeLeftWeight = 0;
+                    docFrame.strokeRightWeight = 0;
+
+                    // Title section
+                    const titleSection = figma.createFrame();
+                    titleSection.name = "Title Section";
+                    titleSection.layoutMode = "VERTICAL";
+                    titleSection.primaryAxisSizingMode = "AUTO";
+                    titleSection.counterAxisSizingMode = "AUTO";
+                    titleSection.itemSpacing = 34;
+                    titleSection.fills = [];
+
+                    // Create logo from SVG
+                    const logoSvg = `<svg width="224" height="32" viewBox="0 0 224 32" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_466_1736)"><g clip-path="url(#clip1_466_1736)"><path d="M47.9502 22.765C46.7073 22.0781 45.7261 21.1295 45.0065 19.952C44.2869 18.7418 43.9271 17.4008 43.9271 15.8962C43.9271 14.3916 44.2869 13.0506 45.0065 11.8404C45.7261 10.6302 46.7073 9.71438 47.9502 9.0275C49.1931 8.34063 50.5996 8.01355 52.1696 8.01355C53.4125 8.01355 54.59 8.24251 55.604 8.66771C56.6506 9.09292 57.5337 9.74708 58.2533 10.5648L56.4217 12.2983C55.3096 11.0881 53.9358 10.4994 52.3004 10.4994C51.2538 10.4994 50.3052 10.7283 49.4548 11.1862C48.6044 11.6442 47.9829 12.2983 47.4923 13.116C47.0344 13.9337 46.8054 14.8496 46.8054 15.8962C46.8054 16.9429 47.0344 17.8587 47.4923 18.6764C47.9502 19.4941 48.6044 20.1483 49.4548 20.6062C50.3052 21.0641 51.2211 21.2931 52.3004 21.2931C53.9358 21.2931 55.3096 20.6716 56.4217 19.4614L58.2533 21.2277C57.5337 22.0781 56.6506 22.6995 55.604 23.1247C54.5573 23.5499 53.4125 23.7789 52.1369 23.7789C50.5996 23.7789 49.1931 23.4191 47.9502 22.765Z" fill="black"/><path d="M63.6175 22.7649C62.3745 22.0781 61.3606 21.1295 60.641 19.9193C59.9214 18.7091 59.5616 17.3681 59.5616 15.8635C59.5616 14.3589 59.9214 13.0179 60.641 11.8077C61.3606 10.5975 62.3418 9.64895 63.6175 8.96207C64.8604 8.2752 66.2995 7.94812 67.8695 7.94812C69.4395 7.94812 70.846 8.2752 72.1216 8.96207C73.3645 9.64895 74.3785 10.5975 75.098 11.775C75.8176 12.9852 76.1774 14.3262 76.1774 15.8308C76.1774 17.3354 75.8176 18.6764 75.098 19.8866C74.3785 21.0968 73.3972 22.0126 72.1216 22.6995C70.8787 23.3864 69.4395 23.7135 67.8695 23.7135C66.2995 23.7789 64.8604 23.4191 63.6175 22.7649ZM70.617 20.5735C71.4347 20.1156 72.0889 19.4614 72.5468 18.6437C73.0047 17.826 73.2337 16.8775 73.2337 15.8635C73.2337 14.8496 73.0047 13.901 72.5468 13.0833C72.0889 12.2656 71.4347 11.6114 70.617 11.1535C69.7993 10.6956 68.8835 10.4667 67.8368 10.4667C66.8229 10.4667 65.8743 10.6956 65.0566 11.1535C64.2389 11.6114 63.5848 12.2656 63.1268 13.0833C62.6689 13.901 62.44 14.8496 62.44 15.8635C62.44 16.8775 62.6689 17.826 63.1268 18.6437C63.5848 19.4614 64.2389 20.1156 65.0566 20.5735C65.8743 21.0314 66.7902 21.2604 67.8368 21.2604C68.8835 21.2604 69.7993 21.0314 70.617 20.5735Z" fill="black"/><path d="M79.1539 8.17706H85.8591C87.4945 8.17706 88.9663 8.50414 90.242 9.1256C91.5176 9.74706 92.4988 10.6629 93.2184 11.8404C93.9053 13.0179 94.2651 14.3589 94.2651 15.8635C94.2651 17.4008 93.9053 18.7418 93.2184 19.8866C92.5315 21.0641 91.5176 21.9472 90.242 22.6014C88.9663 23.2228 87.5272 23.5499 85.8918 23.5499H79.1539V8.17706ZM85.7282 21.1295C86.8403 21.1295 87.8543 20.9006 88.7047 20.4753C89.5551 20.0501 90.2093 19.4287 90.6672 18.6437C91.1251 17.8587 91.354 16.9102 91.354 15.8635C91.354 14.8168 91.1251 13.8683 90.6672 13.0833C90.2093 12.2983 89.5551 11.6768 88.7047 11.2516C87.8543 10.8264 86.8403 10.5975 85.7282 10.5975H81.9995V21.1295H85.7282Z" fill="black"/><path d="M108.82 21.1622V23.5499H97.3069V8.17706H108.526V10.5648H100.153V14.5552H107.577V16.9102H100.153V21.1622H108.82Z" fill="black"/><path d="M115.133 10.5975H110.03V8.17706H123.081V10.5975H117.978V23.5499H115.133V10.5975Z" fill="black"/><path d="M138.879 8.17706V23.5499H136.033V16.9756H128.085V23.5499H125.24V8.17706H128.085V14.5225H136.033V8.17706H138.879Z" fill="black"/><path d="M154.514 21.1622V23.5499H143V8.17706H154.219V10.5648H145.846V14.5552H153.271V16.9102H145.846V21.1622H154.514Z" fill="black"/><path d="M160.597 22.7649C159.354 22.0781 158.34 21.1295 157.621 19.9193C156.901 18.7091 156.542 17.3681 156.542 15.8635C156.542 14.3589 156.901 13.0179 157.621 11.8077C158.34 10.5975 159.322 9.64895 160.597 8.96207C161.873 8.2752 163.279 7.94812 164.849 7.94812C166.419 7.94812 167.826 8.2752 169.101 8.96207C170.344 9.64895 171.358 10.5975 172.078 11.775C172.797 12.9852 173.157 14.3262 173.157 15.8308C173.157 17.3354 172.797 18.6764 172.078 19.8866C171.358 21.0968 170.377 22.0126 169.101 22.6995C167.859 23.3864 166.419 23.7135 164.849 23.7135C163.247 23.7789 161.84 23.4191 160.597 22.7649ZM167.597 20.5735C168.415 20.1156 169.069 19.4614 169.527 18.6437C169.985 17.826 170.214 16.8775 170.214 15.8635C170.214 14.8496 169.985 13.901 169.527 13.0833C169.069 12.2656 168.415 11.6114 167.597 11.1535C166.779 10.6956 165.863 10.4667 164.817 10.4667C163.803 10.4667 162.854 10.6956 162.036 11.1535C161.219 11.6114 160.565 12.2656 160.107 13.0833C159.649 13.901 159.42 14.8496 159.42 15.8635C159.42 16.8775 159.649 17.826 160.107 18.6437C160.565 19.4614 161.219 20.1156 162.036 20.5735C162.854 21.0314 163.77 21.2604 164.817 21.2604C165.863 21.2604 166.779 21.0314 167.597 20.5735Z" fill="black"/><path d="M186.175 23.5499L183.035 19.0362C182.904 19.0362 182.708 19.0689 182.446 19.0689H178.979V23.5499H176.134V8.17706H182.446C183.787 8.17706 184.932 8.40602 185.913 8.83123C186.895 9.25643 187.647 9.9106 188.17 10.7283C188.694 11.546 188.955 12.5273 188.955 13.6393C188.955 14.7841 188.661 15.7981 188.105 16.6158C187.549 17.4662 186.731 18.0877 185.685 18.4801L189.25 23.5499H186.175ZM185.161 11.3825C184.507 10.8591 183.558 10.5975 182.316 10.5975H178.979V16.7139H182.316C183.558 16.7139 184.507 16.4522 185.161 15.8962C185.815 15.3729 186.142 14.6206 186.142 13.6393C186.11 12.6581 185.815 11.9058 185.161 11.3825Z" fill="black"/><path d="M203.707 21.1622V23.5499H192.193V8.17706H203.412V10.5648H195.039V14.5552H202.464V16.9102H195.039V21.1622H203.707Z" fill="black"/><path d="M221.009 23.5499L220.977 13.3777L215.94 21.8164H214.664L209.627 13.5085V23.5499H206.912V8.17706H209.267L215.384 18.3493L221.336 8.17706H223.691L223.724 23.5499H221.009Z" fill="black"/><path d="M34.1474 24.5312H1.83165C0.327072 24.5312 -0.523342 22.8303 0.392488 21.6201L15.9943 1.01395C17.041 -0.359794 19.1016 -0.359794 20.1155 1.01395L35.6192 21.5874C36.5023 22.7976 35.6519 24.5312 34.1474 24.5312Z" fill="url(#paint0_linear_466_1736)"/><path d="M4.15395 28.5215L16.7466 11.9385C17.5643 10.8591 19.167 10.8918 19.952 11.9385L32.4465 28.5215C33.4278 29.8626 32.512 31.727 30.8438 31.727H5.75665C4.08853 31.727 3.14 29.8299 4.15395 28.5215Z" fill="url(#paint1_linear_466_1736)"/><path d="M29.4047 24.5312L19.952 11.9385C19.1343 10.8591 17.5643 10.8591 16.7466 11.9385L7.1958 24.5312H29.4047Z" fill="#6699FF"/></g></g><defs><linearGradient id="paint0_linear_466_1736" x1="0.0140991" y1="12.2574" x2="35.977" y2="12.2574" gradientUnits="userSpaceOnUse"><stop stop-color="#3F71FF"/><stop offset="1" stop-color="#6A73FF"/></linearGradient><linearGradient id="paint1_linear_466_1736" x1="3.73645" y1="21.4341" x2="32.8498" y2="21.4341" gradientUnits="userSpaceOnUse"><stop stop-color="#3F71FF"/><stop offset="1" stop-color="#6A73FF"/></linearGradient><clipPath id="clip0_466_1736"><rect width="224" height="31.727" fill="white"/></clipPath><clipPath id="clip1_466_1736"><rect width="223.724" height="31.727" fill="white"/></clipPath></defs></svg>`;
+
+                    const logo = figma.createNodeFromSvg(logoSvg);
+                    logo.name = "logo - Horizontal";
+                    logo.resize(224, 31.73);
+
+                    // Header Section frame
+                    const headerSection = figma.createFrame();
+                    headerSection.name = "Header Section";
+                    headerSection.layoutMode = "VERTICAL";
+                    headerSection.primaryAxisSizingMode = "AUTO";
+                    headerSection.counterAxisSizingMode = "AUTO";
+                    headerSection.itemSpacing = 6;
+                    headerSection.fills = [];
+
+                    // Title text
+                    const titleText = figma.createText();
+                    titleText.characters = "Input Field Component Set";
+                    titleText.fontSize = 40;
+                    titleText.fontName = { family: "Poppins", style: "SemiBold" };
+                    titleText.fills = [{ type: 'SOLID', color: { r: 0, g: 0, b: 0 } }];
+                    titleText.lineHeight = { value: 150, unit: "PERCENT" };
+
+                    // Subtitle text
+                    const subtitleText = figma.createText();
+                    subtitleText.characters = "Explore our diverse input field set with different types and states for your design.";
+                    subtitleText.fontSize = 16;
+                    subtitleText.fontName = { family: "Montserrat", style: "Medium" };
+                    subtitleText.fills = [{ type: 'SOLID', color: hexToRgb('#444445') }];
+                    subtitleText.lineHeight = { value: 160, unit: "PERCENT" };
+                    subtitleText.letterSpacing = { value: 0.032, unit: "PIXELS" };
+
+                    headerSection.appendChild(titleText);
+                    headerSection.appendChild(subtitleText);
+
+                    titleSection.appendChild(logo);
+                    titleSection.appendChild(headerSection);
+                    docFrame.appendChild(titleSection);
+
+                    // Create container frame for component set
+                    const inputContainer = figma.createFrame();
+                    inputContainer.name = "Input Field Preview";
+                    inputContainer.layoutMode = "VERTICAL";
+                    inputContainer.primaryAxisSizingMode = "AUTO";
+                    inputContainer.counterAxisSizingMode = "AUTO";
+                    inputContainer.paddingTop = 84;
+                    inputContainer.paddingBottom = 84;
+                    inputContainer.paddingLeft = 84;
+                    inputContainer.paddingRight = 84;
+                    inputContainer.fills = [{ type: 'SOLID', color: hexToRgb('#FAFAFA') }];
+                    inputContainer.strokes = [{ type: 'SOLID', color: hexToRgb('#D5D5D6') }];
+                    inputContainer.strokeWeight = 1;
+                    inputContainer.cornerRadius = 8;
+
+                    // Move component set inside the container
+                    inputContainer.appendChild(componentSet);
+                    docFrame.appendChild(inputContainer);
+
+                    // Footer section
+                    const footer = figma.createFrame();
+                    footer.name = "Footer Section";
+                    footer.layoutMode = "VERTICAL";
+                    footer.primaryAxisSizingMode = "AUTO";
+                    footer.counterAxisSizingMode = "AUTO";
+                    footer.itemSpacing = 8;
+                    footer.fills = [];
+
+                    const createdBy = figma.createText();
+                    createdBy.characters = "Created By";
+                    createdBy.fontSize = 12;
+                    createdBy.fontName = { family: "Inter", style: "Regular" };
+                    createdBy.fills = [{ type: 'SOLID', color: hexToRgb('#8A8A8A') }];
+                    createdBy.textAlignHorizontal = "CENTER";
+
+                    const website = figma.createText();
+                    website.characters = "Slate.Design.com";
+                    website.fontSize = 16;
+                    website.fontName = { family: "Inter", style: "Bold" };
+                    website.fills = [{ type: 'SOLID', color: hexToRgb('#121212') }];
+                    website.textAlignHorizontal = "CENTER";
+
+                    footer.appendChild(createdBy);
+                    footer.appendChild(website);
+                    docFrame.appendChild(footer);
+
+                    figma.currentPage.selection = [docFrame];
+                    figma.viewport.scrollAndZoomIntoView([docFrame]);
+                    figma.notify(`✓ Input Field Component Set created inside documentation frame!`);
+                } else {
+                    figma.notify('Error: Failed to create component set');
+                }
+            } else {
+                figma.notify('Error: combineAsVariants is not available');
+            }
+
+        } catch (error) {
+            figma.notify('Error: ' + error.message);
+            console.error(error);
+        }
+    }
 };

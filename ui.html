@@ -3981,6 +3981,19 @@
                                         </div>
                                     </div>
                                     <div class="component-property-field">
+                                        <div class="component-property-label">Primary Color</div>
+                                        <div class="component-property-color-picker" style="position: relative;">
+                                            <input type="text" class="component-property-color-hex"
+                                                id="textfield-bg-color-input" value="#3B82F6"
+                                                oninput="updateTextFieldPreview()">
+                                            <input type="color" id="textfield-bg-color-picker" value="#3B82F6"
+                                                style="position: absolute; bottom: -45px; right: 0; width: 50px; height: 40px; border: none; cursor: pointer; opacity: 0;">
+                                            <div class="component-property-color-circle" id="textfield-bg-color-circle"
+                                                style="background: #3B82F6; border: 1px solid rgba(0, 0, 0, 0.1);">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="component-property-field">
                                         <div class="component-property-label">Border Color</div>
                                         <div class="component-property-color-picker" style="position: relative;">
                                             <input type="text" class="component-property-color-hex"
@@ -3990,19 +4003,6 @@
                                                 style="position: absolute; bottom: -45px; right: 0; width: 50px; height: 40px; border: none; cursor: pointer; opacity: 0;">
                                             <div class="component-property-color-circle"
                                                 id="textfield-border-color-circle" style="background: #E9EAEB;"></div>
-                                        </div>
-                                    </div>
-                                    <div class="component-property-field">
-                                        <div class="component-property-label">Background Color</div>
-                                        <div class="component-property-color-picker" style="position: relative;">
-                                            <input type="text" class="component-property-color-hex"
-                                                id="textfield-bg-color-input" value="#FFFFFF"
-                                                oninput="updateTextFieldPreview()">
-                                            <input type="color" id="textfield-bg-color-picker" value="#FFFFFF"
-                                                style="position: absolute; bottom: -45px; right: 0; width: 50px; height: 40px; border: none; cursor: pointer; opacity: 0;">
-                                            <div class="component-property-color-circle" id="textfield-bg-color-circle"
-                                                style="background: #FFFFFF; border: 1px solid rgba(0, 0, 0, 0.1);">
-                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -4068,7 +4068,7 @@
                         </div>
                         <div class="component-detail-footer">
                             <div class="component-detail-footer-text">Generate Component Set</div>
-                            <button class="component-detail-add-button">
+                            <button class="component-detail-add-button" onclick="createInputFieldComponentDoc()">
                                 <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
                                     xmlns="http://www.w3.org/2000/svg">
                                     <path d="M9 3.75V14.25" stroke="white" stroke-width="2" stroke-linecap="round" />
@@ -4493,6 +4493,25 @@
             }, '*');
         }
 
+        // Create Input Field Component Documentation
+        function createInputFieldComponentDoc() {
+            // Get values from UI
+            const labelText = document.getElementById('textfield-label-input').value || 'label';
+            const radius = document.getElementById('textfield-radius-input').value || '8';
+            const borderColor = document.getElementById('textfield-border-color-input').value || '#D1D5DB';
+            const primaryColor = document.getElementById('textfield-bg-color-input').value || '#3B82F6';
+
+            parent.postMessage({
+                pluginMessage: {
+                    type: 'create-input-doc',
+                    labelText: labelText,
+                    radius: radius,
+                    borderColor: borderColor,
+                    primaryColor: primaryColor
+                }
+            }, '*');
+        }
+
         // Live Preview Update for Component Detail
         function updateButtonPreview() {
             const buttonText = document.getElementById('button-text-input').value;
@@ -4665,7 +4684,7 @@
             const labelText = document.getElementById('textfield-label-input').value;
             const radius = document.getElementById('textfield-radius-input').value;
             const borderColor = document.getElementById('textfield-border-color-input').value;
-            const bgColor = document.getElementById('textfield-bg-color-input').value;
+            const primaryColor = document.getElementById('textfield-bg-color-input').value;
 
             // Update the SVG preview
             const labelPreview = document.getElementById('textfield-label-preview');
@@ -4701,19 +4720,19 @@
                 const clampedRadius = Math.min(Math.max(0, radius), 24);
                 rectPreview.setAttribute('rx', clampedRadius);
                 rectPreview.setAttribute('stroke', borderColor);
-                rectPreview.setAttribute('fill', bgColor);
+                rectPreview.setAttribute('fill', '#FFFFFF'); // Background always white
             }
 
             // Update color circle previews
             const borderColorCircle = document.getElementById('textfield-border-color-circle');
-            const bgColorCircle = document.getElementById('textfield-bg-color-circle');
+            const primaryColorCircle = document.getElementById('textfield-bg-color-circle');
 
             if (borderColorCircle) {
                 borderColorCircle.style.background = borderColor;
             }
 
-            if (bgColorCircle) {
-                bgColorCircle.style.background = bgColor;
+            if (primaryColorCircle) {
+                primaryColorCircle.style.background = primaryColor;
 
                 // Update background color circle border if it's white or light color
                 const rgb = hexToRgb(bgColor);
