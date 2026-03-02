@@ -2291,10 +2291,10 @@ figma.ui.onmessage = async (msg) => {
 
             // Font style mapping for different weights
             const fontStyleMap = {
-                'Regular': ['Regular', 'Normal', 'Book', 'Roman'],
-                'Medium': ['Medium', 'Regular'],
-                'Semibold': ['SemiBold', 'Semibold', 'Semi Bold', 'Demi Bold', 'DemiBold', 'Medium'],
-                'Bold': ['Bold', 'Heavy', 'Black']
+                'Regular': ['Regular', 'Normal'],
+                'Medium': ['Medium'],
+                'Semibold': ['SemiBold'],
+                'Bold': ['Bold']
             };
 
             for (const typo of typographyData) {
