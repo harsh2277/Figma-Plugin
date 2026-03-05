@@ -456,7 +456,7 @@ figma.ui.onmessage = async (msg) => {
             createdBy.textAlignHorizontal = "CENTER";
 
             const website = figma.createText();
-            website.characters = "Slate.Design.com";
+            website.characters = "Slate.Design";
             website.fontSize = 16;
             website.fontName = { family: "Inter", style: "Bold" };
             website.fills = [{ type: 'SOLID', color: hexToRgb('#121212') }];
@@ -754,7 +754,7 @@ figma.ui.onmessage = async (msg) => {
             createdBy.textAlignHorizontal = "CENTER";
 
             const website = figma.createText();
-            website.characters = "Slate.Design.com";
+            website.characters = "Slate.Design";
             website.fontSize = 16;
             website.fontName = { family: "Inter", style: "Bold" };
             website.fills = [{ type: 'SOLID', color: hexToRgb('#121212') }];
@@ -1039,7 +1039,7 @@ figma.ui.onmessage = async (msg) => {
             createdBy.textAlignHorizontal = "CENTER";
 
             const website = figma.createText();
-            website.characters = "Slate.Design.com";
+            website.characters = "Slate.Design";
             website.fontSize = 16;
             website.fontName = { family: "Inter", style: "Bold" };
             website.fills = [{ type: 'SOLID', color: hexToRgb('#121212') }];
@@ -1326,7 +1326,7 @@ figma.ui.onmessage = async (msg) => {
             createdBy.textAlignHorizontal = "CENTER";
 
             const website = figma.createText();
-            website.characters = "Slate.Design.com";
+            website.characters = "Slate.Design";
             website.fontSize = 16;
             website.fontName = { family: "Inter", style: "Bold" };
             website.fills = [{ type: 'SOLID', color: hexToRgb('#121212') }];
@@ -1592,7 +1592,7 @@ figma.ui.onmessage = async (msg) => {
             createdBy.textAlignHorizontal = "CENTER";
 
             const website = figma.createText();
-            website.characters = "Slate.Design.com";
+            website.characters = "Slate.Design";
             website.fontSize = 16;
             website.fontName = { family: "Inter", style: "Bold" };
             website.fills = [{ type: 'SOLID', color: hexToRgb('#121212') }];
@@ -1919,7 +1919,7 @@ figma.ui.onmessage = async (msg) => {
             createdBy.textAlignHorizontal = "CENTER";
 
             const website = figma.createText();
-            website.characters = "Slate.Design.com";
+            website.characters = "Slate.Design";
             website.fontSize = 16;
             website.fontName = { family: "Inter", style: "Bold" };
             website.fills = [{ type: 'SOLID', color: hexToRgb('#121212') }];
@@ -2209,7 +2209,7 @@ figma.ui.onmessage = async (msg) => {
             createdBy.textAlignHorizontal = "CENTER";
 
             const website = figma.createText();
-            website.characters = "Slate.Design.com";
+            website.characters = "Slate.Design";
             website.fontSize = 16;
             website.fontName = { family: "Inter", style: "Bold" };
             website.fills = [{ type: 'SOLID', color: hexToRgb('#121212') }];
@@ -2910,7 +2910,7 @@ figma.ui.onmessage = async (msg) => {
             createdBy.textAlignHorizontal = "CENTER";
 
             const website = figma.createText();
-            website.characters = "Slate.Design.com";
+            website.characters = "Slate.Design";
             website.fontSize = 16;
             website.fontName = { family: "Inter", style: "Bold" };
             website.fills = [{ type: 'SOLID', color: hexToRgb('#121212') }];
@@ -4242,7 +4242,7 @@ figma.ui.onmessage = async (msg) => {
             createdBy.textAlignHorizontal = "CENTER";
 
             const website = figma.createText();
-            website.characters = "Slate.Design.com";
+            website.characters = "Slate.Design";
             website.fontSize = 16;
             website.fontName = { family: "Inter", style: "Bold" };
             website.fills = [{ type: 'SOLID', color: hexToRgb('#121212') }];
@@ -5246,7 +5246,7 @@ figma.ui.onmessage = async (msg) => {
                     createdBy.textAlignHorizontal = "CENTER";
 
                     const website = figma.createText();
-                    website.characters = "Slate.Design.com";
+                    website.characters = "Slate.Design";
                     website.fontSize = 16;
                     website.fontName = { family: "Inter", style: "Bold" };
                     website.fills = [{ type: 'SOLID', color: hexToRgb('#121212') }];
@@ -5277,6 +5277,8 @@ figma.ui.onmessage = async (msg) => {
             const library = msg.library;
             const category = msg.category;
             const iconsArray = msg.icons || [];
+
+            console.log(`[Figma Plugin] Creating icons doc for ${library} - ${category} with ${iconsArray.length} icons`);
 
             // Load fonts
             await figma.loadFontAsync({ family: "Poppins", style: "SemiBold" });
@@ -5444,8 +5446,7 @@ figma.ui.onmessage = async (msg) => {
             createdByHeader.fills = [{ type: 'SOLID', color: hexToRgb('#8A8A8A') }];
 
             const websiteLabel = figma.createText();
-            // Use gitLink if provided, otherwise default
-            websiteLabel.characters = msg.gitLink ? msg.gitLink.replace('https://github.com/', '') : "Slate.Design.com";
+            websiteLabel.characters = "Slate.Design";
             websiteLabel.fontSize = 16;
             websiteLabel.fontName = { family: "Inter", style: "Bold" };
             websiteLabel.fills = [{ type: 'SOLID', color: hexToRgb('#121212') }];
