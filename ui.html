@@ -3667,12 +3667,11 @@
                                         style="width: 100%; padding: 8px 16px; border: 1px solid #E5E7EB; border-radius: 100px; font-family: 'Poppins'; font-size: 14px; outline: none; box-sizing: border-box;">
                                 </div>
 
-                                <!-- Secondary Font Toggle -->
-                                <div>
-                                    <div
-                                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                                <!-- Secondary Font Section -->
+                                <div style="display: flex; flex-direction: column; gap: 8px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
                                         <label
-                                            style="font-family: 'Poppins'; font-size: 14px; font-weight: 400; color: #9CA3AF;">
+                                            style="font-family: 'Poppins'; font-size: 14px; font-weight: 500; color: #000000;">
                                             Secondary Font
                                         </label>
                                         <div class="toggle-switch-unique" id="secondary-font-toggle"
@@ -3680,8 +3679,9 @@
                                             <div class="toggle-switch-knob-unique"></div>
                                         </div>
                                     </div>
-                                    <input type="text" id="secondary-font" placeholder="Enter Font Name" disabled
-                                        style="width: 100%; padding: 8px 16px; border: 1px solid #E5E7EB; border-radius: 100px; font-family: 'Poppins'; font-size: 14px; outline: none; box-sizing: border-box; background: #F9FAFB; color: #9CA3AF;">
+                                    <input type="text" id="secondary-font" placeholder="Enter Secondary Font"
+                                        value="Poppins" disabled
+                                        style="width: 100%; padding: 8px 16px; border: 1px solid #E5E7EB; border-radius: 100px; font-family: 'Poppins'; font-size: 14px; outline: none; box-sizing: border-box; opacity: 0.5; background-color: #F3F4F6;">
                                 </div>
 
                                 <!-- Base Font Size -->
@@ -4592,9 +4592,13 @@
         // Create Button Component Documentation
         function createButtonComponentDoc() {
             const buttonText = document.getElementById('button-text-input').value || 'Button';
-            const radius = parseInt(document.getElementById('radius-input').value) || 12;
+            const radiusValue = document.getElementById('radius-input').value;
+            const radius = radiusValue !== "" ? parseInt(radiusValue) : 12;
             const primaryColor = document.getElementById('primary-color-input').value || '#1350FF';
             const textColor = document.getElementById('text-color-input').value || '#FFFFFF';
+
+            // Show loading toast
+            window.activeActionToastId = showLoadingToast('Creating button component set...');
 
             parent.postMessage({
                 pluginMessage: {
@@ -4611,9 +4615,13 @@
         function createInputFieldComponentDoc() {
             // Get values from UI
             const labelText = document.getElementById('textfield-label-input').value || 'label';
-            const radius = document.getElementById('textfield-radius-input').value || '8';
+            const radiusValue = document.getElementById('textfield-radius-input').value;
+            const radius = radiusValue !== "" ? radiusValue : '8';
             const borderColor = document.getElementById('textfield-border-color-input').value || '#D1D5DB';
             const primaryColor = document.getElementById('textfield-bg-color-input').value || '#3B82F6';
+
+            // Show loading toast
+            window.activeActionToastId = showLoadingToast('Creating input field component set...');
 
             parent.postMessage({
                 pluginMessage: {
@@ -4930,32 +4938,29 @@
         });
 
         // Typography Functions
-        let secondaryFontEnabled = false;
 
         function toggleSecondaryFont() {
             const toggle = document.getElementById('secondary-font-toggle');
             const input = document.getElementById('secondary-font');
+            const isActive = toggle.classList.toggle('active');
 
-            secondaryFontEnabled = !secondaryFontEnabled;
-
-            if (secondaryFontEnabled) {
-                toggle.classList.add('active');
+            if (isActive) {
                 input.disabled = false;
-                input.style.background = '#FFFFFF';
-                input.style.color = 'rgba(0, 0, 0, 0.6)';
+                input.style.opacity = '1';
+                input.style.backgroundColor = '#FFFFFF';
             } else {
-                toggle.classList.remove('active');
                 input.disabled = true;
-                input.style.background = '#F9FAFB';
-                input.style.color = '#9CA3AF';
+                input.style.opacity = '0.5';
+                input.style.backgroundColor = '#F3F4F6';
             }
-
             generateTypographyPreview();
         }
 
         function generateTypographyPreview() {
             const baseFontSize = parseFloat(document.getElementById('base-font-size').value);
             const primaryFont = document.getElementById('primary-font').value || 'Inter';
+            const secondaryFontToggle = document.getElementById('secondary-font-toggle');
+            const secondaryFont = secondaryFontToggle && secondaryFontToggle.classList.contains('active') ? document.getElementById('secondary-font').value : null;
 
             const previewArea = document.getElementById('typography-preview-area');
 
@@ -5010,6 +5015,10 @@
                             <div style="font-family: '${primaryFont}', sans-serif; font-size: 16px; font-weight: 500; line-height: 150%; color: #000000;">
                                 Whereas disregard and contempt for human rights have resulted
                             </div>
+                            ${secondaryFont ? `
+                            <div style="font-family: '${secondaryFont}', sans-serif; font-size: 16px; font-weight: 400; line-height: 150%; color: #000000; border-top: 1px dashed #E5E7EB; padding-top: 8px; margin-top: 4px;">
+                                Secondary: Whereas disregard and contempt for human rights
+                            </div>` : ''}
                         </div>
                         
                         <!-- Expandable Details Section -->
@@ -5076,7 +5085,8 @@
         function createTypographyStyles() {
             const baseFontSize = parseFloat(document.getElementById('base-font-size').value);
             const primaryFont = document.getElementById('primary-font').value || 'Inter';
-            const secondaryFont = secondaryFontEnabled ? document.getElementById('secondary-font').value : null;
+            const secondaryFontToggle = document.getElementById('secondary-font-toggle');
+            const secondaryFont = secondaryFontToggle && secondaryFontToggle.classList.contains('active') ? document.getElementById('secondary-font').value : null;
             const scale = 1.25; // Default scale ratio
 
             parent.postMessage({
@@ -5095,6 +5105,7 @@
                     type: 'create-typography-doc',
                     baseFontSize: baseFontSize,
                     primaryFont: primaryFont,
+                    secondaryFont: secondaryFont,
                     scale: scale
                 }
             }, '*');
@@ -5103,7 +5114,8 @@
         function addTypographyTokens() {
             const baseFontSize = parseFloat(document.getElementById('base-font-size').value);
             const primaryFont = document.getElementById('primary-font').value || 'Inter';
-            const secondaryFont = secondaryFontEnabled ? document.getElementById('secondary-font').value : null;
+            const secondaryFontToggle = document.getElementById('secondary-font-toggle');
+            const secondaryFont = secondaryFontToggle && secondaryFontToggle.classList.contains('active') ? document.getElementById('secondary-font').value : null;
 
             // Base multipliers (based on 12px base font)
             const typographyLevels = [
@@ -5176,7 +5188,8 @@
                 pluginMessage: {
                     type: 'create-typography-doc',
                     baseFontSize: baseFontSize,
-                    primaryFont: primaryFont
+                    primaryFont: primaryFont,
+                    secondaryFont: secondaryFont
                 }
             }, '*');
         }
@@ -5188,6 +5201,7 @@
             // Add event listeners for typography inputs
             document.getElementById('base-font-size').addEventListener('change', generateTypographyPreview);
             document.getElementById('primary-font').addEventListener('input', generateTypographyPreview);
+            document.getElementById('secondary-font').addEventListener('input', generateTypographyPreview);
         });
 
         // Setup Option Selection
